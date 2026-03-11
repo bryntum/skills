@@ -30,7 +30,14 @@ Before writing any code, determine:
 2. **Which framework**: Vanilla JS, React, Angular, or Vue
 3. **Version**: Check `package.json`. If unclear, use the docs tool to confirm the current major version.
 
-Use the `mcp__bryntum__search_bryntum_docs` tool to look up product-specific configuration, API, and integration guides. Always pass the `product` and `version` parameters when you know them.
+If the `mcp__bryntum__search_bryntum_docs` tool is available, use it to look up product-specific configuration, API, and integration guides. Always pass the `product` and `version` parameters when you know them.
+
+If the MCP tool is **not available**, look up documentation directly:
+- API docs: `https://bryntum.com/products/{product}/docs/api/`
+- Guides: `https://bryntum.com/products/{product}/docs/guide/`
+- Example: `https://bryntum.com/products/calendar/docs/api/Calendar/view/Calendar`
+
+Use `WebFetch` or `WebSearch` on `bryntum.com` to answer questions about config options, data models, and integration patterns.
 
 ---
 
@@ -214,13 +221,13 @@ Bryntum components default to `100%` width and a minimum height of `10em`. To fi
 
 ## Step 5: Look up what you don't know
 
-Use `mcp__bryntum__search_bryntum_docs` freely for:
+Use `mcp__bryntum__search_bryntum_docs` if available, otherwise use `WebFetch` or `WebSearch` on `bryntum.com` for:
 - Feature configuration (columns, resources, events, dependencies, etc.)
 - API methods and events
 - Migration guidance (e.g., CSS migration from v6 → v7)
 - Framework-specific integration guides
 
-Pass `product` (e.g., `"gantt"`, `"scheduler"`, `"schedulerpro"`, `"grid"`, `"calendar"`, `"taskboard"`) and `version` so results are scoped correctly.
+When using the MCP tool, pass `product` (e.g., `"gantt"`, `"scheduler"`, `"schedulerpro"`, `"grid"`, `"calendar"`, `"taskboard"`) and `version` so results are scoped correctly.
 
 ---
 
