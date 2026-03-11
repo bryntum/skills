@@ -90,12 +90,60 @@ Bryntum 7 uses **plain CSS** — no SASS/SCSS. Follow this pattern for every pro
 
 **If the project has a `node_modules` import path instead of a package alias**, use `./node_modules/@bryntum/...` — the pattern is identical, just a different prefix.
 
+### Default font: Poppins
+
+Bryntum hardcodes `Helvetica Neue, Arial, Helvetica, sans-serif` on `.b-widget` — there is **no `--b-font-family` CSS variable**. To apply a custom font, load it and override `.b-widget` directly:
+
+```css
+/* Load Poppins from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+/* Override Bryntum's hardcoded font */
+.b-widget {
+  font-family: 'Poppins', sans-serif;
+}
+```
+
+**Default to Poppins** unless the user specifies otherwise. A `--b-font-family` variable does not exist and will have no effect.
+
+### Full CSS example (Calendar, svalbard-light, Poppins)
+
+```css
+/* Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+/* FontAwesome icons — required in Bryntum 7+ */
+@import "@bryntum/calendar/fontawesome/css/fontawesome.css";
+@import "@bryntum/calendar/fontawesome/css/solid.css";
+
+/* Structural CSS — required */
+@import "@bryntum/calendar/calendar.css";
+
+/* Theme */
+@import "@bryntum/calendar/svalbard-light.css";
+
+.b-widget {
+  font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+```
+
 ### CSS rules — never break these
 
 - Never use SASS/SCSS for Bryntum styling.
 - Never use legacy single-file imports like `gantt.stockholm.css` — those are the old v5/v6 format.
 - The theme file alone is **not enough**. Always pair it with the structural `{product}.css`.
 - Default to `svalbard-light.css` unless the user asks for something else.
+- Default to Poppins font via `.b-widget { font-family: ... }` — do not use `--b-font-family` (it doesn't exist).
 - Use CSS variables for customization (`--b-widget-background`, etc.) rather than overriding specific class styles.
 - Use normalized kebab-case class names: `.b-button-group`, not `.b-buttongroup`.
 
@@ -184,6 +232,7 @@ Pass `product` (e.g., `"gantt"`, `"scheduler"`, `"schedulerpro"`, `"grid"`, `"ca
 - [ ] `{product}.css` comes before the theme CSS
 - [ ] Theme is not used alone (always paired with structural CSS)
 - [ ] Default theme is `svalbard-light` unless overridden
+- [ ] Default font is Poppins via `.b-widget { font-family: 'Poppins', sans-serif }` — not via a CSS variable
 - [ ] Angular: new config props bound in template with `[prop]="..."`
 - [ ] React: config passed as JSX props
 - [ ] Component is sized correctly (parent has explicit height)
