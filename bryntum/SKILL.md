@@ -253,7 +253,7 @@ When using the MCP tool, pass `product` (e.g., `"gantt"`, `"scheduler"`, `"sched
 
 - **`loadUrl` uses GET, `syncUrl` uses POST**.
 - **Prefer assignments over `resourceId`**: Use an `assignments` store instead of `resourceId` on events.
-- **Don't persist phantom IDsin database**: Sync requests for new records contain `$PhantomId` strings (e.g. `_generatedEventModel_...`). When a sync creates an event and its assignment in one request, the assignment's `eventId` references the event's phantom ID. The backend must: (1) insert events first, (2) build a phantom→real ID map, (3) resolve phantom references before inserting assignments. Return the mapping (`{ $PhantomId, id }`) in the response so the client updates its records.
+- **Don't persist phantom IDs in database**: Sync requests for new records contain `$PhantomId` strings (e.g. `_generatedEventModel_...`). When a sync creates an event and its assignment in one request, the assignment's `eventId` references the event's phantom ID. The backend must: (1) insert events first, (2) build a phantom→real ID map, (3) resolve phantom references before inserting assignments. Return the mapping (`{ $PhantomId, id }`) in the response so the client updates its records.
 - **`exceptionDates` must be `[]`, never `null`**: 
 - **`allDay` must be a boolean**: SQLite stores `0`/`1` — convert to `true`/`false` in the load response.
 - **Sync updates are partial**: Bryntum only sends changed fields in `updated` arrays. Never use a fixed `UPDATE ... SET col1=?, col2=?, ...` statement — dynamically build the SET clause from the fields present in the request, or you'll overwrite existing values with `NULL`/`undefined`.
