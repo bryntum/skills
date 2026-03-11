@@ -32,4 +32,3 @@ cp -r bryntum-skills/bryntum ~/.claude/skills/
 ## Requirements
 
 - [Claude Code](https://claude.ai/code)
-- The [Bryntum MCP server](https://github.com/bryntum/bryntum-mcp) for docs lookup (optional but recommended)
