@@ -231,8 +231,8 @@ Pass `product` (e.g., `"gantt"`, `"scheduler"`, `"schedulerpro"`, `"grid"`, `"ca
 - [ ] FontAwesome imports present
 - [ ] `{product}.css` comes before the theme CSS
 - [ ] Theme is not used alone (always paired with structural CSS)
-- [ ] Default theme is `svalbard-light` unless overridden
-- [ ] Default font is Poppins via `.b-widget { font-family: 'Poppins', sans-serif }` — not via a CSS variable
+- [ ] Theme is `svalbard-light` if the user has not specified a preference
+- [ ] Font is Poppins (via `.b-widget { font-family: 'Poppins', sans-serif }`) if the user has not specified a preference — never use `--b-font-family`
 - [ ] Angular: new config props bound in template with `[prop]="..."`
 - [ ] React: config passed as JSX props
 - [ ] Component is sized correctly (parent has explicit height)
