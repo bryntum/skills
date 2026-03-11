@@ -249,6 +249,19 @@ When using the MCP tool, pass `product` (e.g., `"gantt"`, `"scheduler"`, `"sched
 
 ---
 
+## Backend / CrudManager rules
+
+- **`loadUrl` uses GET, `syncUrl` uses POST**.
+- **Prefer assignments over `resourceId`**: Use an `assignments` store instead of `resourceId` on events.
+- **Don't persist phantom IDsin database**: Sync requests for new records contain `$PhantomId` strings (e.g. `_generatedEventModel_...`). When a sync creates an event and its assignment in one request, the assignment's `eventId` references the event's phantom ID. The backend must: (1) insert events first, (2) build a phantom→real ID map, (3) resolve phantom references before inserting assignments. Return the mapping (`{ $PhantomId, id }`) in the response so the client updates its records.
+- **`exceptionDates` must be `[]`, never `null`**: 
+- **`allDay` must be a boolean**: SQLite stores `0`/`1` — convert to `true`/`false` in the load response.
+- **Sync updates are partial**: Bryntum only sends changed fields in `updated` arrays. Never use a fixed `UPDATE ... SET col1=?, col2=?, ...` statement — dynamically build the SET clause from the fields present in the request, or you'll overwrite existing values with `NULL`/`undefined`.
+- **Seed data dates must use proper helpers**: When generating seed dates, call the date helper with distinct start/end hours directly (e.g. `makeDate(0, 9)` and `makeDate(0, 10)`). Never construct an end date by string-replacing parts of a start date ISO string — regex replacements on ISO timestamps are fragile and timezone-dependent.
+- **Start the backend before Vite**: When using Vite's `server.proxy` to forward `/api` requests to a backend, always start the backend server first (or use `concurrently`). If Vite starts before the proxy config exists or before the backend is listening, API requests return Vite's HTML fallback instead of JSON.
+
+---
+
 ## Quick checklist before finishing
 
 - [ ] No SASS/SCSS
