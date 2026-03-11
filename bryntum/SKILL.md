@@ -30,14 +30,32 @@ Before writing any code, determine:
 2. **Which framework**: Vanilla JS, React, Angular, or Vue
 3. **Version**: Check `package.json`. If unclear, use the docs tool to confirm the current major version.
 
-If the `mcp__bryntum__search_bryntum_docs` tool is available, use it to look up product-specific configuration, API, and integration guides. Always pass the `product` and `version` parameters when you know them.
+Use the `mcp__bryntum__search_bryntum_docs` tool to look up product-specific configuration, API, and integration guides. Always pass the `product` and `version` parameters when you know them.
 
-If the MCP tool is **not available**, look up documentation directly:
+### If the MCP tool is not available
+
+Ask the user to add the Bryntum MCP server at `https://mcp.bryntum.com`.
+
+**Claude Code** (run in terminal):
+```bash
+claude mcp add --transport http bryntum https://mcp.bryntum.com
+```
+
+**Claude Desktop** (add to `claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "bryntum": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://mcp.bryntum.com"]
+    }
+  }
+}
+```
+
+If the user cannot or does not want to set up the MCP, fall back to `WebFetch` / `WebSearch` on `bryntum.com`:
 - API docs: `https://bryntum.com/products/{product}/docs/api/`
 - Guides: `https://bryntum.com/products/{product}/docs/guide/`
-- Example: `https://bryntum.com/products/calendar/docs/api/Calendar/view/Calendar`
-
-Use `WebFetch` or `WebSearch` on `bryntum.com` to answer questions about config options, data models, and integration patterns.
 
 ---
 
