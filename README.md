@@ -16,19 +16,18 @@ Guides Claude through integrating Bryntum components into web apps. Covers:
 
 ## Installation
 
-Run this command to install the Bryntum skill into Claude Code:
+Copy the `bryntum/` directory into your `.claude/skills/` folder:
 
 ```bash
-claude skill install https://github.com/bryntum/bryntum-skills/raw/main/bryntum.skill
+cp -r bryntum ~/.claude/skills/
 ```
 
-Or install manually:
+Or clone and copy in one step:
 
-1. Download `bryntum.skill`
-2. Run:
-   ```bash
-   claude skill install ./bryntum.skill
-   ```
+```bash
+git clone https://github.com/bryntum/bryntum-skills.git
+cp -r bryntum-skills/bryntum ~/.claude/skills/
+```
 
 ## Requirements
 
