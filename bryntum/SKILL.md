@@ -12,11 +12,7 @@ metadata:
   tags: bryntum, scheduler, gantt, calendar, grid, taskboard, schedulerpro
 ---
 
-## Step 1: Identify the product and version
-
-Before writing any code, determine:
-
-1. **Which product** is being integrated:
+## Products
 
 | Product | npm package | Trial package | CSS file |
 |---|---|---|---|
@@ -27,16 +23,9 @@ Before writing any code, determine:
 | Grid | `@bryntum/grid` | `@bryntum/grid-trial` | `grid.css` |
 | TaskBoard | `@bryntum/taskboard` | `@bryntum/taskboard-trial` | `taskboard.css` |
 
-2. **Which framework**: Vanilla JS, React, Angular, or Vue
-3. **Version**: Check `package.json`. If unclear, use the docs tool to confirm the current major version.
+Before writing code: identify **product**, **framework** (React/Angular/Vue/Vanilla), and **version** (check `package.json`).
 
-Use the `mcp__bryntum__search_bryntum_docs` tool to look up product-specific configuration, API, and integration guides. Always pass the `product` and `version` parameters when you know them.
-
-### If the MCP tool is not available
-
-Ask the user to add the Bryntum MCP server at `https://mcp.bryntum.com`.
-
-**Claude Code** (run in terminal):
+Use `mcp__bryntum__search_bryntum_docs` (pass `product` + `version`) for API/config lookups. If unavailable, ask the user to add it:
 ```bash
 claude mcp add --transport http bryntum https://mcp.bryntum.com
 ```
@@ -53,224 +42,174 @@ claude mcp add --transport http bryntum https://mcp.bryntum.com
 }
 ```
 
-If the user cannot or does not want to set up the MCP, fall back to `WebFetch` / `WebSearch` on `bryntum.com`:
-- API docs: `https://bryntum.com/products/{product}/docs/api/`
-- Guides: `https://bryntum.com/products/{product}/docs/guide/`
+Fallback: `WebFetch`/`WebSearch` on `bryntum.com/products/{product}/docs/`.
 
 ---
 
 ## Installing packages
 
-### Trial (no login required)
-
-Trial packages are on the **public npm registry** — no `.npmrc`, no auth token, no Bryntum account needed.
-
-Install using the npm alias pattern so imports use the standard `@bryntum/{product}` name:
-
+**Trial** (public npm, no auth):
 ```bash
-npm install @bryntum/scheduler@npm:@bryntum/scheduler-trial@7.2.0
+npm install @bryntum/gantt@npm:@bryntum/gantt-trial@7.2.0
 ```
+Framework wrappers have no `-trial` suffix: `npm install @bryntum/gantt-react@7.2.0`. Use exact versions (no `^`).
 
-Or in `package.json`:
-
-```json
-"dependencies": {
-  "@bryntum/scheduler": "npm:@bryntum/scheduler-trial@7.2.0"
-}
-```
-
-The same pattern applies for all products — just swap `scheduler` for `gantt`, `calendar`, etc.
-
-Framework wrappers (e.g. `@bryntum/scheduler-react`, `@bryntum/scheduler-angular`) have **no `-trial` suffix** and install directly from the public registry at the same version number.
-
-> Use exact versions (no `^`). Trial adds a watermark but is otherwise fully functional.
-
-### Licensed
-
-Licensed packages live on the private Bryntum registry. Add to `.npmrc`:
-```
-@bryntum:registry=https://npm.bryntum.com
-```
-Then `npm login --registry=https://npm.bryntum.com` with Customer Zone credentials.
+**Licensed**: Add `@bryntum:registry=https://npm.bryntum.com` to `.npmrc`, then `npm login --registry=https://npm.bryntum.com`.
 
 ---
 
-## Step 2: CSS setup (Bryntum 7+)
+## CSS setup (v7+)
 
-Bryntum 7 uses **plain CSS** — no SASS/SCSS. Follow this pattern for every product:
+Bryntum 7 uses **plain CSS only** — no SASS/SCSS. Three imports required in order:
 
 ```css
-/* FontAwesome icons (required — no longer auto-bundled) */
-@import "@bryntum/{product}/fontawesome/css/fontawesome.css";
+@import "@bryntum/{product}/fontawesome/css/fontawesome.css";  /* icons */
 @import "@bryntum/{product}/fontawesome/css/solid.css";
-
-/* Structural CSS (required) */
-@import "@bryntum/{product}/{product}.css";
-
-/* Theme CSS — svalbard-light is the default */
-@import "@bryntum/{product}/svalbard-light.css";
+@import "@bryntum/{product}/{product}.css";                    /* structural — required */
+@import "@bryntum/{product}/svalbard-light.css";               /* theme */
 ```
 
-**Available themes**: `svalbard-light`, `svalbard-dark`, `stockholm-light`, `stockholm-dark`, `material3-light`, `material3-dark`, `fluent2-light`, `fluent2-dark`
+**Themes**: `svalbard-light` (default), `svalbard-dark`, `stockholm-light`, `stockholm-dark`, `visby-light`, `visby-dark`, `material3-light`, `material3-dark`, `fluent2-light`, `fluent2-dark`
 
-**If the project has a `node_modules` import path instead of a package alias**, use `./node_modules/@bryntum/...` — the pattern is identical, just a different prefix.
-
-### Default font: Poppins
-
-Bryntum hardcodes `Helvetica Neue, Arial, Helvetica, sans-serif` on `.b-widget` — there is **no `--b-font-family` CSS variable**. To apply a custom font, load it and override `.b-widget` directly:
-
+**Font**: Default to Poppins. No `--b-font-family` variable exists — override `.b-widget` directly:
 ```css
-/* Load Poppins from Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
-
-/* Override Bryntum's hardcoded font */
-.b-widget {
-  font-family: 'Poppins', sans-serif;
-}
+.b-widget { font-family: 'Poppins', sans-serif; }
 ```
 
-**Default to Poppins** unless the user specifies otherwise. A `--b-font-family` variable does not exist and will have no effect.
-
-### Full CSS example (Calendar, svalbard-light, Poppins)
-
-```css
-/* Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
-
-/* FontAwesome icons — required in Bryntum 7+ */
-@import "@bryntum/calendar/fontawesome/css/fontawesome.css";
-@import "@bryntum/calendar/fontawesome/css/solid.css";
-
-/* Structural CSS — required */
-@import "@bryntum/calendar/calendar.css";
-
-/* Theme */
-@import "@bryntum/calendar/svalbard-light.css";
-
-.b-widget {
-  font-family: 'Poppins', sans-serif;
-}
-
-html, body {
-  height: 100%;
-}
-
-#app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-```
-
-### CSS rules — never break these
-
-- Never use SASS/SCSS for Bryntum styling.
-- Never use legacy single-file imports like `gantt.stockholm.css` — those are the old v5/v6 format.
-- The theme file alone is **not enough**. Always pair it with the structural `{product}.css`.
-- Default to `svalbard-light.css` unless the user asks for something else.
-- Default to Poppins font via `.b-widget { font-family: ... }` — do not use `--b-font-family` (it doesn't exist).
-- Use CSS variables for customization (`--b-widget-background`, etc.) rather than overriding specific class styles.
-- Use normalized kebab-case class names: `.b-button-group`, not `.b-buttongroup`.
+**CSS rules**:
+- Never SASS/SCSS. Never legacy single-file imports (`gantt.stockholm.css`).
+- Structural `{product}.css` must always accompany the theme file.
+- Use CSS variables (`--b-widget-background`, etc.) for customization.
 
 ---
 
-## Step 3: Framework-specific patterns
+## Dynamic theme switching (dark mode)
 
-### Angular
+**Must** use `DomHelper.setTheme()` with `<link>` tags. CSS `@import` will NOT work.
 
-- Install the Angular wrapper: `@bryntum/{product}-angular`
-- Import `Bryntum{Product}Module` in your `AppModule` (or standalone component)
-- Use the component tag: `<bryntum-{product}>`
-- **When you add a new config property**, always bind it in `app.html` using Angular property binding:
-
+**1. Load CSS via `<link>` in `index.html`** (not CSS `@import`):
 ```html
-<bryntum-scheduler
-  [resources]="schedulerProps.resources"
-  [events]="schedulerProps.events"
-  [columns]="schedulerProps.columns!"
-></bryntum-scheduler>
+<link rel="stylesheet" href="/node_modules/@bryntum/{product}/fontawesome/css/fontawesome.css" />
+<link rel="stylesheet" href="/node_modules/@bryntum/{product}/fontawesome/css/solid.css" />
+<link rel="stylesheet" href="/node_modules/@bryntum/{product}/{product}.css" />
+<link rel="stylesheet" href="/node_modules/@bryntum/{product}/svalbard-light.css" data-bryntum-theme />
+```
+The `data-bryntum-theme` attribute is **required** — `setTheme()` finds and swaps this `<link>`.
+
+**2. Call `DomHelper.setTheme()`**:
+```javascript
+import { DomHelper } from '@bryntum/{product}';
+DomHelper.setTheme('svalbard-dark');  // or 'svalbard-light'
 ```
 
-- Config objects typically live in a `{product}Props` object in the component class.
+**What does NOT work**:
+- CSS `@import` + `setTheme()` → no `<link>` to target, silently fails
+- Manual CSS overrides (`.dark .b-gridbase { ... }`) → only covers a fraction of theme variables
 
-### React
+**React tbar example**:
+```jsx
+const ganttConfig = useMemo(() => ({
+  tbar: {
+    items: [
+      { type: 'widget', html: '<h2 style="margin:0">Title</h2>' },
+      '->',
+      {
+        type: 'button', icon: 'b-fa b-fa-moon', text: 'Dark Mode',
+        toggleable: true,
+        onToggle: ({ pressed }) => {
+          DomHelper.setTheme(pressed ? 'svalbard-dark' : 'svalbard-light');
+        },
+      },
+    ],
+  },
+}), []);
+```
 
-- Install the React wrapper: `@bryntum/{product}-react`
-- Import `Bryntum{Product}` from `@bryntum/{product}-react`
-- Pass config as props directly:
+---
+
+## Framework wrappers
+
+**React**: `@bryntum/{product}-react` → `<BryntumGantt {...config} />`. Use `useRef` for instance access.
+
+**Angular**: `@bryntum/{product}-angular` → `<bryntum-gantt [columns]="props.columns" />`. Bind new props in template with `[prop]="..."`.
+
+**Vue**: `@bryntum/{product}-vue-3` (Vue 3) or `@bryntum/{product}-vue` (Vue 2). Bind via `v-bind` or individual props.
+
+**Vanilla**: `import { Gantt } from '@bryntum/gantt'` → instantiate with config + `appendTo`.
+
+---
+
+## Data loading
+
+**Never mix `project` prop with inline data props** — throws an error. Pick one:
 
 ```tsx
-<BryntumScheduler
-  resources={resources}
-  events={events}
-  columns={columns}
-/>
+// ✅ Data inside project config (recommended)
+<BryntumGantt project={{ tasks: myTasks, dependencies: myDeps }} />
+
+// ✅ Data as props, no project
+<BryntumGantt tasks={myTasks} dependencies={myDeps} />
+
+// ❌ WRONG — will throw
+<BryntumGantt tasks={myTasks} project={{ autoSetConstraints: true }} />
 ```
 
-- Use `useRef` to get a reference to the underlying component instance when you need to call methods.
-
-### Vue
-
-- Install the Vue wrapper: `@bryntum/{product}-vue-3` (Vue 3) or `@bryntum/{product}-vue` (Vue 2)
-- Register and use as a standard component
-- Bind config via `v-bind` or individual props
-
-### Vanilla JS
-
-- Import the class directly: `import { {ProductClass} } from '@bryntum/{product}'`
-- Instantiate with a config object and an `appendTo` / `adopt` target
+**v7 deprecations**: Use `tasks`/`dependencies`/`resources`/`assignments` (not `tasksData`/`dependenciesData` etc. — deprecated in v7).
 
 ---
 
-## Step 4: Sizing
+## Sizing
 
-Bryntum components default to `100%` width and a minimum height of `10em`. To fill the screen, set parent containers explicitly:
-
+Components default to `100%` width, `10em` min-height. Set parent height explicitly:
 ```css
-#app {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
+#app { height: 100vh; display: flex; flex-direction: column; }
 ```
 
 ---
 
-## Step 5: Look up what you don't know
+## Backend / CrudManager
 
-Use `mcp__bryntum__search_bryntum_docs` if available, otherwise use `WebFetch` or `WebSearch` on `bryntum.com` for:
-- Feature configuration (columns, resources, events, dependencies, etc.)
-- API methods and events
-- Migration guidance (e.g., CSS migration from v6 → v7)
-- Framework-specific integration guides
-
-When using the MCP tool, pass `product` (e.g., `"gantt"`, `"scheduler"`, `"schedulerpro"`, `"grid"`, `"calendar"`, `"taskboard"`) and `version` so results are scoped correctly.
-
----
-
-## Backend / CrudManager rules
-
-- **`loadUrl` uses GET, `syncUrl` uses POST**.
-- **Prefer assignments over `resourceId`**: Use an `assignments` store instead of `resourceId` on events.
-- **Don't persist phantom IDs in database**: Sync requests for new records contain `$PhantomId` strings (e.g. `_generatedEventModel_...`). When a sync creates an event and its assignment in one request, the assignment's `eventId` references the event's phantom ID. The backend must: (1) insert events first, (2) build a phantom→real ID map, (3) resolve phantom references before inserting assignments. Return the mapping (`{ $PhantomId, id }`) in the response so the client updates its records.
-- **`exceptionDates` must be `[]`, never `null`**: 
-- **`allDay` must be a boolean**: SQLite stores `0`/`1` — convert to `true`/`false` in the load response.
-- **Sync updates are partial**: Bryntum only sends changed fields in `updated` arrays. Never use a fixed `UPDATE ... SET col1=?, col2=?, ...` statement — dynamically build the SET clause from the fields present in the request, or you'll overwrite existing values with `NULL`/`undefined`.
-- **Seed data dates must use proper helpers**: When generating seed dates, call the date helper with distinct start/end hours directly (e.g. `makeDate(0, 9)` and `makeDate(0, 10)`). Never construct an end date by string-replacing parts of a start date ISO string — regex replacements on ISO timestamps are fragile and timezone-dependent.
-- **Start the backend before Vite**: When using Vite's `server.proxy` to forward `/api` requests to a backend, always start the backend server first (or use `concurrently`). If Vite starts before the proxy config exists or before the backend is listening, API requests return Vite's HTML fallback instead of JSON.
+- `loadUrl` (GET by default) and `syncUrl` (POST by default) are convenience shortcuts for `transport.load.url` and `transport.sync.url`; HTTP methods are configurable via the `transport` config
+- Prefer `assignments` store over `resourceId` on events
+- Phantom IDs (`$PhantomId`): backend must resolve phantom→real ID mapping for related records in the same sync
+- `exceptionDates` must be `[]`, never `null`; `allDay` must be boolean (not `0`/`1`)
+- Sync updates are **partial** — only changed fields sent. Build SET clauses dynamically
+- Start backend before Vite when using `server.proxy`
 
 ---
 
-## Quick checklist before finishing
+## React StrictMode
 
-- [ ] No SASS/SCSS
-- [ ] No legacy single-file theme import (`{product}.stockholm.css`, etc.)
-- [ ] FontAwesome imports present
-- [ ] `{product}.css` comes before the theme CSS
-- [ ] Theme is not used alone (always paired with structural CSS)
-- [ ] Theme is `svalbard-light` if the user has not specified a preference
-- [ ] Font is Poppins (via `.b-widget { font-family: 'Poppins', sans-serif }`) if the user has not specified a preference — never use `--b-font-family`
-- [ ] Angular: new config props bound in template with `[prop]="..."`
-- [ ] React: config passed as JSX props
-- [ ] Component is sized correctly (parent has explicit height)
+React 18+ StrictMode double-mounts components in dev (mount → unmount → mount). This can cause data loading issues with Bryntum components. If this happens, wait for data to load before rendering the component. Do not retain references to destroyed Bryntum instances after unmount. Bryntum's official basic React example sidesteps the issue by using `useState` for config instead of `useEffect`/ref — `useState` preserves the config across the remount cycle, so there are no side effects to clean up and no refs that could point to a destroyed instance:
+
+```javascript
+const App = () => {
+    const [ganttProps] = useState(useGanttProps());
+    return <BryntumGantt {...ganttProps} />;
+};
+
+createRoot(document.getElementById('root')!).render(
+    <StrictMode><App /></StrictMode>
+);
+```
+
+---
+
+## Scaffolding safety
+
+**NEVER `rm -rf` the project directory** to re-scaffold — destroys config files. Scaffold in-place or add files manually.
+
+---
+
+## Checklist
+
+- [ ] No SASS/SCSS, no legacy single-file theme imports
+- [ ] FontAwesome + structural CSS + theme CSS (in order)
+- [ ] Default theme: `svalbard-light`; default font: Poppins via `.b-widget`
+- [ ] No mixing `project` prop with inline data props
+- [ ] Using `tasks`/`dependencies`/`resources` (not deprecated `*Data` names)
+- [ ] Parent has explicit height for proper sizing
+- [ ] Dark mode: CSS via `<link>` + `data-bryntum-theme`, swap via `DomHelper.setTheme()`
+- [ ] React: don't retain references to destroyed Bryntum instances after StrictMode unmount
+- [ ] Angular: new props bound in template with `[prop]="..."`
