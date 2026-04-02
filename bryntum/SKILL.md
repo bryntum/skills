@@ -26,6 +26,7 @@ metadata:
 Before writing code: identify **product**, **framework** (React/Angular/Vue/Vanilla), and **version** (check `package.json`).
 
 Use `mcp__bryntum__search_bryntum_docs` (pass `product` + `version`) for API/config lookups. If unavailable, ask the user to add it:
+
 ```bash
 claude mcp add --transport http bryntum https://mcp.bryntum.com
 ```
@@ -42,8 +43,8 @@ claude mcp add --transport http bryntum https://mcp.bryntum.com
 }
 ```
 
-Fallback: `WebFetch`/`WebSearch` on `bryntum.com/products/{product}/docs/`.
-
+Fallback: `WebFetch`/`WebSearch` on `bryntum.com/products/{product}/docs/` or 
+`https://bryntum.com/blog/`
 ---
 
 ## Installing packages
@@ -54,7 +55,13 @@ npm install @bryntum/gantt@npm:@bryntum/gantt-trial@7.2.0
 ```
 Framework wrappers have no `-trial` suffix: `npm install @bryntum/gantt-react@7.2.0`. Use exact versions (no `^`).
 
-**Licensed**: Add `@bryntum:registry=https://npm.bryntum.com` to `.npmrc`, then `npm login --registry=https://npm.bryntum.com`.
+**Licensed**: 
+Bryntum licenced components are hosted in a private Bryntum repository. To get repository access, you need to complete these two steps:
+
+- Configure npm
+- Login
+
+Follow private repository access guide in docs. For example: https://bryntum.com/products/schedulerpro/docs/guide/SchedulerPro/npm/repository/private-repository-access
 
 ---
 
