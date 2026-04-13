@@ -65,6 +65,27 @@ Follow private repository access guide in docs. For example: https://bryntum.com
 
 ---
 
+## Using with Vite
+
+### Optimize dependencies
+
+When using Vite with React in development mode (npm run dev), in order to fix loading bundles multiple times and avoid runtime error - include Bryntum packages in the `optimizeDeps` in `vite.config.js` as shown below:
+
+```js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+    plugins      : [react()],
+    optimizeDeps : {
+        include : ['@bryntum/gantt', '@bryntum/gantt-react']
+    }
+});
+```
+
+Don't use this for thin Bryntum packages, for example `@bryntum/gantt-thin`
+
 ## CSS setup (v7+)
 
 Bryntum 7 uses **plain CSS only** — no SASS/SCSS. Three imports required in order:
