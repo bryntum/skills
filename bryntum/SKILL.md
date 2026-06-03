@@ -121,10 +121,12 @@ Bryntum 7 uses **plain CSS only** — no SASS/SCSS. Three imports required in or
 
 **Themes**: `svalbard-light` (default), `svalbard-dark`, `stockholm-light`, `stockholm-dark`, `visby-light`, `visby-dark`, `material3-light`, `material3-dark`, `fluent2-light`, `fluent2-dark`
 
-**Font**: Default to Poppins. No `--b-font-family` variable exists — override `.b-widget` directly:
+**Font**: Default to Poppins IF app does not have a specific font:
 ```css
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
-.b-widget { font-family: 'Poppins', sans-serif; }
+body {
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+}
 ```
 
 **CSS rules**:
