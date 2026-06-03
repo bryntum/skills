@@ -10,6 +10,13 @@ metadata:
   tags: bryntum, vue, vue3
 ---
 
+## Quick-start guide
+
+Fetch before writing code:
+`https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/vue-3.md`
+
+---
+
 ## Vue 3
 
 Framework wrapper package: `@bryntum/{product}-vue-3`

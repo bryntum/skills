@@ -10,6 +10,13 @@ metadata:
   tags: bryntum, vanilla, javascript
 ---
 
+## Quick-start guide
+
+Fetch before writing code:
+`https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/javascript-npm.md`
+
+---
+
 ## Vanilla JS
 
 No framework wrapper package needed — import directly from the core package.

@@ -26,15 +26,29 @@ Load the relevant skill, or fetch the raw file directly if the skill is not inst
 
 ---
 
-## Mirroring the relevant official demo
+## Quick-start guides
 
-Fetch the entry file for the detected framework (URLs below), then its imports. If a URL returns 404, derive the correct filename casing from the import path in the entry file before retrying. Copy its structure (dedicated config file, data wiring, CSS import order). Before importing any named export from a Bryntum package, confirm it exists in the package's runtime exports (not just `.d.ts`) — if it's type-only, use `import type`. **Strip:** `BryntumDemoHeader`, `@bryntum/demo-resources` styling, example-only extras, and server data loading (`transport`/`loadUrl`) — define seed data in code instead. If the demo imports `@bryntum/…-thin` packages, switch to the regular packages you installed (import all classes from `@bryntum/{product}`, framework wrapper from `@bryntum/{product}-react`/`-angular`/`-vue-3`, and replace per-package structural CSS with the single `@bryntum/{product}/{product}.css`).
+Fetch the quick-start guide for the detected product and framework before writing code. The guides cover installation, CSS, and component setup.
 
-Entry points (`basic-thin` is used for products with a scheduling engine):
-- **React** — `https://bryntum.com/products/{product}/examples/frameworks/react-vite/basic/src/App.tsx` — use `basic-thin` instead of `basic` for Scheduler Pro, Calendar, TaskBoard (then `./AppConfig` + `./App.scss`)
-- **Angular** — `https://bryntum.com/products/{product}/examples/frameworks/angular/basic/src/app/app.component.ts` — use `basic-thin` for Scheduler Pro, Gantt, TaskBoard (plus `app.config.ts`, `app.component.html`, `styles.scss`)
-- **Vue** — `https://bryntum.com/products/{product}/examples/frameworks/vue-3-vite/basic/src/App.vue` (then `./AppConfig` + `./App.scss`)
-- **Vanilla** — `https://bryntum.com/products/{product}/examples/basic/app.module.js` — use `dependencies` instead of `basic` for Scheduler Pro
+URL pattern: `https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/{framework}.md`
+
+| Product | `{product}` | `{Product}` |
+|---------|-------------|-------------|
+| Gantt | `gantt` | `Gantt` |
+| Scheduler | `scheduler` | `Scheduler` |
+| Scheduler Pro | `schedulerpro` | `SchedulerPro` |
+| Calendar | `calendar` | `Calendar` |
+| Grid | `grid` | `Grid` |
+| TaskBoard | `taskboard` | `TaskBoard` |
+
+| Framework | `{framework}` |
+|-----------|---------------|
+| React | `react` |
+| Angular | `angular` |
+| Vue 3 | `vue-3` |
+| Vanilla JS | `javascript-npm` |
+
+Example: `https://bryntum.com/products/gantt/docs-llm/guide/Gantt/quick-start/react.md`
 
 ---
 

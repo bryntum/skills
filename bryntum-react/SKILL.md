@@ -10,6 +10,13 @@ metadata:
   tags: bryntum, react, strictmode
 ---
 
+## Quick-start guide
+
+Fetch before writing code:
+`https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/react.md`
+
+---
+
 ## React
 
 Framework wrapper package: `@bryntum/{product}-react`

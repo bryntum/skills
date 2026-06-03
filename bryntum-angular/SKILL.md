@@ -10,6 +10,13 @@ metadata:
   tags: bryntum, angular, standalone
 ---
 
+## Quick-start guide
+
+Fetch before writing code:
+`https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/angular.md`
+
+---
+
 ## Angular
 
 Framework wrapper package: `@bryntum/{product}-angular`
