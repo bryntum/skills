@@ -3,10 +3,6 @@
 Support level: **strong** (an official Ext → Bryntum Gantt guide exists; its mappings are corrected and folded into
 `../api-mapping.md` §4–§6, `../data-migration.md`, `../patterns.md`).
 
-Finished example (extjs-migration-agent repo, currently internal to Bryntum): `gantt-extjsmodern-vite` (Ext hbox + resizable panel → `Container` +
-`Splitter`, Ext grouped List → Bryntum `List`, wrapper defaults moved onto the Gantt, `ProjectModel` + dataset copy,
-Material3, RTL, fixing a default overwritten by `items : { x : true }`).
-
 `project` is mandatory and is the data + scheduling hub. Gantt `startDate`/`endDate` set the visible time axis, and
 `project.startDate` is the project start.
 
@@ -27,32 +23,23 @@ const gantt    = new Gantt({ appendTo : 'app', project /* , ... */ });
 For a toolbar with zoom, undo/redo, filters and a live settings menu (row height, bar margin, animation duration,
 dependency radius), model it on the official `advanced` demo's `GanttToolbar`
 (`https://bryntum.com/products/gantt/examples/advanced/`) rather than reconstructing it. It uses `onAction`,
-`.b-row-number-cell` and `layout : 'vbox'`. Two non-obvious details:
-
-- Live animation duration needs a `<style>` node rewritten on each slider input — `transitionDuration` alone doesn't
-  change the CSS transition:
-  ```js
-  construct(...args) {
-      super.construct(...args);
-      this.styleNode = document.createElement('style');
-      document.head.appendChild(this.styleNode);
-  }
-  onAnimationDurationChange({ value }) {
-      this.gantt.transitionDuration = value;
-      this.styleNode.innerHTML = `.b-animating .b-gantt-task-wrap { transition-duration: ${value / 1000}s !important; }`;
-  }
-  ```
-- Bar-margin slider max depends on row height: `barMargin.max = (rowHeight.value / 2) - 5`.
+`.b-row-number-cell` and `layout : 'vbox'`. A bar-margin slider's max depends on row height:
+`barMargin.max = (rowHeight.value / 2) - 5`.
 
 ### Per-calendar duration conversion (rare)
 
 Ext Gantt calendars had their own `hoursPerDay`/`daysPerWeek`/`daysPerMonth`; Bryntum moved these to the project. Only
-if the app really depends on per-calendar values:
+if the app really depends on per-calendar values, follow "Restoring calendar level duration converting" in the Gantt
+calendars guide (`https://bryntum.com/products/gantt/docs/guide/Gantt/basics/calendars`). It takes three pieces, and
+all are required:
 
-```js
-class MyCalendarModel extends DurationConverterMixin.derive(CalendarModel) {}
-// project : { calendarModelClass : MyCalendarModel, taskModelClass : MyTaskModel, dependencyModelClass : MyDependencyModel }
-```
+- `MyCalendarModel extends DurationConverterMixin.derive(CalendarModel)` — this only **adds** the
+  `hoursPerDay`/`daysPerWeek`/`daysPerMonth` fields to calendars
+- `MyTaskModel` overriding `convertDurationGen` (convert with the task's `effectiveCalendar`) and `canConvertDuration`
+- `MyDependencyModel` overriding `convertLagGen` (convert with the dependency's calendar)
+
+Then `project : { calendarModelClass, taskModelClass, dependencyModelClass }`. With the mixin alone (empty task and
+dependency subclasses), conversion silently keeps using the project values. Copy the overrides from the guide.
 
 ### Language switcher
 
@@ -67,14 +54,9 @@ me.widgetMap.localeCombo.value      = me.localeManager.locale.localeName;
 // on change: me.localeManager.applyLocale(value);
 ```
 
-### Old zipped copies of the Ext Gantt demos
-
-They carry stale 5.x setup. `../api-mapping.md` §9 lists what to correct. Also drop their debug `console.log` lines.
-
 ## Both types supported
 
 - **Type A** (`Gnt.*`, PascalCase data, `TaskType`, old calendars): the full mapping in `../api-mapping.md` and the
   structural data changes in `../data-migration.md`.
-- **Type B** (Bryntum Gantt in an Ext wrapper): use `gantt-extjsmodern-vite` as the template.
-
-No finished type A example exists yet (a legacy `Gnt.*` fixture has been prepared for one).
+- **Type B** (Bryntum Gantt in an Ext wrapper): remove the Ext shell (an Ext hbox + resizable panel becomes a
+  `Container` + `splitter`), move the wrapper's defaults onto the Gantt, and re-check the config against 7.x defaults.

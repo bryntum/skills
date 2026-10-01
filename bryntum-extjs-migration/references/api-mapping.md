@@ -6,10 +6,9 @@ Verified against Bryntum **7.3.7**. For a newer installed version, confirm anyth
 Tags:
 
 - **G-S** / **G-G** — stated in the official Ext → Bryntum Scheduler / Gantt migration guide (corrected where wrong)
-- **SRC** — confirmed in 7.3.7 source or a finished migration in the extjs-migration-agent examples (that repo is
-  currently internal to Bryntum)
+- **SRC** — confirmed in the 7.3.7 source (check it in `node_modules/@bryntum/<product>/` for the installed version)
 - **DOC** — added for general Ext app migrations; the name is confirmed in the 7.3.7 typings (`*.d.ts`), but the
-  mapping hasn't been exercised in a finished migration — check config details in the docs before relying on them
+  mapping hasn't been verified end to end — check config details in the docs before relying on them
 - **UNV** — the Bryntum name exists, but equivalence to the Ext behavior is not verified
 
 Product-specific rows only apply to that product. Don't generalize a Gantt row to Scheduler or vice versa.
@@ -39,7 +38,8 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 | `Ext.menu.Menu` | `Menu` | | DOC |
 | `Ext.tip.ToolTip` / `data-qtip` | `Tooltip` / `data-btip` | Grid cell tooltips (renderer `metaData.tdAttr = 'data-qtip=…'`): column `tooltipRenderer` + `features : { cellTooltip : true }`, which is off by default | SRC |
 | `Ext.window.Toast` / `Ext.toast(msg)` | `Toast.show(msg)` | | SRC |
-| `Ext.Msg.alert` / `confirm(title, msg, fn)` | `await MessageDialog.confirm({ title, message, okButton : 'Yes', cancelButton : 'No' }) === MessageDialog.okButton` | Returns a `Promise<number>`. `message` is rendered as HTML, so escape user data | SRC |
+| `Ext.Msg.alert(title, msg, fn)` | `await MessageDialog.alert({ title, message })` | Single OK button. `message` is rendered as HTML, so escape user data | SRC |
+| `Ext.Msg.confirm(title, msg, fn)` | `await MessageDialog.confirm({ title, message, okButton : 'Yes', cancelButton : 'No' }) === MessageDialog.okButton` | Returns a `Promise<number>`. `message` is rendered as HTML, so escape user data | SRC |
 | `Ext.Msg.prompt` | `MessageDialog.prompt({ title, message, textField })` | Resolves to `{ button, text }` | SRC |
 | `Ext.Dialog` / `Ext.window.Window` + form | `Popup` subclass (`modal`, `centered`, `closable`, `autoShow : false`, `autoClose : false`, `bbar` buttons, `keyMap`). In a framework app with its own component system, use its dialog | See `patterns.md` §6 | SRC |
 | `xtype : 'list'` + `itemTpl`, `grouped`, store `grouper` | `type : 'list'`, `itemTpl(record)`, `groupHeaderTpl(record, groupName)`, `collapsibleGroups`, store `groupers` | | SRC |
@@ -73,7 +73,7 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 | `createEventOnDblClick` | remove (default behavior) | G-S |
 | `lockedGridConfig : { width }` | `subGridConfigs : { locked : { width } }` | G-S, SRC |
 | — | `barMargin` (defaults differ, set explicitly) | G-S |
-| `eventBodyTemplate` (Ext.XTemplate) | `eventRenderer` returning HTML (preferred) | G-S, SRC |
+| `eventBodyTemplate` (Ext.XTemplate) | `eventRenderer` returning a DomConfig (preferred), or an HTML string with record values escaped via the `StringHelper.xss` tagged template / `StringHelper.encodeHtml()` — a direct `XTemplate` port can open an XSS hole | G-S, SRC |
 | `eventRenderer(event, resource, tplData)` | `eventRenderer({ eventRecord, resourceRecord, renderData })` | SRC |
 | `tooltipTpl` | `features : { eventTooltip : { template : ({ eventRecord }) => '...' } }` | G-S |
 | `setViewPreset(p)` / `switchViewPreset(p, start, end)` | `scheduler.viewPreset = p` + `setTimeSpan(start, end)`, or `scheduler.zoomTo({ preset, startDate, endDate })`. Either way the axis snaps to whole units of the preset: `weekAndDay` starts weeks on `weekStartDay` (Sunday by default), so a Mon–Mon span becomes two weeks. Align the start with `DateHelper.startOf(date, 'week')` or set `weekStartDay : 1` | G-S, SRC |
@@ -217,7 +217,7 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 - Ext state providers (`stateful`, `stateId`) — Bryntum has a `state` mechanism but it isn't equivalent (UNV)
 - Ext theming packages, Sass variables and custom UIs — rebuild with CSS variables (`styling.md`)
 
-## 9. Outdated advice (official guides, old blog posts, `ext-migration.zip`)
+## 9. Outdated advice (official guides, old blog posts)
 
 Verified against the 7.3.7 source. Correct these whenever you read older material:
 
@@ -237,3 +237,5 @@ Verified against the 7.3.7 source. Correct these whenever you read older materia
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
 - Setting an editor title in `eventEditBeforeSetRecord` is overwritten in 7.3.7; set it in `beforeEventEditShow`.
 - `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources`.
+- `idField : 'Id'` as a store config (Scheduler guide) → silently ignored. Use `static idField = 'Id'` on the model,
+  or a `{ name : 'id', dataSource : 'Id' }` field.

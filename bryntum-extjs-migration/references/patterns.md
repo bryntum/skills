@@ -28,16 +28,18 @@ export default class AppToolbar extends Toolbar {
     static $name = 'AppToolbar';
     static configurable = { items : { /* keyed items */ } };
 
-    construct(...args) {
-        super.construct(...args);
-        this.host = this.parent;
+    // Resolve the host widget lazily: it isn't guaranteed to be set during construction,
+    // and a cached reference goes stale if the toolbar is moved
+    get host() {
+        return this.owner;   // or this.up('gantt') / this.up('scheduler') when the toolbar is nested deeper
     }
 }
 
 AppToolbar.initClass();   // registers the type so { type : 'apptoolbar' } works
 ```
 
-- Ext `initComponent` → `construct(...args)` + `super.construct(...args)`. (G-G)
+- Ext `initComponent` → `construct(...args)` + `super.construct(...args)`, but only for real setup logic. Most
+  `initComponent` bodies just set configs, which belong in `static configurable`. (G-G)
 - Ext `config : {}` + `applyX`/`updateX` → `static configurable = {}` (apply/update hooks: UNV, check docs).
 - Don't subclass when a config on the stock widget does the job.
 - Widgets have `callOnFunctions : true`, so a method named `on<EventName>` (e.g. `onBeforeEventDropFinalize`) is already
@@ -154,16 +156,16 @@ export default class RangeEditor extends Popup {
 RangeEditor.initClass();
 ```
 
-This pattern (checked against 7.3.7: Cancel closes the dialog, and Enter saves only when the fields are valid) is
-adapted from `examples/scheduler-extjsmodern-vite/lib/TimeRangeEditor.js` in the extjs-migration-agent repo, which is
-currently internal to Bryntum.
+Checked against 7.3.7: Cancel closes the dialog, and Enter saves only when the fields are valid.
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (core skill, widget-first rule).
 
 ## 7. Rendering
 
 - Scheduler: `eventRenderer({ eventRecord, resourceRecord, renderData })` — set `renderData.cls` / `renderData.style`,
-  return HTML or a DOM config. Custom layouts: see the `bryntum-styling` skill. (SRC)
+  and return a DomConfig (preferred) or an HTML string. In an HTML string, escape every record value with the
+  `StringHelper.xss` tagged template or `StringHelper.encodeHtml()`: Ext `XTemplate`s often encoded by default, so a
+  direct port can open an XSS hole. Custom layouts: see the `bryntum-styling` skill. (SRC)
 - Gantt: `taskRenderer({ taskRecord, renderData })`. (SRC)
 - Colors painted in renderers (`background-color : resource.color`) → `eventColor` on the event or resource (any CSS
   color) plus `eventStyle`. (SRC)

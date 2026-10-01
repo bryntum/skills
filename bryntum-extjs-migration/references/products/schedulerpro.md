@@ -2,10 +2,6 @@
 
 Support level: **moderate** (no official Ext guide; follows the Scheduler shape plus a project-centric data layer).
 
-Finished example (extjs-migration-agent repo, currently internal to Bryntum): `schedulerpro-extjsmodern-vite` (the Scheduler template plus a `project`
-hub with calendars, assignments and dependencies, percent bars, grouped resources,
-`eventStore.isDateRangeAvailable()` overlap checks).
-
 `project` holds `resources`, `events`, `assignments`, `dependencies` and `calendars`, and runs the scheduling engine.
 Events have `startDate` + `duration`. `endDate` is derived, and dependencies cascade.
 

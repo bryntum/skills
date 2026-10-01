@@ -26,14 +26,12 @@ both counts in the report.
 | field `type : 'bool'` / `'boolean'` | `type : 'boolean'` | DOC |
 | field `defaultValue` | `defaultValue` | SRC |
 | field `calculate` / `convert` | `calculate : r => ...` for derived fields (SRC); `convert` — verify (UNV) | SRC / UNV |
-| `idProperty : 'Id'` | `idField : 'Id'` (store) or `{ name : 'id', dataSource : 'Id' }` | G-S |
+| `idProperty : 'Id'` | `static idField = 'Id'` on the model subclass, or `{ name : 'id', dataSource : 'Id' }`. `idField` is **not** a Store config (silently ignored there; the official Scheduler guide is wrong) | SRC |
 | `hasMany` / `belongsTo` associations | no direct equivalent — flatten, or use Bryntum's built-in relations (assignments, dependencies, tree children) | UNV |
 | Sch/Gnt model subclasses (`Sch.model.Event`, `Gnt.model.Task`) | `EventModel`, `ResourceModel`, `TaskModel`, `DependencyModel`, `AssignmentModel`, `CalendarModel` | G-S, G-G |
 
-Leave the `id` field untyped, even when Ext declared `{ name : 'Id', type : 'int' }`. JSON numeric ids stay numbers
-anyway. Observed in 7.3.7 (possibly a bug): with `type : 'int'` on `id`, with or without `dataSource`, a grouped
-Store/AjaxStore keeps only one record (8 rows → 1, with no error). `type : 'number'` gives 16 rows instead of 12.
-Ungrouped stores are unaffected.
+Leave the `id` field untyped, even when Ext declared `{ name : 'Id', type : 'int' }`; JSON numeric ids stay numbers
+anyway (7.3.7 bug: a typed `id` gives wrong record counts in a grouped store).
 
 Extra fields that keep their name can be declared as strings: `fields : ['location', { name : 'eventType', defaultValue : 'appointment' }]`
 (SRC). Declare only fields the app actually uses.
@@ -47,7 +45,7 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `proxy : { type : 'rest', url }` | AjaxStore with per-operation URLs + `httpMethods` — verify request shape against the server | DOC |
 | `reader : { rootProperty : 'data' }` | AjaxStore `responseDataProperty` | DOC |
 | `remoteSort` / `remoteFilter` / paging (`pageSize`) | AjaxStore `remoteSort` / `remoteFilter` / `remotePaging` + `pageSize` | DOC |
-| `sorters`, `groupers`, `filters` | same names on the store. A 7.x `grouper.field` must be a field name (a function throws); use a calculated field for computed groups | SRC |
+| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (7.3.7 bug: a function `field` in the `groupers` config throws; `store.group(fn)` works) | SRC |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
 | Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `crudManager` (Scheduler) or `project` (Scheduler Pro, Gantt) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
 | separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `crudManager` load for both | SRC |
@@ -73,8 +71,7 @@ Inline mapping on the stores (G-S):
 crudManager : {
     autoLoad      : true,
     resourceStore : {
-        idField : 'YourIdField',
-        fields  : [
+        fields : [
             { name : 'id',        dataSource : 'YourIdField' },
             { name : 'name',      dataSource : 'Name' },
             { name : 'eventColor', dataSource : 'Color' }   // renderer-painted colors → eventColor (SRC)

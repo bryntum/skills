@@ -3,11 +3,6 @@
 Support level: **strong** (an official Ext → Bryntum Scheduler guide exists; its mappings are corrected and folded into
 `../api-mapping.md` §3, `../data-migration.md`, `../patterns.md`).
 
-Finished examples (extjs-migration-agent repo, currently internal to Bryntum): `scheduler-extjsmodern-vite` (the template: custom Ext dialogs →
-built-in `eventEdit` + a `Popup` subclass, renderer colors → `eventColor`, calculated-field grouping, `Toast`),
-`scheduler-extjs-multiassign-vite` (minimal wrapper removal, `crudManager.loadUrl` with multi-resource `assignments` +
-`dependencies`, `resourceInfo` avatars, `eventStyle : 'bordered'`).
-
 Scheduler is a Panel in 7.x, so `title`, `tools` and `tbar` work. The official guide's "Scheduler is not a Panel" is
 outdated. Colors come from `eventColor` (an event or resource field) and `eventStyle`, not inline styles injected by
 renderers.
@@ -19,7 +14,7 @@ renderers.
 - Multi-resource events: `assignments` store instead of `resourceId` on events.
 - Date + time field pairs in forms: `datefield` with `partner : '<timeFieldRef>'` plus a `timefield`, laid out
   with `layout : { type : 'box', horizontal : true, wrap : true, align : 'end' }` and `flex : '1 0 45%'` on each.
-  Don't use a combined `datetimefield` with the Material3 theme — its label overlaps the input.
+  (7.3.7 bug: a combined `datetimefield` label overlaps the input in Material3.)
 - Drag-create opens `eventEdit` for the new record. The name field is empty, with the model's `name` default or
   "New event" as its placeholder, and Cancel removes the record. If the Ext app created events silently, either keep
   the editor (a visible behavior change for the report) or turn it off. Without an event editor, drag-create adds the
@@ -36,6 +31,5 @@ renderers.
 ## Both types supported
 
 - **Type A** (`Sch.*`, PascalCase data): full config/column/data mapping from the references.
-- **Type B** (Bryntum Scheduler in an Ext wrapper): use `scheduler-extjsmodern-vite` as the template.
-
-No finished type A example exists yet.
+- **Type B** (Bryntum Scheduler in an Ext wrapper): remove the Ext shell, copy the Scheduler config and re-check it
+  against 7.x defaults. Custom Ext dialogs usually become the built-in `eventEdit` plus a `Popup` subclass.

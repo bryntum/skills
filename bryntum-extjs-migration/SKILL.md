@@ -19,7 +19,8 @@ components are replaced first and the Ext shell is removed afterwards.
 Load the core `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend and
 `bryntum-editor` when the app customizes the event/task editor.
 
-Read only the references the app needs:
+Read only the references the app needs. If this skill isn't installed locally, fetch them from
+`https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-extjs-migration/references/<file>`.
 
 | File | Use it for |
 |---|---|
@@ -29,11 +30,6 @@ Read only the references the app needs:
 | `references/styling.md` | Theme choice, dropping Ext chrome, selector renames, color tokens |
 | `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro`, `gantt` |
 | `references/templates.md` | Inventory checklist, `MIGRATION_PLAN.md` / `MIGRATION_REPORT.md` formats, verification checklist |
-
-Finished, verified migrations of Bryntum's own Ext demos are in the
-[extjs-migration-agent examples](https://github.com/bryntum/extjs-migration-agent/tree/main/examples). Use the closest
-one as a model for structure. They don't cover every feature your app may need. The repo is currently internal to
-Bryntum. If you can't reach it, work from `references/`, where `patterns.md` inlines the dialog pattern.
 
 ## Principles
 
@@ -96,7 +92,6 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
   system.
 - Controllers and ViewModel `bind` become explicit handlers (vanilla) or framework state.
 - Only add localization, undo/redo or RTL if the source app had them.
-- `@bryntum/demo-resources` and `DemoHeader` belong only in migrations of Bryntum's own demos, never in a customer app.
 
 ## Verifying
 
@@ -115,11 +110,12 @@ features the Ext app didn't have.
 
 - The official Ext → Bryntum guides and old blog posts predate 7.x in places. `references/api-mapping.md` §9 lists the
   corrections.
-- `items : { someBuiltIn : true }` on a menu or editor **replaces** the built-in item config, leaving blank menu text.
-  Override only the properties you change, or use `false`/`null` to remove an item.
+- 7.3.7 bug: `items : { someBuiltIn : true }` on a menu or editor blanks the built-in item. Leave kept
+  built-ins out of `items`, or override only the properties you change.
 - Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
   feature enabled and return `false` from the hook (`bryntum-editor`).
-- In 7.x, a store `grouper.field` must be a field name, and a function throws. Group on a calculated field instead.
+- 7.3.7 bug: a function `field` in the store's `groupers` config throws (`store.group(fn)` works). Group on a
+  calculated field instead.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - When switching between trial and licensed packages, move `package-lock.json` and `node_modules/` aside first. The
   lockfile silently keeps the old package source.

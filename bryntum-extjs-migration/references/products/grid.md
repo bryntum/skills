@@ -1,11 +1,7 @@
 # Grid
 
-Support level: **moderate** (type B verified in finished examples; type C — plain `Ext.grid.Panel` — follows the
+Support level: **moderate** (type B is mostly structural; type C — plain `Ext.grid.Panel` — follows the
 mappings in `../api-mapping.md`, many tagged DOC: confirm them in the docs for the installed version).
-
-Finished examples (extjs-migration-agent repo, currently internal to Bryntum): `grid-extjsmodern-vite` (wrapper removal, header items → `tools`,
-ViewModel binds → `selectionChange`, `groupRenderer` 7.x args), `grid-extjs-groupedheaders-vite` (grouped and
-collapsible headers, template/date/percent/check columns, combo editor, `StringHelper.xss`).
 
 Grid is a Panel in 7.x (`title`, `tools`, `tbar`, `bbar` work), so Ext header actions move to `tools`.
 
@@ -41,7 +37,7 @@ Rules:
 - Locked columns: `locked : true` on the column (Ext `lockable`/`locked` → same idea; the Grid creates the locked
   region).
 - Grouped headers: parent column with `children : [...]`; collapsible groups use `collapsible`, `collapseMode :
-  'toggleAll'`, `toggleAllHidden` (SRC, groupedheaders example).
+  'toggleAll'`, `toggleAllHidden` (SRC).
 - Computed grouping (`grouper.groupFn`) → a calculated field + `groupers : [{ field : '<calculatedField>' }]`.
 - Group header text goes in the Group feature's `renderer({ groupRowFor, count, isFirstColumn })`. The per-column
   `groupRenderer` gets `{ groupRowFor, count, groupColumn, … }` and no `isFirstColumn` (`../patterns.md` §7).

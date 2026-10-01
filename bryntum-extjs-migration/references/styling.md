@@ -5,8 +5,7 @@ old app's domain meaning (status colors, holidays, custom renderer markup) — n
 
 ## CSS setup
 
-Use plain CSS `@import`s as in the core `bryntum` skill. Ext Sass variables and theme packages don't carry over. Only
-a migration of an official Bryntum demo adds `@bryntum/demo-resources`, whose `scss/example.scss` needs `sass`.
+Use plain CSS `@import`s as in the core `bryntum` skill. Ext Sass variables and theme packages don't carry over.
 
 ## Choosing a theme
 
@@ -18,7 +17,7 @@ Themes in 7.3: `svalbard`, `visby`, `stockholm`, `material3`, `fluent2`, `high-c
 | Ext Modern Material | `material3-light` / `material3-dark` |
 | Framework target with Material UI / Angular Material / Vuetify | `material3-*` |
 | Fluent / Microsoft-style host | `fluent2-*` |
-| Bryntum-in-Ext demo that already set a theme (`data-bryntum-theme` link) | keep that theme |
+| Bryntum-in-Ext app that already set a 7.x theme | keep that theme |
 | Pre-7.0 combined file (`gantt.stockholm.css`) | the matching 7.x theme (`stockholm-light.css`) |
 | Otherwise | `svalbard-light` (default) |
 
@@ -59,8 +58,10 @@ data-driven.
 
 - Tokens: `--b-primary`, `--b-neutral-<n>`, `--b-text-<n>`, `--b-border-<n>`; component variables such as
   `--b-grid-header-background`, `--b-grid-header-font-weight`, `--b-grid-cell-font-size`, `--b-panel-header-background`.
-- Named colors in 7.3: `--b-color-red`, `-orange`, `-amber`, `-lime`, `-green`, `-teal`, `-cyan`, `-blue`, `-indigo`,
-  `-purple`, `-magenta`, `-pink`, `-brown`, `-gray`, `-black`.
+- Named colors (`Core/Colors.css` in 7.3): `--b-color-red`, `-orange`, `-deep-orange`, `-amber`, `-yellow`, `-lime`,
+  `-light-green`, `-green`, `-teal`, `-cyan`, `-light-blue`, `-blue`, `-indigo`, `-violet`, `-purple`, `-deep-purple`,
+  `-magenta`, `-pink`, `-brown`, `-light-gray`, `-lighter-gray`, `-gray`, `-black`. Check the file in the installed
+  package for the current list.
 - Renderer-injected inline backgrounds → `eventColor` (event or resource field) + `eventStyle`.
 - Override variables on `:root` (or a wrapper class) rather than targeting internal selectors. Some are re-declared
   per widget, so an inherited value never arrives: Stockholm sets `--b-panel-header-background`/`-color` on
