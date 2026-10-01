@@ -15,6 +15,10 @@ Docs host: <docs host> · Source: index.json | docs fallback (index 404)
 |---------|---------|---------------|------------|-----------------------------------|
 
 ## Actions (in version order)
+### Packages
+- [ ] **Bump every `@bryntum/*` package to exactly `<to>`** (incl. `@bryntum/demo-resources`; not `*-lib` helpers)
+  Files: `package.json`, lockfile · first update any `postinstall` script that copies Bryntum files
+
 ### <version> — <Product>
 - [ ] **<short title>** · risk: breaking | behaviour change | deprecation | cosmetic
   Source: <url> → "<heading>"
@@ -28,8 +32,12 @@ Docs host: <docs host> · Source: index.json | docs fallback (index 404)
   …
   ```
 
+## Default behaviour changes — keep the new default or opt out?
+- <version> · <Product> · "<guide heading>" · opt out: `<config>`
+
 ## Unsure — needs your answer
 - …
+  **Answer:** <filled in after the user replies>
 
 <details><summary>## Not applicable (n items, zero hits in this codebase)</summary>
 - <version> · <Product> · <title> · <source>
