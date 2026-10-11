@@ -209,7 +209,9 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 
 - Ext data proxies beyond plain AJAX/JSON/REST (`direct`, `jsonp`, custom writers, `LocalStorage` proxy)
 - `Ext.app.ViewModel` `bind : '{...}'` and `formulas` — rewrite as explicit handlers or framework state, item by item
-- Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV)
+- Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV). Bryntum Chart
+  isn't in the product packages: it ships as the separate thin package `@bryntum/chart-thin`, so check its install
+  docs (trial and licensed) before planning a chart replacement, and otherwise report the chart as unmapped
 - `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`) — Bryntum fields have `required`,
   `validateOnInput`, etc., but the model differs (UNV)
 - `Ext.util.History` / routing — use the target framework's router

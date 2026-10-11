@@ -43,7 +43,8 @@ Read only the references the app needs. If this skill isn't installed locally, f
 
 - **Only use names you can confirm.** Old Ext → Bryntum material is full of plausible names that don't exist in 7.x.
   Look names up in this order: `references/` (verified against 7.3.7), then `mcp__bryntum__search_bryntum_docs` for
-  the installed version, then the package source in `node_modules/@bryntum/`. If none of these confirms a name, treat
+  the installed version, then the package source in `node_modules/@bryntum/` (its `*.d.ts` typings are the quickest check when the docs
+  search tool isn't available). If none of these confirms a name, treat
   the item as **unmapped**: leave a `// MIGRATION:` comment where it was and list it in the report.
 - **Report every loss.** Anything removed, changed or unmapped goes in the report with a reason. Count the key records
   before and after, and include both counts in the report.

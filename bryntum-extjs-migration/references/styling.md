@@ -109,7 +109,8 @@ Stockholm sizing:
 ```
 
 Plus `rowHeight : 26` on the grid and `features : { group : { headerHeight : 30 } }`. Only aim for the old density
-when the user asks for it, and list it in the report either way.
+when the user asks for it, or when the original's fixed-size layout would otherwise hide rows or content, and list
+it in the report either way.
 
 To make dialogs compact too, give the Popup a `cls` and add:
 
