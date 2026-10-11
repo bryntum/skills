@@ -12,7 +12,7 @@ metadata:
 
 ## Quick-start guide
 
-Fetch before writing code:
+When scaffolding a new app, fetch (skip for migrations or existing apps):
 `https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/javascript-npm.md`
 
 ---

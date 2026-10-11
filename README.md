@@ -38,7 +38,7 @@ Theme catalog, choosing a theme to match the host app (Material / Fluent), and d
 
 ### `bryntum-styling`
 
-Custom event bar styling for Scheduler / Scheduler Pro: `eventRenderer` layouts, event bar DOM structure, padding CSS variables, sticky content, and a worked two-line layout example.
+Custom event bar styling for Scheduler / Scheduler Pro (`eventRenderer` layouts, event bar DOM structure, padding CSS variables, sticky content) and widget `rendition` variants for buttons, text fields and tooltips, plus the form look. Depth lives in `references/`.
 
 ### `bryntum-editor`
 
@@ -48,13 +48,37 @@ Customizing the built-in event/task editor — adding/removing fields and tabs v
 
 Migrating Ext JS apps to Bryntum 7 (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification.
 
+### `bryntum-features`
+
+Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-13:00 as lunch", "grey out weekends", "a totals row", "export to Excel", "swimlanes", "critical path") mapped to the built-in feature that does it, plus the commonly invented APIs that don't exist.
+
+### `bryntum-from-extjs`
+
+For codebases and habits coming from Ext JS. Maps Ext idioms to their Bryntum equivalents (`store.first()`, `component.down()`, `xtype`, `dataIndex`, `Ext.getCmp`, `Ext.Msg`) and flags the near-misses that fail silently rather than throwing.
+
+### `bryntum-migrate`
+
+Upgrading an existing Bryntum app to a newer version: detects installed and target versions, gathers the ordered upgrade guides / what's-new / changelogs across the product and the products it inherits from, cross-references them with your code, writes a migration plan you approve, then applies it (including the v6 → v7 CSS codemod) and verifies the build.
+
 ---
 
 ## Installation
 
-Copy the skills you need into your agent's skills folder. At minimum, install `bryntum` plus the skill for your framework.
+At minimum, install `bryntum` plus the skill for your framework.
 
-### Claude Code
+### Easiest: the `skills` CLI
+
+Run this in your project folder. The CLI detects your agents and lets you choose skills:
+
+```bash
+npx skills add bryntum/skills
+```
+
+### Manual install
+
+Or copy the skills you need into your agent's skills folder with `degit`.
+
+#### Claude Code
 
 Skills live in `.claude/skills/` (project-local). Use `~/.claude/skills/` instead to install them globally for all projects.
 
@@ -72,6 +96,9 @@ npx degit bryntum/skills/bryntum-theming .claude/skills/bryntum-theming
 npx degit bryntum/skills/bryntum-styling .claude/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .claude/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .claude/skills/bryntum-extjs-migration
+npx degit bryntum/skills/bryntum-features .claude/skills/bryntum-features
+npx degit bryntum/skills/bryntum-from-extjs .claude/skills/bryntum-from-extjs
+npx degit bryntum/skills/bryntum-migrate .claude/skills/bryntum-migrate
 ```
 
 **Install individually** (e.g. React only):
@@ -81,7 +108,7 @@ npx degit bryntum/skills/bryntum .claude/skills/bryntum
 npx degit bryntum/skills/bryntum-react .claude/skills/bryntum-react
 ```
 
-### Codex
+#### Codex
 
 Skills live in `.agents/skills/` (project-local). Use `~/.agents/skills/` instead to install them globally for all projects.
 
@@ -99,6 +126,9 @@ npx degit bryntum/skills/bryntum-theming .agents/skills/bryntum-theming
 npx degit bryntum/skills/bryntum-styling .agents/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .agents/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .agents/skills/bryntum-extjs-migration
+npx degit bryntum/skills/bryntum-features .agents/skills/bryntum-features
+npx degit bryntum/skills/bryntum-from-extjs .agents/skills/bryntum-from-extjs
+npx degit bryntum/skills/bryntum-migrate .agents/skills/bryntum-migrate
 ```
 
 **Install individually** (e.g. React only):

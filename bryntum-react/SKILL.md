@@ -12,7 +12,7 @@ metadata:
 
 ## Quick-start guide
 
-Fetch before writing code:
+When scaffolding a new app, fetch (skip for migrations or existing apps):
 `https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/react.md`
 
 ---
@@ -33,6 +33,10 @@ const ganttRef = useRef(null);
 <BryntumGantt ref={ganttRef} {...ganttProps} />
 ```
 
+### Features
+
+Features are props with a `Feature` suffix, not a `features` object: `eventTooltipFeature={{ … }}`, `excelExporterFeature`. A `features` prop fails TypeScript with TS2353. At runtime they're still on `ref.current.instance.features`.
+
 ### StrictMode (React 18+)
 
 React StrictMode double-mounts in dev (mount → unmount → mount). Bryntum configuration that needs to adapt depending on the component's state or props should be encapsulated in the component using the React `useState` hook to maintain reference across re-renders, prevent unnecessary calculations, and avoids side effects that need cleanup:
@@ -52,6 +56,29 @@ createRoot(document.getElementById('root')!).render(
 ```
 
 **Never retain references to destroyed Bryntum instances after unmount.** Do not use `useEffect`/`useRef` patterns that hold the instance across the unmount cycle.
+
+### Gantt / Scheduler Pro: project data
+
+Gantt and Scheduler Pro keep their data in a project. Don't put store data inside a `project` prop object — the wrapper logs *"Using the "project" prop with inner store configurations is not recommended"*. Put the data on the project component and pass its ref to the Gantt:
+
+```tsx
+import { useRef } from 'react';
+import { BryntumGantt, BryntumGanttProjectModel } from '@bryntum/gantt-react';
+import { ganttProps, projectProps } from './ganttConfig'; // projectProps: { tasks, dependencies, ... }
+
+function App() {
+    const project = useRef<BryntumGanttProjectModel>(null);
+
+    return (
+        <>
+            <BryntumGanttProjectModel ref={project} {...projectProps} />
+            <BryntumGantt project={project} {...ganttProps} />
+        </>
+    );
+}
+```
+
+Type `projectProps` as `BryntumGanttProjectModelProps`. Project-level settings (`calendar`, `calendars`, `loadUrl`, `autoLoad`) go in `projectProps` too. Scheduler Pro uses `BryntumSchedulerProProjectModel` the same way.
 
 ### Vite config
 

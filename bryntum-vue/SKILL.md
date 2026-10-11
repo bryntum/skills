@@ -12,7 +12,7 @@ metadata:
 
 ## Quick-start guide
 
-Fetch before writing code:
+When scaffolding a new app, fetch (skip for migrations or existing apps):
 `https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/vue-3.md`
 
 ---
@@ -58,6 +58,18 @@ const ganttConfig: BryntumGanttProps = {
     // ...
 };
 ```
+
+### Features
+
+Features are props with a `Feature` suffix: `stickyEventsFeature : false`, `eventTooltipFeature : { … }`, `printFeature : true`.
+
+### Instance
+
+Put a template `ref` on the component and read `ref.value.instance.value` for the Bryntum widget (e.g. `eventStore`, `features`). Inside `tbar` handlers, `source.up('<product>')` also works (e.g. `'gantt'`, `'scheduler'`).
+
+### Vite
+
+`optimizeDeps : { include : ['@bryntum/scheduler', '@bryntum/scheduler-vue-3'] }` alongside `@vitejs/plugin-vue` (see the `bryntum` skill's Vite section).
 
 ### Sizing
 

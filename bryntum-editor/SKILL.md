@@ -32,17 +32,33 @@ To match a design-system host app (e.g. Material UI), switch the Bryntum **theme
 
 ## Customize via the feature's `items` config
 
-Remove fields you don't want or add your own through the feature's `items`. Use **object notation** (not arrays) for built-in items — `name` binds a field to a data field:
+Remove fields you don't want or add your own through the feature's `items`. Use **object notation** (not arrays) for built-in items — `name` binds a field to a data field.
+
+**Built-in item refs differ by product** — a wrong ref is silently ignored (the field stays visible):
+
+| Product | Feature | Built-in field refs (General tab / editor) |
+|---|---|---|
+| Gantt | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
+| Scheduler Pro | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
+| Scheduler, Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
+
+Custom items can use any key (it becomes the new item's `ref`; `name` binds it to the data field). Only keys that change or remove a built-in item must match its ref exactly.
+
+The `config-items` example on the Gantt `TaskEdit` API page is inherited from Scheduler Pro and uses `durationField` — in Gantt that key matches nothing and is ignored; use `duration`.
+
+Tab refs (Gantt, Scheduler Pro): `generalTab`, `predecessorsTab`, `successorsTab`, `resourcesTab` (Gantt), `advancedTab`, `notesTab`. Fields on the Advanced tab use the `Field` suffix in both (e.g. `calendarField`, `constraintTypeField`). Verify refs for the installed version via MCP (`search_bryntum_docs`, "task editor fields").
+
+Gantt:
 
 ```js
 features: {
-    taskEdit: {                                   // eventEdit for Scheduler
+    taskEdit: {
         items: {
             generalTab: {
                 items: {
-                    percentDoneField : false,     // remove a built-in field
-                    durationField    : false,
-                    myField : { type: 'textfield', name: 'color', label: 'Color' } // add one
+                    percentDone : false,          // remove built-in fields (Gantt refs have no "Field" suffix)
+                    effort      : false,
+                    myField : { type: 'textfield', name: 'color', label: 'Color', weight: 710 } // add one
                 }
             },
             predecessorsTab : false,              // remove whole tabs
@@ -52,6 +68,8 @@ features: {
     }
 }
 ```
+
+Scheduler Pro uses the same structure with `Field`-suffixed refs (`percentDoneField : false`, `durationField : false`). Scheduler and Calendar use `eventEdit` with flat `items` (no tabs), e.g. `eventEdit: { items: { resourceField: false } }`.
 
 Run-time tweaks: listen to `beforeTaskEditShow` (or `beforeEventEditShow`) and adjust `editor.widgetMap.<ref>`.
 

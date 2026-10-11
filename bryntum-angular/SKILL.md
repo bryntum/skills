@@ -12,7 +12,7 @@ metadata:
 
 ## Quick-start guide
 
-Fetch before writing code:
+When scaffolding a new app, fetch (skip for migrations or existing apps):
 `https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/angular.md`
 
 ---
@@ -39,11 +39,11 @@ Every config prop **must** be bound with `[prop]="..."` in the template — not 
 
 ### Config separation
 
-Copy the demo's exported `…Props` config objects into a **separate** Bryntum config file (e.g. `gantt.config.ts`) imported by your component. **Do not overwrite the scaffold's `app.config.ts`** — that is Angular's `ApplicationConfig`, not a Bryntum file.
+Copy the demo's exported `…Props` config objects into a **separate** Bryntum config file (e.g. `gantt.config.ts`) imported by your component. **Do not overwrite the scaffold's `app.config.ts`** in a freshly scaffolded standalone app — that is Angular's `ApplicationConfig`, not a Bryntum file. In existing apps, check the file's contents first: older NgModule apps often keep the Bryntum config there.
 
 ### Standalone component setup
 
-Use standalone components (Angular 17+). Add the Bryntum module to `imports` in `@Component`:
+For new apps, use standalone components (Angular 17+). Add the Bryntum module to `imports` in `@Component`. In an existing NgModule app, keep the Bryntum module in the NgModule's `imports`; a Bryntum upgrade isn't the time to convert to standalone.
 
 ```typescript
 import { BryntumGanttModule } from '@bryntum/gantt-angular';
@@ -66,3 +66,7 @@ See the Sizing section of the `bryntum` skill for the general rule. Angular's `a
 html, body { height: 100%; margin: 0; }
 app-root { display: flex; flex: 1 1 100%; flex-direction: column; }
 ```
+
+### Production build warning
+
+`ng build` warns `2 rules skipped due to selector errors` (`:has()`, `:host(:not(.b-nothing))`) with Bryntum 7 CSS. The theme variables are still emitted, so the warning is expected.
