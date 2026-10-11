@@ -149,7 +149,7 @@ General (all Grid-based widgets):
 | `flex`, `width`, `hidden`, `align` | same names | G-S |
 | `locked : true` | `locked : true` (or `region`) | SRC |
 | `sortable`, `menuDisabled`, `filter` | `sortable`; `filterable` (with `filterBar`); header menu per `headerMenu` | DOC |
-| `renderer(value, meta, record)` | `renderer({ value, record, cellElement, row, ... })` — return the content | SRC |
+| `renderer(value, meta, record)` | `renderer({ value, record, cellElement, row, ... })` — return the content. A bare formatter (`renderer : fmt`) got Ext's `meta` as its 2nd argument: check `fmt`'s optional params and pass what that did | SRC |
 | `columns : [{ text, columns : [...] }]` (grouped headers) | `children : [...]` on a parent column; `collapsible` groups | SRC |
 | `xtype : 'datecolumn'` (`format : 'Y-m-d'`) | `type : 'date'` (`format : 'YYYY-MM-DD'` — convert tokens) | DOC |
 | `xtype : 'numbercolumn'` | `type : 'number'` | DOC |

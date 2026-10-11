@@ -69,6 +69,23 @@ data-driven.
   itself with higher specificity: `.my-wrapper :is(.b-panel, .b-panel-header):not(.b-nothing) { … }`.
 - A brand color with real meaning (the customer's primary color) may stay as a hex value, set once as a variable.
 
+## Sizes from Ext
+
+Ext pixel widths fit Ext's padding and font, not Bryntum's (SRC):
+
+- Cells have `--b-grid-cell-padding-inline` on each side, default `var(--b-widget-padding)` = 1em (Visby .75em,
+  Fluent2 .8em), and the header uses the same padding. A column loses about 2em to padding.
+- Column `minWidth` defaults to 60, so narrower Ext columns (icons, checkboxes) grow unless you lower it.
+- Cells are flex containers, so fixed-size content (avatar, badge) in a narrow column gets squeezed. Give it
+  `flex-shrink : 0` and size the column as content + both paddings, or give the column a `cellCls` and lower the
+  padding there, as Bryntum's demos do: `.b-grid-cell.my-cls { --b-grid-cell-padding-inline : .5em; }`.
+- Text columns: prefer `flex`, or `autoWidth : true` (`columnAutoWidth` is on by default), to a copied or scaled
+  `width`.
+- Toolbars default to `overflow : 'menu'`: an Ext toolbar that just fitted may now hide buttons in a menu.
+
+Check at the original's window width: take a screenshot and look for header or cell text whose `scrollWidth`
+exceeds its `clientWidth` (`.b-grid-header-text-content`, `.b-grid-cell`). Report any clipping that remains.
+
 ## Ext Classic density in Stockholm
 
 Stockholm is much roomier than Crisp/Neptune (panel header 57px vs ≈36px, toolbar 65 vs 36, column header 42 vs 30,

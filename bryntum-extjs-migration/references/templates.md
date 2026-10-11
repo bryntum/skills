@@ -119,4 +119,12 @@ Look:
   `theme-*.js` and `theme-*-all.css`) and stub the `Sch.*`/`Gnt.*` views with placeholder panels. This covers the
   non-scheduler screens only
 
+- [ ] at the original's window width: no clipped header or cell text, fixed-size content keeps its shape, no
+  toolbar items pushed into an overflow menu (`styling.md`, "Sizes from Ext")
+
+Report:
+
+- [ ] each "fits"/"fixed"/"verified"/"matches Ext" claim names the check or screenshot behind it; a "matches Ext"
+  claim ran the same input sequence on the original, not just proved the feature works
+
 After about 5 fix-and-recheck rounds, stop and report exactly what still fails.

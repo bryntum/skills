@@ -41,7 +41,13 @@ Rules:
 - Computed grouping (`grouper.groupFn`) → a calculated field + `groupers : [{ field : '<calculatedField>' }]`.
 - Group header text goes in the Group feature's `renderer({ groupRowFor, count, isFirstColumn })`. The per-column
   `groupRenderer` gets `{ groupRowFor, count, groupColumn, … }` and no `isFirstColumn` (`../patterns.md` §7).
+  `groupRowFor` is `'!!novalue!!'` for records with an empty group value: map it to `''` in a custom renderer (SRC).
 - Ext `hideGroupedHeader` has no Group config: set `hidden : true` on the grouped column.
+- Header menu: Ext shows Sort Ascending/Descending + a Columns submenu (+ grouping items); `headerMenu` adds more.
+  Match it with `features : { headerMenu : { items : { hideColumn : false, resizeColumn : false, multiSort : false,
+  sortAsc : { text : '…' } } } }` (keys also `columnPicker`, `sortDesc`, `groupAsc`, `groupDesc`, `groupRemove`;
+  per-column extras via `headerMenuItems`). The Columns submenu lists `column.text`, so an icon-only column needs a
+  `text` plus `icon` and `headerRenderer : () => ''` to keep the header blank, or `hideable : false` (SRC).
 - `bufferedrenderer` and `infinite` configs are unnecessary — rendering is virtualized.
 - Anything relying on custom Ext column xtypes, deep store pipelines or Ext-only plugins not in `../api-mapping.md`:
   report as unmapped rather than inventing a column type.

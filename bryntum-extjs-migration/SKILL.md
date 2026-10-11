@@ -81,9 +81,13 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
 - Choose **one** data strategy per app, field mapping or conversion (`references/data-migration.md`). Gantt calendars,
   `TaskType` and baselines can only be converted.
 - Set `barMargin`, `rowHeight`, `viewPreset` and `startDate`/`endDate` explicitly. Their defaults differ from Ext.
+- Don't copy Ext pixel widths as is: Bryntum cells are padded and themes are roomier, so text clips and fixed-size
+  content squeezes (`references/styling.md`, "Sizes from Ext").
+- Ext's header menu differs from `headerMenu`; match it through `items` (`references/products/grid.md`).
 - Convert plugins to `features` only when the mapping is confirmed.
-- Some Bryntum features are on by default that the Ext app may not have had: `cellEdit`, `cellMenu`, `headerMenu`
-  (Grid); `eventEdit`, `eventMenu`, `scheduleMenu`, `eventTooltip`, `enableDeleteKey` (Scheduler). Turn off each one
+- Some Bryntum features are on by default that the Ext app may not have had: `cellEdit`, `cellMenu`, `headerMenu`,
+  `columnReorder`, `group`, `rowCopyPaste` (Grid, Scheduler); `eventEdit`, `eventMenu`, `scheduleMenu`,
+  `eventTooltip`, `eventCopyPaste`, `enableDeleteKey` (Scheduler); `taskCopyPaste` (Gantt). Turn off each one
   the source lacked, or keep it and list it as a behavior change. `cellEdit` takes over the row double-click that Ext
   apps often used to open an edit window. `cellMenu`'s "Remove row" and the Delete key both skip any app-level
   delete confirmation.
@@ -95,13 +99,15 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
 
 ## Verifying
 
-Use the checklist in `references/templates.md`. Two lessons from past migrations:
+Use the checklist in `references/templates.md`. Three lessons from past migrations:
 
 - Run the dev server as well as `npm run build`. Vite's dev server enforces file-serving rules that the build doesn't,
   so icons and fonts can 404 only in dev.
 - Drive the UI the way a user would, with Playwright clicks, right-clicks and typing. Helpers like
   `showContextMenuFor()` skip the real code path and prove nothing. For a vanilla target, expose the root widget on
   `window`. For a framework target, use the wrapper's `instance`.
+- Check every claim before writing it. "Fits", "no longer clipped" or "matches Ext" needs a screenshot or the same
+  input sequence run on the original. Proving that a feature works doesn't prove it behaves like Ext.
 
 Then write `MIGRATION_REPORT.md` (`references/templates.md`). Follow the core skill's hand-off, and suggest Bryntum
 features the Ext app didn't have.
