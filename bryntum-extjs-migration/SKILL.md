@@ -16,8 +16,9 @@ metadata:
 Turns an Ext JS app (Classic or Modern) into a Bryntum 7 app with no Ext left. For an incremental path, the Ext
 components are replaced first and the Ext shell is removed afterwards.
 
-Load the core `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend and
-`bryntum-editor` when the app customizes the event/task editor.
+Load the core `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend,
+`bryntum-editor` when the app customizes the event/task editor, and `bryntum-features` to find the built-in feature
+for an Ext plugin or hand-written behavior.
 
 Read only the references the app needs. If this skill isn't installed locally, fetch them from
 `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-extjs-migration/references/<file>`.
@@ -25,6 +26,7 @@ Read only the references the app needs. If this skill isn't installed locally, f
 | File | Use it for |
 |---|---|
 | `references/api-mapping.md` | Ext class / config / plugin / column / method → Bryntum, what has no equivalent, and outdated advice to ignore |
+| `references/idioms.md` | Line-by-line porting: store / record / tree / component-lookup methods, and the Ext near-misses that fail silently |
 | `references/data-migration.md` | Models, stores, field mapping vs data conversion, CrudManager, Gantt data changes |
 | `references/patterns.md` | Idiom rewrites: app shell, classes, toolbars, dialogs, editors, renderers, locales, undo/redo, framework targets |
 | `references/styling.md` | Theme choice, dropping Ext chrome, selector renames, color tokens |
@@ -90,7 +92,9 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
   `eventTooltip`, `eventCopyPaste`, `enableDeleteKey` (Scheduler); `taskCopyPaste` (Gantt). Turn off each one
   the source lacked, or keep it and list it as a behavior change. `cellEdit` takes over the row double-click that Ext
   apps often used to open an edit window. `cellMenu`'s "Remove row" and the Delete key both skip any app-level
-  delete confirmation.
+  delete confirmation. Two defaults that change Ext behavior without a feature flag: multi-row selection
+  (`selectionMode.multiSelect`) and Ctrl-click multi-column sort (`sort : { multiSort }`); Ext grids select one row
+  and sort one column.
 - Ext apps often replaced the event editor with a custom dialog. Customize the built-in `eventEdit`/`taskEdit`
   instead. Other dialogs become a `Popup` subclass, or the host framework's dialog when the app has its own component
   system.
@@ -123,5 +127,9 @@ features the Ext app didn't have.
 - 7.3.7 bug: a function `field` in the store's `groupers` config throws (`store.group(fn)` works). Group on a
   calculated field instead.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
+- Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
+  (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use
+  `widgetMap`), and setting an undeclared record field (never saved). Check ported code against
+  `references/idioms.md`.
 - When switching between trial and licensed packages, move `package-lock.json` and `node_modules/` aside first. The
   lockfile silently keeps the old package source.

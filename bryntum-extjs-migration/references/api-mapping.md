@@ -175,12 +175,9 @@ Scheduler resource column with avatar: `type : 'resourceInfo'` (SRC).
 | `selModel : { selType : 'checkboxmodel' }` | `selectionMode : { checkbox : true }` | DOC |
 | `selModel : 'cellmodel'` | `selectionMode : { cell : true }` | DOC |
 | `selModel.mode : 'MULTI'` | `selectionMode : { multiSelect : true }` | DOC |
+| default Ext selection (`rowmodel`, one row) | `selectionMode : { multiSelect : false }`: Bryntum selects several rows with Ctrl/Shift-click by default | SRC |
 | grid `select` / `selectionchange` events | `selectionChange` | SRC |
 | `itemclick` / `itemdblclick` / `cellclick` | `cellClick` / `cellDblClick` (Grid); `eventClick` / `eventDblClick` (Scheduler); `taskClick` (Gantt) | DOC |
-| `record.get('Name')` / `record.set('Name', v)` | `record.name` / `record.name = v` (`get()`/`set()` also exist) | SRC |
-| `grid.getStore()` / `getSelectionModel().getSelection()` | `grid.store` / `grid.selectedRecords` | DOC |
-| `store.getAt(i)`, `store.getById(id)`, `store.add`, `store.remove` | same names | DOC |
-| `store.each(fn)` | `store.forEach(fn)` | DOC |
 | `listeners : { x : fn, scope }` | `listeners : { x : fn, thisObj }` or `widget.on({ x })` (returns a detacher). A subclass method named `on<Event>` is already a listener (`callOnFunctions`), so don't also register it | G-G, SRC |
 | button `handler` | `onClick` / `onAction`; string `'up.methodName'` calls the method on the nearest ancestor that has it, passing the click event. See `patterns.md` §3 | G-G, SRC |
 | `Ext.getCmp(id)` / `lookupReference(ref)` / `down('#id')` | `widgetMap.ref`, `Widget.getById(id)` | G-G, SRC |
@@ -190,6 +187,9 @@ Scheduler resource column with avatar: `type : 'resourceInfo'` (SRC).
 | `Ext.Date.clearTime(d)` | `DateHelper.clearTime(d)` | SRC |
 | `suspendLayouts` / `resumeLayouts` | `suspendRefresh()` / `resumeRefresh()` | UNV |
 | `expandAll`, `collapseAll`, `zoomIn`, `zoomOut`, `zoomToFit`, `shiftPrevious`, `shiftNext` | same names. Wrap them in a handler rather than using `'up.shiftNext'` (the event object would become `amount`) | G-G, SRC |
+
+Store, record, tree-node and component-lookup methods (`store.first`, `findRecord`, `insertChild`, `down()`,
+`getView().refresh()`, …) and the near-misses that fail silently: `idioms.md`.
 
 ## 8. No equivalent / needs a human
 
