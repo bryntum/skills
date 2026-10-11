@@ -6,7 +6,10 @@ description: >
   (`Ext.grid.Panel`, `Ext.tree.Panel`) — targeting vanilla JS, React, Angular, or Vue. Use alongside
   the `bryntum` skill. Trigger on phrases like "migrate from Ext JS", "port our Ext app", "replace
   Sencha", "Ext JS end of life", "Sch.panel", "Gnt.panel", "Ext.grid.Panel to Bryntum", or any
-  Ext JS codebase being moved to Bryntum.
+  Ext JS codebase being moved to Bryntum. Also use it whenever Ext JS habits appear in Bryntum code
+  (`store.first()`, `component.down()`, `store.get(id)`, `Ext.getCmp`, `Ext.create`, `xtype`,
+  `dataIndex`, `renderTo`, `Ext.Msg`, `grid.getStore()`, `getSelectionModel()`, `store.sync()`) or the
+  user mentions an Ext JS / Sencha background.
 metadata:
   tags: bryntum, extjs, sencha, migration, scheduler, gantt, grid, schedulerpro
 ---
@@ -15,6 +18,9 @@ metadata:
 
 Turns an Ext JS app (Classic or Modern) into a Bryntum 7 app with no Ext left. For an incremental path, the Ext
 components are replaced first and the Ext shell is removed afterwards.
+
+Not migrating, just writing Bryntum code with Ext JS habits? Read `references/idioms.md`: Bryntum shares Ext's
+vocabulary (`Store`, `items`, `renderer`, `type`) but several look-alike calls fail silently.
 
 Load the core `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend,
 `bryntum-editor` when the app customizes the event/task editor, and `bryntum-features` to find the built-in feature

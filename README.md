@@ -46,15 +46,11 @@ Customizing the built-in event/task editor — adding/removing fields and tabs v
 
 ### `bryntum-extjs-migration`
 
-Migrating Ext JS apps to Bryntum 7 (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification.
+Migrating Ext JS apps to Bryntum 7 (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification, plus the Ext idioms that fail silently in Bryntum code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`).
 
 ### `bryntum-features`
 
 Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-13:00 as lunch", "grey out weekends", "a totals row", "export to Excel", "swimlanes", "critical path") mapped to the built-in feature that does it, plus the commonly invented APIs that don't exist.
-
-### `bryntum-from-extjs`
-
-For codebases and habits coming from Ext JS. Maps Ext idioms to their Bryntum equivalents (`store.first()`, `component.down()`, `xtype`, `dataIndex`, `Ext.getCmp`, `Ext.Msg`) and flags the near-misses that fail silently rather than throwing.
 
 ### `bryntum-migrate`
 
@@ -97,7 +93,6 @@ npx degit bryntum/skills/bryntum-styling .claude/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .claude/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .claude/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .claude/skills/bryntum-features
-npx degit bryntum/skills/bryntum-from-extjs .claude/skills/bryntum-from-extjs
 npx degit bryntum/skills/bryntum-migrate .claude/skills/bryntum-migrate
 ```
 
@@ -127,7 +122,6 @@ npx degit bryntum/skills/bryntum-styling .agents/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .agents/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .agents/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .agents/skills/bryntum-features
-npx degit bryntum/skills/bryntum-from-extjs .agents/skills/bryntum-from-extjs
 npx degit bryntum/skills/bryntum-migrate .agents/skills/bryntum-migrate
 ```
 

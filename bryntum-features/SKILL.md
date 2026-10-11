@@ -85,4 +85,4 @@ These are the most commonly invented APIs in this area:
 - `bryntum-editor` — customizing the event/task editor.
 - `bryntum-styling` — event bar content and `eventRenderer`.
 - `bryntum-drag-and-drop` — dragging onto the timeline from outside.
-- `bryntum-from-extjs` — Ext JS idioms that do not apply here.
+- `bryntum-extjs-migration` — Ext JS idioms that do not apply here (`references/idioms.md`), and full Ext app migrations.
