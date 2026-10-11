@@ -4,8 +4,9 @@ description: >
   Build and integrate Bryntum components — Scheduler, Scheduler Pro, Gantt, Calendar, Grid,
   TaskBoard — even when "Bryntum" isn't mentioned by name. Trigger on phrases like "add a
   scheduler", "gantt chart", "grid component", "calendar view", "task board", "resource
-  scheduling", any mention of @bryntum/* npm packages, or questions about Bryntum CSS imports,
-  themes, or framework wrappers (Angular, React, Vue). When in doubt, use this skill.
+  scheduling", any mention of @bryntum/* npm packages, questions about Bryntum CSS imports,
+  themes, or framework wrappers (Angular, React, Vue), or migrating from Ext JS / Sencha.
+  When in doubt, use this skill.
 metadata:
   tags: bryntum, scheduler, gantt, calendar, grid, taskboard, schedulerpro
 ---
@@ -26,7 +27,7 @@ Load the relevant skill, or fetch the raw file directly if the skill is not inst
 | Custom event bar content / `eventRenderer` layouts, widget `rendition` (button/field looks), form look | `bryntum-styling` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-styling/SKILL.md |
 | Customizing the built-in event/task editor popup | `bryntum-editor` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-editor/SKILL.md |
 | A request phrased as an outcome (shade a time range, grey out weekends, totals row, export, undo, swimlanes, critical path) — find the built-in feature before hand-rolling | `bryntum-features` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-features/SKILL.md |
-| Ext JS / Sencha background, or Ext idioms appearing in the code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`) | `bryntum-from-extjs` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-from-extjs/SKILL.md |
+| Migrating an Ext JS app (Ext Scheduler/Gantt, Bryntum inside Ext, Ext grids), or Ext idioms / an Ext JS background showing in Bryntum code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`) | `bryntum-extjs-migration` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-extjs-migration/SKILL.md |
 | Upgrading an existing Bryntum app to a newer version / bumping `@bryntum/*` packages | `bryntum-migrate` | https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-migrate/SKILL.md |
 
 ---
