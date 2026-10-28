@@ -2,31 +2,67 @@
 name: bryntum-react
 description: >
   React-specific patterns for Bryntum components. Use this alongside the `bryntum` skill when
-  building or integrating any Bryntum product (Scheduler, Gantt, Calendar, Grid, TaskBoard,
-  Scheduler Pro) in a React project. Trigger when the project has React in package.json or when
-  the user asks about React + Bryntum integration, JSX config, StrictMode issues, or
-  @bryntum/*-react packages.
+  building or integrating any Bryntum product (Scheduler, Scheduler Pro, Gantt, Calendar, Grid,
+  TaskBoard) in a React project, on the 8.0 tier packages (`@bryntum/<product>-react-<tier>`) or
+  on 7.x. Trigger when the project has React in package.json or when the user asks about React +
+  Bryntum integration, JSX config, StrictMode issues, or @bryntum/*-react packages.
 metadata:
-  tags: bryntum, react, strictmode
+  tags: bryntum, react, strictmode, tier
+---
+
+## Version check — do this first
+
+Read the app's `package.json` and pick the branch (in a monorepo, the workspace package that will import Bryntum). Every code block in this file is 8.0 code.
+
+| `@bryntum/*` dependencies | Version | Do |
+|---|---|---|
+| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
+| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-react/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json`; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
+| None, and no `build/` folder | **New app on 8.0** | Follow this file |
+| No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification in the `bryntum` skill) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
+
 ---
 
 ## Quick-start guide
 
 When scaffolding a new app, fetch (skip for migrations or existing apps):
-`https://bryntum.com/products/{product}/docs-llm/guide/{Product}/quick-start/react.md`
+`https://bryntum.com/products/<product>/docs-llm/guide/<Product>/quick-start/react.md`
+
+On 8.x the page names the Enterprise packages; substitute the app's tier.
 
 ---
 
 ## React
 
-Framework wrapper package: `@bryntum/{product}-react`
+### Packages and imports
+
+8.x only. On 7.x, `references/v7.md` replaces this section.
+
+Framework wrapper package: `@bryntum/<product>-react-<tier>`. It depends on `@bryntum/core-react-<tier>`, the wrappers of the products below it and the product package, so those arrive with it.
+
+A wrapper exports its own product's components only. Import each thing from the package that owns it, and declare every package you import from in `package.json`:
+
+```tsx
+import { BryntumGantt, BryntumGanttProjectModel } from '@bryntum/gantt-react-enterprise';
+import type { BryntumGanttProps, BryntumGanttProjectModelProps } from '@bryntum/gantt-react-enterprise';
+import { BryntumButton, BryntumCombo } from '@bryntum/core-react-enterprise';   // Core widgets
+import { BryntumGrid } from '@bryntum/grid-react-enterprise';                   // another product on the page
+import { StringHelper } from '@bryntum/core-enterprise';                         // Core helpers
+import type { TaskModel } from '@bryntum/gantt-enterprise';                      // product classes and types
+```
+
+Scheduler Pro is Scheduler at the Enterprise tier: `BryntumScheduler` and `BryntumSchedulerProjectModel` from `@bryntum/scheduler-react-enterprise`. `BryntumSchedulerPro` still exists but wraps the deprecated `SchedulerPro` class — don't use it in new code.
+
+A Grid feature the product does not load itself (`cellTooltip`, `quickFind`) registers only after `import '@bryntum/grid-<tier>';` — see the `bryntum` skill, Imports.
 
 ### Component
+
+8.x only. On 7.x, `references/v7.md` replaces this section.
 
 Pass all config as JSX props. Use `useRef` for instance access:
 
 ```jsx
-import { BryntumGantt } from '@bryntum/gantt-react';
+import { BryntumGantt } from '@bryntum/gantt-react-enterprise';
 
 const ganttRef = useRef(null);
 // access instance: ganttRef.current.instance
@@ -57,13 +93,19 @@ createRoot(document.getElementById('root')!).render(
 
 **Never retain references to destroyed Bryntum instances after unmount.** Do not use `useEffect`/`useRef` patterns that hold the instance across the unmount cycle.
 
-### Gantt / Scheduler Pro: project data
+### Next.js
 
-Gantt and Scheduler Pro keep their data in a project. Don't put store data inside a `project` prop object — the wrapper logs *"Using the "project" prop with inner store configurations is not recommended"*. Put the data on the project component and pass its ref to the Gantt:
+Bryntum does not support server-side rendering: render the wrapper client-side only.
+
+### Gantt and Scheduler Enterprise: project data
+
+8.x only. On 7.x, `references/v7.md` replaces this section.
+
+Gantt and Scheduler Enterprise (the former Scheduler Pro) keep their data in a project. Don't put store data inside a `project` prop object — the wrapper logs *"Using the "project" prop with inner store configurations is not recommended"*. Put the data on the project component and pass its ref to the Gantt:
 
 ```tsx
 import { useRef } from 'react';
-import { BryntumGantt, BryntumGanttProjectModel } from '@bryntum/gantt-react';
+import { BryntumGantt, BryntumGanttProjectModel } from '@bryntum/gantt-react-enterprise';
 import { ganttProps, projectProps } from './ganttConfig'; // projectProps: { tasks, dependencies, ... }
 
 function App() {
@@ -78,19 +120,30 @@ function App() {
 }
 ```
 
-Type `projectProps` as `BryntumGanttProjectModelProps`. Project-level settings (`calendar`, `calendars`, `loadUrl`, `autoLoad`) go in `projectProps` too. Scheduler Pro uses `BryntumSchedulerProProjectModel` the same way.
+Type `projectProps` as `BryntumGanttProjectModelProps`. Project-level settings (`calendar`, `calendars`, `loadUrl`, `autoLoad`) go in `projectProps` too. Scheduler Enterprise uses `BryntumSchedulerProjectModel` the same way.
 
-### Vite config
+### License key
 
-Include Bryntum packages in `optimizeDeps` to prevent multiple bundle loading in dev:
+8.x only. On 7.x, `references/v7.md` replaces this section.
 
-```js
-optimizeDeps: {
-    include: ['@bryntum/gantt', '@bryntum/gantt-react']
-}
+Community needs none. Otherwise register it in `main.tsx`, after the imports (they load the Bryntum packages, which create the `bryntum` global) and before the first render. `bryntum` is declared in no typings, so a `.ts`/`.tsx` file needs this declaration or `(window as any).bryntum.licenseKey` — see the `bryntum` skill, License key.
+
+```tsx
+import { createRoot } from 'react-dom/client';
+import App from './App';
+
+declare const bryntum : { licenseKey? : string };
+bryntum.licenseKey = 'your-license-key';
+createRoot(document.getElementById('root')!).render(<App />);
 ```
 
-When adding to an **existing** `vite.config`, merge into the current `optimizeDeps.include` array — don't only check for this on fresh scaffolds, and don't overwrite an existing `optimizeDeps`.
+**Next.js App Router:** there is no single client entry file. Set the key in the `"use client"` component that renders the Bryntum wrapper, after the wrapper import. A server module such as `app/layout.tsx` fails with `bryntum is not defined`.
+
+### Vite
+
+8.x only. On 7.x, `references/v7.md` replaces this section.
+
+Vite: see the `bryntum` skill; the names to add only on the loaded-multiple-times error are `'@bryntum/gantt-enterprise'` and `'@bryntum/gantt-react-enterprise'`.
 
 ### Sizing
 

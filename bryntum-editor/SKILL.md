@@ -5,7 +5,7 @@ description: >
   `bryntum` skill to add, remove, or reorder editor fields and tabs, tweak validation, react
   to the editor opening/saving, or swap in a fully custom dialog. Trigger on phrases like
   "edit event popup", "task editor", "remove the % Complete field", "custom event editor",
-  "eventEdit"/"taskEdit" config, or "beforeEventEdit"/"beforeTaskEdit".
+  "eventEdit"/"taskEdit"/"basicTaskEdit" config, or "beforeEventEdit"/"beforeTaskEdit".
 metadata:
   tags: bryntum, editor, eventedit, taskedit, popup, scheduler, gantt
 ---
@@ -22,11 +22,14 @@ To match a design-system host app (e.g. Material UI), switch the Bryntum **theme
 
 | Product | Editor feature |
 |---|---|
-| Scheduler | `eventEdit` |
-| Scheduler Pro | `taskEdit` |
-| Gantt | `taskEdit` |
+| Scheduler Community, Business | `eventEdit` |
+| Scheduler Enterprise (the former Scheduler Pro) | `taskEdit` — on by default, `eventEdit` off |
+| Gantt Business, Enterprise | `taskEdit` |
+| Gantt Community | `basicTaskEdit` — on 8.x; ships at every Gantt tier, on by default only on Community; flat `items` like `eventEdit`, no tabs |
 | Task Board | `taskEdit` |
 | Calendar | `eventEdit` |
+
+On 8.x the tier picks the feature: configuring an editor the tier lacks (e.g. `taskEdit` on Gantt Community) is skipped and a dialog names the tier it requires — see Tiers in the `bryntum` skill. The opposite direction works at any tier: Scheduler Enterprise can use the simple popup with `features : { taskEdit : false, eventEdit : true }`, and Gantt Business/Enterprise the lightweight editor with `basicTaskEdit : true, taskEdit : false` (`eventEdit` ships on every Scheduler tier, `basicTaskEdit` on every Gantt tier).
 
 ---
 
@@ -38,15 +41,16 @@ Remove fields you don't want or add your own through the feature's `items`. Use 
 
 | Product | Feature | Built-in field refs (General tab / editor) |
 |---|---|---|
-| Gantt | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
-| Scheduler Pro | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
-| Scheduler, Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
+| Gantt (Business, Enterprise) | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
+| Gantt Community (8.x; available at every Gantt tier) | `basicTaskEdit` | `nameField`, `startDateField`, `endDateField`, `durationField` |
+| Scheduler Enterprise | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
+| Scheduler (Community, Business), Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
 
 Custom items can use any key (it becomes the new item's `ref`; `name` binds it to the data field). Only keys that change or remove a built-in item must match its ref exactly.
 
-The `config-items` example on the Gantt `TaskEdit` API page is inherited from Scheduler Pro and uses `durationField` — in Gantt that key matches nothing and is ignored; use `duration`.
+The `config-items` example on the Gantt `TaskEdit` API page is inherited from Scheduler's `TaskEdit` (the former Scheduler Pro editor) and uses `durationField` — in Gantt that key matches nothing and is ignored; use `duration`.
 
-Tab refs (Gantt, Scheduler Pro): `generalTab`, `predecessorsTab`, `successorsTab`, `resourcesTab` (Gantt), `advancedTab`, `notesTab`. Fields on the Advanced tab use the `Field` suffix in both (e.g. `calendarField`, `constraintTypeField`). Verify refs for the installed version via MCP (`search_bryntum_docs`, "task editor fields").
+Tab refs (Gantt, Scheduler Enterprise): `generalTab`, `predecessorsTab`, `successorsTab`, `resourcesTab` (Gantt), `advancedTab`, `notesTab`. Fields on the Advanced tab use the `Field` suffix in both (e.g. `calendarField`, `constraintTypeField`). Verify refs for the installed version via MCP (`search_bryntum_docs`, "task editor fields").
 
 Gantt:
 
@@ -69,7 +73,7 @@ features: {
 }
 ```
 
-Scheduler Pro uses the same structure with `Field`-suffixed refs (`percentDoneField : false`, `durationField : false`). Scheduler and Calendar use `eventEdit` with flat `items` (no tabs), e.g. `eventEdit: { items: { resourceField: false } }`.
+Scheduler Enterprise uses the same structure with `Field`-suffixed refs (`percentDoneField : false`, `durationField : false`). Scheduler Community/Business and Calendar (`eventEdit`), and Gantt Community (`basicTaskEdit`), use flat `items` (no tabs), e.g. `eventEdit: { items: { resourceField: false } }`.
 
 Run-time tweaks: listen to `beforeTaskEditShow` (or `beforeEventEditShow`) and adjust `editor.widgetMap.<ref>`.
 

@@ -1,7 +1,7 @@
 ---
 name: bryntum-styling
 description: >
-  Custom styling of Bryntum Scheduler / Scheduler Pro event bars (eventRenderer layouts, event bar
+  Custom styling of Bryntum Scheduler event bars, any tier incl. the former Scheduler Pro (eventRenderer layouts, event bar
   DOM structure, padding CSS variables, sticky content) and widget `rendition` (built-in visual
   variants of buttons, text fields and tooltips, plus the form look). Use alongside the `bryntum`
   skill. Trigger on "eventRenderer", "style the event bars", "customize event content", "two-line
@@ -25,10 +25,10 @@ metadata:
 ```
 
 - `.b-sch-event-content` already has padding. Adjust it with `--b-sch-event-padding-inline` (horizontal mode) or `--b-sch-event-padding-block` (vertical mode) on the wrapper, e.g. `.b-sch-event-wrap { --b-sch-event-padding-inline: 1em; }`.
-- Event content is sticky by default (kept in view while scrolling the time axis), so it doesn't stretch to fill the bar. For layouts that should fill it (multi-line, stacked), set `features: { stickyEvents: false }`.
+- Event content is sticky by default on Business and Enterprise (`stickyEvents` is a Business feature; on 8.x Community content is not sticky and the config is ignored) — kept in view while scrolling the time axis, so it doesn't stretch to fill the bar. For layouts that should fill it (multi-line, stacked), set `features: { stickyEvents: false }`.
 - `eventRenderer({ eventRecord, renderData })` can return a DOM config array. To suppress the default icon (e.g. you render it yourself, or want none), set `renderData.iconCls = ''`. `null` also works in JS, but the TypeScript type is `string | DomClassList`, so `null` fails under `strict`.
 
-Worked two-line layout (time + icon header, bold name below) with its CSS: `references/two-line-event-bar.md`. Scope your CSS with `.b-sch-event-wrap …`, not `.b-scheduler …`: the Scheduler Pro root has no `b-scheduler` class (`.b-scheduler-base` matches both products).
+Worked two-line layout (time + icon header, bold name below) with its CSS: `references/two-line-event-bar.md`. Scope your CSS with `.b-sch-event-wrap …`, not `.b-scheduler …`: `.b-scheduler-base` matches every Scheduler, while a 7.x Scheduler Pro root has no `b-scheduler` class.
 
 ## Widget renditions
 
@@ -38,8 +38,8 @@ Buttons, text fields and tooltips ship several looks. Use the `rendition` config
 |---|---|---|
 | `Button` (and subclasses) | `'elevated'` raised with a shadow · `'filled'` primary colour · `'tonal'` faded primary · `'outlined'` border, pale/transparent fill · `'text'` transparent, text only | theme-dependent (`text` in Svalbard) |
 | `ButtonGroup` | the Button values, plus `'padded'` and `'padded-filled'`; applied to every button in the group | as Button |
-| `TextField`, `TextAreaField`, `NumberField`, `DateTimeField` and subclasses (Combo, DateField, TimeField, DurationField, …) | `'outlined'` · `'filled'` | theme-dependent |
-| `Tooltip` | `'plain'` · `'rich'` (title + body chrome) | `'plain'` |
+| `TextField`, `TextAreaField`, `NumberField`, `DateTimeField` and subclasses (Combo, DateField, TimeField, DurationField, …) | `'outlined'` · `'filled'` | `'outlined'` |
+| `Tooltip` | `'plain'` · `'rich'` (title + body chrome) | auto: rich when the content has a header, items or nested markup, else plain |
 
 Nothing else takes `rendition` (not Panel, Toolbar, Grid columns or Menu items); style those with CSS variables. Set it on the primary action only, e.g. `{ type : 'button', text : 'Save', rendition : 'tonal' }` (`'filled'` for the strongest emphasis).
 

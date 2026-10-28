@@ -9,7 +9,7 @@ Rows where the name and behaviour are identical in both libraries are omitted.
 | `Ext.define('My.Grid', { extend : 'Ext.grid.Panel' })` | `class MyGrid extends Grid { static $name = 'MyGrid'; }` | Plain ES classes. `$name` is used for the feature/type registry, not a namespace |
 | `Ext.create('Ext.grid.Panel', cfg)` | `new Grid(cfg)` | No string-based factory for top-level construction |
 | `xtype : 'button'` | `type : 'button'` | Declare `static type = '…'` and call `MyWidget.initClass()` once; without it, `type` lookup throws `Invalid type name … passed to Widget factory` |
-| `requires` / `Ext.require` | `import { Grid } from '@bryntum/grid'` | |
+| `requires` / `Ext.require` | `import { Grid } from '@bryntum/grid-enterprise'` (on 8.x the tier is in the name and each class comes from its own product's package; 7.x: `@bryntum/grid`) | |
 | `renderTo : 'app'` | `appendTo : 'app'` | Also `insertBefore`, `insertFirst`, `adopt`. No `renderTo` |
 | `initComponent()` / `apply*` | `static configurable = { … }` + `changeFoo(value, old)` / `updateFoo(value, old)` | `change` normalizes, `update` reacts |
 | `initComponent()` for one-off setup | `construct(config) { super.construct(config); … }` | Call `super.construct` first |
@@ -51,7 +51,7 @@ over `id`: `id` must be unique across the document, `ref` need not be.
 | `store.insert(index, records)` | `store.insert(index, records)` | |
 | `store.sync()` | `store.commit()` (on `AjaxStore`) | `acceptChanges()` marks clean without a request; `revertChanges()` rolls back |
 | `store.getModifiedRecords()` | `store.changes` / `store.hasChanges` | `changes` is `{ added, modified, removed }` |
-| `proxy : { type : 'ajax', url }` | `new AjaxStore({ readUrl, createUrl, updateUrl, deleteUrl })` | `await store.load()`; `autoLoad`, `autoCommit` |
+| `proxy : { type : 'ajax', url }` | `new AjaxStore({ readUrl, createUrl, updateUrl, deleteUrl })` | `await store.load()`; `autoLoad`, `autoCommit`. On 8.x `AjaxStore` is imported from `@bryntum/core-<tier>` |
 | `grid.getStore()` | `grid.store` | |
 | `store.loadData(arr)` | `store.data = arr` | Keeps sorters, filters, groupers and collapsed groups; clear them yourself to reset. `loadData(data, action)` also exists |
 
@@ -78,7 +78,7 @@ over `id`: `id` must be unique across the document, `ref` need not be.
 | `node.isLeaf()` | `node.isLeaf` | Getter |
 | `node.getDepth()` | `node.childLevel` | |
 | `node.cascadeBy(fn)` | `node.traverse(fn, skipSelf, options)` | |
-| grouping `expand(name)` / `collapseAll()` | `await grid.features.group.toggleCollapse(memberRecord, false)` / `grid.expandAll()` / `grid.collapseAll()` | Pass any record in the group, or its header. `expandAll` / `collapseAll` are added to the grid by the `group` feature |
+| grouping `expand(name)` / `collapseAll()` | `await grid.features.group.toggleCollapse(memberRecord, false)` / `grid.expandAll()` / `grid.collapseAll()` | Pass any record in the group, or its header. `expandAll` / `collapseAll` are added to the grid by the `group` feature (on 8.x `group` is Business+) |
 | `node.expand()` | `await grid.features.tree.expand(record)` | Driven by the `tree` feature. Also `collapse`, `toggleCollapse`, `expandAll`, `collapseAll`, `expandTo`, `expandToLevel` |
 
 ## Config names
@@ -125,7 +125,7 @@ Renderers return a string, a `DomConfig` object, or (with the React wrapper) JSX
 
 | Ext JS | Bryntum | Note |
 |---|---|---|
-| `grid.getView().refresh()` | `grid.refreshRows()` | Grid has no `refresh()` |
+| `grid.getView().refresh()` | `grid.refresh()` on 8.x; `grid.refreshRows()` on 7.x | 7.x Grid has no `refresh()`; 8.0 adds it |
 | refresh one column | `grid.refreshColumn(column)` | |
 | `getSelectionModel().getSelection()` | `grid.selectedRecords` | Also `selectedRecord`, `selectedCells` |
 | `sm.select(rec)` / `deselectAll()` | `grid.selectRow({ record })` / `deselectRow(record)` / `deselectAll()` | |

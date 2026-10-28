@@ -1,7 +1,7 @@
 ---
 name: bryntum-drag-and-drop
 description: >
-  Drag-and-drop INTO a Bryntum Scheduler / Scheduler Pro / Gantt from an outside source —
+  Drag-and-drop INTO a Bryntum Scheduler (any tier, incl. the former Scheduler Pro) / Gantt from an outside source —
   a sidebar of unscheduled jobs, plain <div>s, a third-party grid (AG Grid), or a Bryntum
   Grid. Use alongside the `bryntum` skill whenever items are dragged onto the timeline.
   Trigger on phrases like "drag from sidebar", "drag unscheduled tasks", "drag onto the
@@ -10,20 +10,34 @@ metadata:
   tags: bryntum, drag, drop, draghelper, scheduler, schedulerpro, gantt, external-source, grid
 ---
 
+## Version check — do this first
+
+Read the app's `package.json` and pick the branch (in a monorepo, the workspace package that will import Bryntum). Every code block in this file is 8.0 code.
+
+| `@bryntum/*` dependencies | Version | Do |
+|---|---|---|
+| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
+| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-drag-and-drop/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json`; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
+| None, and no `build/` folder | **New app on 8.0** | Follow this file |
+| No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification in the `bryntum` skill) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
+
+---
+
 ## dragging from another Bryntum Grid/store
 
-If the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what the demo `Drag.ts` is built for: https://bryntum.com/products/schedulerpro/examples/drag-from-grid/app.module.js, https://bryntum.com/products/schedulerpro/examples/drag-from-grid/lib/Drag.js
+On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what its `Drag.js` is built for: https://bryntum.com/products/scheduler/examples/drag-from-grid/app.module.js, https://bryntum.com/products/scheduler/examples/drag-from-grid/lib/Drag.js The demo runs at the Enterprise tier (`taskEdit`, `stickyEvents`); on Community/Business drop those feature blocks — the `Drag.js` class itself needs nothing above Community.
 
 ## Dragging from an external (non-Bryntum) source
 
 Core use case: a sidebar/pool of unscheduled jobs that the user drags onto a resource row in the Scheduler.
 
-Use Bryntum's [`DragHelper`](https://bryntum.com/products/schedulerpro/docs/api/Core/helper/DragHelper) and point it at your OWN DOM elements, reading data from your OWN source. `DragHelper` works with any draggable HTML element — it is not limited to Bryntum stores.
+Use Bryntum's [`DragHelper`](https://bryntum.com/products/scheduler/docs/api/Core/helper/DragHelper) and point it at your OWN DOM elements, reading data from your OWN source. `DragHelper` works with any draggable HTML element — it is not limited to Bryntum stores.
 
 ### Minimal pattern
 
 ```ts
-import { DragHelper, SchedulerPro } from '@bryntum/schedulerpro';
+import { DragHelper } from '@bryntum/core-enterprise';
+import { Scheduler } from '@bryntum/scheduler-enterprise';
 
 class JobDragHelper extends DragHelper {
     static configurable = {
@@ -42,7 +56,7 @@ class JobDragHelper extends DragHelper {
     createProxy(grabbedElement) {
         const job   = this.getJobFor(grabbedElement);  // your lookup: element id -> your JS record
         const proxy = document.createElement('div');
-        proxy.classList.add('b-sch-event-wrap', 'b-sch-style-border', 'b-sch-horizontal');
+        proxy.classList.add('b-sch-event-wrap', 'b-sch-style-bordered', 'b-sch-horizontal');
         proxy.innerHTML = `<div class="b-sch-event"><div class="b-sch-event-content">${job.name}</div></div>`;
         this.context.job = job;
         return proxy;
@@ -75,6 +89,8 @@ class JobDragHelper extends DragHelper {
 }
 ```
 
+On 8.x `DragHelper` comes from `@bryntum/core-<tier>` and `Scheduler` from `@bryntum/scheduler-<tier>`; the former Scheduler Pro is Scheduler at the Enterprise tier.
+
 Instantiate after the component exists (in React, inside an effect once you have the instance):
 
 ```ts
@@ -92,7 +108,7 @@ const drag = new JobDragHelper({
 - `createProxy(el)` — build the visual drag proxy from your data; stash the record on `this.context`.
 - `onDragStart` — capture the dragged record into `context`.
 - `onDrag` — per-move validation; set `context.valid`. Use `scheduler.getDateFromCoordinate()` and `scheduler.resolveResourceRecord(context.target)`.
-- `onDrop` — if `context.valid`, commit via `scheduler.scheduleEvent({ eventRecord, startDate, resourceRecord })` (or `assignEventToResource`), then remove the item from your source.
+- `onDrop` — if `context.valid`, commit via `scheduler.scheduleEvent({ eventRecord, startDate, resourceRecord })` (or `scheduler.eventStore.assignEventToResource(event, resource)` for an event that already has dates), then remove the item from your source.
 
 For richer, in-scheduler drag validation also add the `eventDrag` feature's `validatorFn`.
 
@@ -103,4 +119,4 @@ For richer, in-scheduler drag validation also add the `eventDrag` feature's `val
 
 The same article also shows keeping the source list in sync with the Bryntum stores via store events (`add`/`remove`/`update`).
 
-> **Version caveat:** that article targets Bryntum **v6**, so its CSS class names are pre-rename (e.g. `.b-timeline-subgrid`). v7 normalized classes to kebab-case (`.b-timeline-sub-grid`, `.b-grid-sub-grid`, `.b-time-axis-sub-grid`, `.b-button-group`, …). Copy the *pattern/logic* from the article but translate any CSS class names to their v7 kebab-case form. See https://bryntum.com/products/schedulerpro/docs-llm/guide/SchedulerPro/migration/migrate-to-new-css.md
+> **Version caveat:** that article targets Bryntum **v6**, so its CSS class names are pre-rename (e.g. `.b-timeline-subgrid`). v7 normalized classes to kebab-case (`.b-timeline-sub-grid`, `.b-grid-sub-grid`, `.b-time-axis-sub-grid`, `.b-button-group`, …). Copy the *pattern/logic* from the article but translate any CSS class names to their v7 kebab-case form, and on 8.x use the tiered packages and owning-package imports above. See https://bryntum.com/products/scheduler/docs-llm/guide/Scheduler/migration/migrate-to-new-css.md
