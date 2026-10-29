@@ -2,7 +2,7 @@
 
 Agent skills for working with [Bryntum](https://bryntum.com) components — Scheduler (incl. the former Scheduler Pro), Gantt, Calendar, Grid, and TaskBoard. Compatible with Claude Code and Codex.
 
-The skills serve both 8.0 and 7.x apps from this one `main` branch: each skill that has 7.x differences starts with a version check that reads the app's `package.json` and loads its `references/v7.md` for a 7.x app; the others apply to both, with their few 8.0-only sentences marked "On 8.x". On 8.0 every package is `@bryntum/<product>-<tier>`; the Community tier needs no license key, while Business and Enterprise run as a 14-day trial until a key is set.
+The skills serve both 8.0 and 7.x apps from this one `main` branch: the core `bryntum` skill detects the version from the app's `package.json`, and every skill with 7.x differences points to that check and loads its own `references/v7.md` for a 7.x app. A `SKILL.md` describes 8.0. On 8.0 every package is `@bryntum/<product>-<tier>`; the Community tier needs no license key, while Business and Enterprise run as a 14-day trial until a key is set.
 
 ## Skills
 

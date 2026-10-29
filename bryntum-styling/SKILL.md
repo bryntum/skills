@@ -12,6 +12,12 @@ metadata:
   tags: bryntum, styling, eventrenderer, event-bar, scheduler, schedulerpro, css, rendition, button, form
 ---
 
+## Version check — do this first
+
+Detect the version as the `bryntum` skill's Version check says (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/SKILL.md). Every code block in this file is 8.0 code. 7.x → also load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-styling/references/v7.md).
+
+---
+
 ## Event bar structure
 
 ```html
@@ -25,10 +31,10 @@ metadata:
 ```
 
 - `.b-sch-event-content` already has padding. Adjust it with `--b-sch-event-padding-inline` (horizontal mode) or `--b-sch-event-padding-block` (vertical mode) on the wrapper, e.g. `.b-sch-event-wrap { --b-sch-event-padding-inline: 1em; }`.
-- Event content is sticky by default on Business and Enterprise (`stickyEvents` is a Business feature; on 8.x Community content is not sticky and the config is ignored) — kept in view while scrolling the time axis, so it doesn't stretch to fill the bar. For layouts that should fill it (multi-line, stacked), set `features: { stickyEvents: false }`.
+- Event content is sticky by default on Business and Enterprise (`stickyEvents` is a Business feature; on Community content is not sticky and the config is ignored) — kept in view while scrolling the time axis, so it doesn't stretch to fill the bar. For layouts that should fill it (multi-line, stacked), set `features: { stickyEvents: false }`.
 - `eventRenderer({ eventRecord, renderData })` can return a DOM config array. To suppress the default icon (e.g. you render it yourself, or want none), set `renderData.iconCls = ''`. `null` also works in JS, but the TypeScript type is `string | DomClassList`, so `null` fails under `strict`.
 
-Worked two-line layout (time + icon header, bold name below) with its CSS: `references/two-line-event-bar.md`. Scope your CSS with `.b-sch-event-wrap …`, not `.b-scheduler …`: `.b-scheduler-base` matches every Scheduler, while a 7.x Scheduler Pro root has no `b-scheduler` class.
+Worked two-line layout (time + icon header, bold name below) with its CSS: `references/two-line-event-bar.md`. Scope your CSS with `.b-sch-event-wrap …`; for a component-level selector use `.b-scheduler-base`, which matches every Scheduler.
 
 ## Widget renditions
 

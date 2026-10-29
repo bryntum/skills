@@ -14,6 +14,12 @@ metadata:
 
 # Bryntum features
 
+## Version check — do this first
+
+Detect the version as the `bryntum` skill's Version check says (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/SKILL.md). Every code block in this file is 8.0 code. 7.x → also load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-features/references/v7.md).
+
+---
+
 Most outcome-style requests map to a single entry in the `features` config. The usual mistake
 is not knowing the feature exists and hand-building it with an `eventRenderer`, a `cellCls`,
 positioned `<div>`s or CSS. That can look right while missing virtualization, export, state, or
@@ -29,14 +35,9 @@ have snippets, tiers and per-product differences.
 - On 8.x every feature belongs to a tier — Community, Business or Enterprise, cumulative. The
   tier in the Index and the reference files is the lowest tier that has it; unmarked entries are
   in every tier. A feature above the app's tier is skipped and a dialog names the tier it needs,
-  so say the tier when you suggest one. On 7.x there are no tiers. Of the Scheduler features
-  marked Enterprise here, `resourceNonWorkingTime`, `timeSpanHighlight`, `nestedEvents`,
-  `eventSegments`, `taskEdit` and `versions` were Scheduler Pro's (`@bryntum/schedulerpro`); the
-  others were in `@bryntum/scheduler` or `@bryntum/grid`.
+  so say the tier when you suggest one.
 - Configure features at construction. On 8.x add a feature later with
-  `widget.addFeature({ summary : true })` (unknown names throw). On 7.x a feature added after
-  construction never runs its paint-time init — include it in the config and flip
-  `widget.features.x.disabled = false`.
+  `widget.addFeature({ summary : true })` (unknown names throw).
 - The React and Vue wrappers take each feature as a `<name>Feature` prop (`nonWorkingTimeFeature`,
   `eventTooltipFeature={{ … }}`), not a `features` object. Runtime access is still
   `instance.features.<name>`.
@@ -71,7 +72,7 @@ Raw: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-f
 | Group rows, totals row, per-group totals | `group`, `summary`, `groupSummary` | Business; `summary` and `groupSummary` Enterprise | [grid](references/grid.md) |
 | Filter UI, search box, type-to-find, multi-sort | `filter` / `filterBar`, `search`, `quickFind`, `store.sort(…, true)` | Community; `filter` Business | [grid](references/grid.md) |
 | Event/task editor, tooltips | `eventEdit` / `taskEdit`, `eventTooltip` / `taskTooltip` (Gantt), `cellTooltip` | Community; `taskEdit` Enterprise in Scheduler, Business in Gantt; `cellTooltip` Business | [editing & export](references/editing-and-export.md) |
-| Undo / redo | Project `stm : { autoRecord : true }` plus an `UndoRedo` widget or `stm.enable()` — both halves are needed; Gantt imports the widget from the Scheduler package | Business (TaskBoard widget Enterprise) | [editing & export](references/editing-and-export.md) |
+| Undo / redo | Project `stm : { autoRecord : true }` plus an `UndoRedo` widget or `stm.enable()` — both halves are needed; on 8.x Gantt imports the widget from the Scheduler package | Business (TaskBoard widget Enterprise) | [editing & export](references/editing-and-export.md) |
 | Excel, PDF, print, MS Project | `excelExporter`, `pdfExport`, `print`, `mspExport` | Enterprise | [editing & export](references/editing-and-export.md) |
 | Critical path, baselines, progress line, rollups, deadlines | Gantt features | Business to Enterprise, per feature | [gantt](references/gantt.md) |
 | Resource load / utilisation | `ResourceHistogram` / `ResourceUtilization` views | Enterprise | [gantt](references/gantt.md) |
@@ -87,12 +88,10 @@ These are the most commonly invented APIs in this area:
 - `timeRangesStore` / `resourceTimeRangesStore` — the stores are singular: `timeRangeStore`,
   `resourceTimeRangeStore`.
 - A `taskFilter` TaskBoard feature — it is `columnFilter` or `filterBar`.
-- `Grid#refresh()` on 7.x — Grid gained `refresh()` in 8.0 like the other products; on 7.x use
-  `refreshRows()` / `refreshColumn()`.
 - Multi-field grouping in the grid UI — use `treeGroup`.
 - A Grid `UndoRedo` widget.
 - `eventTooltip` in Gantt — it is `taskTooltip`. On 8.x an unknown feature key throws
-  `Invalid type name` (on 7.x it was silently ignored).
+  `Invalid type name`.
 - Client-only PDF export — `pdfExport` needs the export server.
 - `columnLines` driven by time ranges — it draws from ViewPreset ticks only.
 

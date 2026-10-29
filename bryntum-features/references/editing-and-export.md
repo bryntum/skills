@@ -12,8 +12,7 @@ Tier marks are 8.x; an unmarked feature is in every tier.
 - Bar tooltip: the feature name differs by product.
   - Scheduler: `eventTooltip : { template : ({ eventRecord }) => … }`.
   - Gantt: `taskTooltip : { template : ({ taskRecord, startClockHtml, endClockHtml }) => … }`. Gantt
-    has no `eventTooltip`; on 8.x the unknown key throws `Invalid type name` (on 7.x it was
-    silently ignored).
+    has no `eventTooltip`; on 8.x the unknown key throws `Invalid type name`.
   - Calendar: `eventTooltip` with `renderer` / `titleRenderer`.
 - End dates are exclusive: with 24-hour working days, a task that finishes Friday has `endDate`
   at Saturday 00:00. With an 08:00–17:00 calendar it ends Friday 17:00, so subtracting a day would

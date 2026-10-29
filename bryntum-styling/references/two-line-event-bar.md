@@ -5,7 +5,7 @@ A header row with start time + icon, and a bold name below. `stickyEvents: false
 ```js
 const scheduler = new Scheduler({
     features : {
-        stickyEvents : false   // lets event content stretch to fill the bar (Business feature; on 8.x Community it is ignored)
+        stickyEvents : false   // lets event content stretch to fill the bar (Business feature; ignored on Community)
     },
 
     eventRenderer({ eventRecord, renderData }) {
@@ -33,7 +33,7 @@ const scheduler = new Scheduler({
 ```
 
 ```css
-.b-sch-event-wrap .b-sch-event-content {   /* not .b-scheduler: a 7.x Scheduler Pro root lacks that class */
+.b-sch-event-wrap .b-sch-event-content {
     flex-direction               : column;
     align-items                  : stretch;
     justify-content              : center;

@@ -13,9 +13,15 @@ metadata:
 
 # Bryntum for Ext JS developers
 
+## Version check — do this first
+
+Detect the version as the `bryntum` skill's Version check says (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/SKILL.md). Every code block in this file is 8.0 code. 7.x → also load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-from-extjs/references/v7.md).
+
+---
+
 Bryntum used to ship Ext Scheduler (`Sch.panel.SchedulerGrid`) and Ext Gantt
 (`Gnt.panel.Gantt`) as Ext JS add-ons. Those products are discontinued. Today's Scheduler
-(on 8.x its Enterprise tier replaces Scheduler Pro), Gantt, Grid, Calendar and TaskBoard are standalone ES modules with no Ext JS
+(its Enterprise tier is the former Scheduler Pro), Gantt, Grid, Calendar and TaskBoard are standalone ES modules with no Ext JS
 dependency and no shared code, so answers and forum threads under `Sch.*` / `Gnt.*` don't apply.
 
 `Ext.create` rarely leaks in by accident. The real risk is the shared vocabulary: both
@@ -43,7 +49,7 @@ queries, store, model, tree nodes, config names, dialogs, helpers, selection) is
 | button `handler` | `onClick` | Any `onXxx` config becomes a listener for `xxx`. `onClick : 'up.onSave'` calls `onSave` on an owning widget, like a ViewController method name |
 | positional `renderer(value, metaData, record, …)` | `renderer : ({ record, value, column, row, cellElement }) => …` | One object argument |
 | `node.insertChild(index, child)` | `node.insertChild(child, before)` | Arguments reversed, and the second is the sibling record to insert before, not an index |
-| `grid.getView().refresh()` | `grid.refresh()` on 8.x; `grid.refreshRows()` on 7.x | 7.x Grid has no `refresh()` (Calendar, TaskBoard, Scheduler and Gantt do); 8.0 adds it |
+| `grid.getView().refresh()` | `grid.refresh()` | There is no `getView()`; the grid is its own view |
 
 Also watch:
 

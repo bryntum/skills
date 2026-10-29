@@ -10,6 +10,12 @@ metadata:
   tags: bryntum, editor, eventedit, taskedit, popup, scheduler, gantt
 ---
 
+## Version check — do this first
+
+Detect the version as the `bryntum` skill's Version check says (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/SKILL.md). Every code block in this file is 8.0 code. 7.x → also load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-editor/references/v7.md).
+
+---
+
 ## Keep the built-in editor
 
 **Default to Bryntum's built-in editor.** It already handles create/edit/delete, validation, and writes straight back to the stores. Do NOT build a custom dialog (a React/MUI modal, a framework dialog, hand-rolled HTML) unless the user explicitly asks for one.
@@ -20,12 +26,14 @@ To match a design-system host app (e.g. Material UI), switch the Bryntum **theme
 
 ## Which feature owns the editor
 
+8.x only. On 7.x, `references/v7.md` replaces this section.
+
 | Product | Editor feature |
 |---|---|
 | Scheduler Community, Business | `eventEdit` |
 | Scheduler Enterprise (the former Scheduler Pro) | `taskEdit` — on by default, `eventEdit` off |
 | Gantt Business, Enterprise | `taskEdit` |
-| Gantt Community | `basicTaskEdit` — on 8.x; ships at every Gantt tier, on by default only on Community; flat `items` like `eventEdit`, no tabs |
+| Gantt Community | `basicTaskEdit` — ships at every Gantt tier, on by default only on Community; flat `items` like `eventEdit`, no tabs |
 | Task Board | `taskEdit` |
 | Calendar | `eventEdit` |
 
@@ -37,12 +45,12 @@ On 8.x the tier picks the feature: configuring an editor the tier lacks (e.g. `t
 
 Remove fields you don't want or add your own through the feature's `items`. Use **object notation** (not arrays) for built-in items — `name` binds a field to a data field.
 
-**Built-in item refs differ by product** — a wrong ref is silently ignored (the field stays visible):
+**Built-in item refs differ by product** — a wrong ref is silently ignored (the field stays visible). On 7.x, `references/v7.md` replaces this table:
 
 | Product | Feature | Built-in field refs (General tab / editor) |
 |---|---|---|
 | Gantt (Business, Enterprise) | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
-| Gantt Community (8.x; available at every Gantt tier) | `basicTaskEdit` | `nameField`, `startDateField`, `endDateField`, `durationField` |
+| Gantt Community (available at every Gantt tier) | `basicTaskEdit` | `nameField`, `startDateField`, `endDateField`, `durationField` |
 | Scheduler Enterprise | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
 | Scheduler (Community, Business), Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
 

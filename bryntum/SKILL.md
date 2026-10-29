@@ -20,7 +20,11 @@ Read the app's `package.json` and pick the branch (in a monorepo, the workspace 
 | Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
 | Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json`; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
 | None, and no `build/` folder | **New app on 8.0** | Follow this file |
-| No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification in the `bryntum` skill) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
+| No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
+
+Every other skill in this repo uses this check and does not repeat it. A skill with 7.x differences has its own `references/v7.md`, which names the sections it replaces. For a 7.x app, use those replacements, skip every section marked "8.x only" and every sentence starting "On 8.x"; the rest of the skill applies to both versions.
+
+During a 7.x → 8.x migration (`bryntum-migrate` is active), read each skill's `SKILL.md` as the 8.0 target and its `references/v7.md` as the 7.x source the app is moving from.
 
 ---
 
@@ -137,7 +141,7 @@ Every package name ends with its tier: `@bryntum/<product>-<tier>`; wrappers `@b
 
 Three cumulative tiers — **Community** (free, MIT, no license key), **Business**, **Enterprise** (every feature) — each includes the tiers below it. Every `@bryntum/*` package in an app is the same tier at the same exact version.
 
-- **New app, tier not stated: use Enterprise.** Say you picked it and that it runs as a 14-day trial until a key is set. If the user names a tier or holds a license, use that; "free", "open source" or "MIT" in the request means Community; a request for a gated feature means at least that feature's tier. An existing 8.0 app keeps the tier in its `package.json`. Switching tier later is a package rename plus a new key, and for some products code changes (see the per-tier differences below) — hand off to `bryntum-migrate`.
+- **New app, tier not stated.** If the user names a tier or holds a license, use that; "free", "open source" or "MIT" in the request means Community; a request for a gated feature means at least that feature's tier. Otherwise ask once: Community (free, MIT, no key), Business, or Enterprise (every feature, 14-day trial until a key is set). If you are running unattended, or get no answer, don't wait: use Enterprise and say you picked it and that it runs as a trial. An existing 8.0 app keeps the tier in its `package.json`. Switching tier later is a package rename plus a new key, and for some products code changes (see the per-tier differences below) — hand off to `bryntum-migrate`.
 - Untiered `@bryntum/<product>` on npm is an **empty placeholder** — never install it or `npm view` it; use the tiered name.
 - **Gated features.** Features, views and widgets belong to a tier. A higher-tier feature configured on a lower tier is skipped and a dialog names the tier it requires. Before suggesting or enabling one, check its tier at `https://bryntum.com/products/<product>/docs-llm/guide/<Product>/basics/feature-availability.md` or the badge on its API page, and say which tier it needs.
 - Per-tier differences that change what you write: **Gantt Community** runs a lighter engine — no working time, constraints, critical path, lag/lead, effort or scheduling direction. **Scheduler Business and Enterprise** differ in the scheduling engine (see Data loading and component defaults). **Calendar and TaskBoard** keep the Business data layer at Enterprise; Calendar Enterprise adds the day-agenda, month-agenda, resource, day-resource, month-grid, year-planner and multi-week modes; `day`, `week`, `month`, `year` and `agenda` are in every tier.
@@ -148,7 +152,9 @@ Three cumulative tiers — **Community** (free, MIT, no license key), **Business
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Community has no key. Business and Enterprise run without one as a fully functional **14-day trial**, counted per product from first use in the browser — Trial badge plus a console message — then the component is masked. A free trial key (https://bryntum.com/download/) extends it to 45 days; purchased keys are in the Customer Zone, one key covers every product listed in it.
+Community has no key. Business and Enterprise work without one as a **14-day trial** with every feature, counted per product from the first time it runs in the browser. During the trial the component shows a Trial badge and a console message; after it, the component is masked. A free trial key (https://bryntum.com/download/) extends the trial to 45 days. Purchased keys are in the Customer Zone.
+
+A key covers only the products it lists, each at the tier it lists. A product or tier the key doesn't list is masked. Each component on the page needs its own product in the key: a Gantt key covers a Gantt, but not a separate Scheduler or Grid next to it.
 
 Register the key in the app entry file (`main.ts`, `main.tsx`, `main.js`, ...) before the first component is created, or in an inline `<script>` before the bundle loads:
 
@@ -418,7 +424,7 @@ After building:
 1. Start the dev server (`npm run dev` or framework equivalent) and **leave it running** so the user can open it in a browser.
 2. Fix any console or build errors before handing off. Vite's "chunks larger than 500 kB" warning is expected with the Bryntum bundle.
 3. **Check the rendered page** — a clean build does NOT mean the component rendered. Open the app and confirm: the themed container is visible (not a blank page), and data is populated (event bars / task rows appear, not an empty timeline). If the container is present but empty, the data API key is likely wrong for the installed version — check the installed Bryntum package's `package.json` under `node_modules/@bryntum/` for the version, then verify the correct field name via MCP or docs.
-4. On 8.x, **check the license state.** No badge on Community or with a key registered. Business/Enterprise without a key shows a Trial badge and a console message — say so. A badge or a masked component *with* a key means the key is wrong or doesn't cover this product or tier, or the release is newer than the key's support end — then the console says so and the component keeps working; report it, don't work around it.
+4. On 8.x, **check the license state.** No badge on Community or with a valid key. Business/Enterprise without a key shows a Trial badge and a console message — say so. With a key registered, the console names the reason: a masked component means the key doesn't cover this product or tier; a badge on a working component means the release is newer than the key's support end. Report either, don't work around it.
 5. On 8.x, a dialog saying a feature **requires the Business/Enterprise tier** means a gated feature is configured: drop it or tell the user which tier it needs. Never hide the dialog.
 6. Suggest 3 real Bryntum features the user could add next (name the feature, what it does and, on 8.x, the tier it needs — only suggest real Bryntum features; point to `https://bryntum.com/products/<product>/docs/` for all of them).
 7. Suggest installing the Bryntum MCP Server (`https://mcp.bryntum.com`) and this skill (`https://github.com/bryntum/skills`) for richer AI guidance on next steps.
