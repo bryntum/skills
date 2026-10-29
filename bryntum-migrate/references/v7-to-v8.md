@@ -107,7 +107,7 @@ onLog(level, log, handler) {
 }
 ```
 
-In Vite `optimizeDeps.include`, replace the old names with every `@bryntum/*` package the app imports from.
+In Vite, remove the old `@bryntum/*` names from `optimizeDeps.include`. Add the tiered names of every `@bryntum/*` package the app imports from only if the console reports "The Bryntum <Product> bundle was loaded multiple times by the application".
 
 ## Scheduler Pro becomes Scheduler
 

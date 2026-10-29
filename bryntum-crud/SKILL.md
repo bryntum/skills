@@ -68,7 +68,7 @@ When adding a Bryntum component to an app that has **no API**, do NOT reach for 
 const data = await fetch('/data.json').then(r => r.json());
 ```
 
-This gets a working, populated component on screen. If the user actually needs edits to persist across reloads, that requires a backend — wire the project transport (`loadUrl`/`syncUrl`) as above; don't substitute client-side storage.
+This gets a working, populated component on screen. If the user actually needs edits to persist across reloads, that requires a backend — wire `loadUrl`/`syncUrl` as shown above; don't substitute client-side storage.
 
 ### Phantom IDs
 

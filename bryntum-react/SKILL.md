@@ -88,7 +88,7 @@ createRoot(document.getElementById('root')!).render(
 
 ### Next.js
 
-Bryntum does not support server-side rendering: render the wrapper client-side only.
+Bryntum does not support server-side rendering: render the wrapper client-side only, from a component loaded with `dynamic(() => import('../components/Gantt'), { ssr : false })` (as the Next.js examples do).
 
 ### Gantt and Scheduler Enterprise: project data
 
@@ -130,13 +130,13 @@ bryntum.licenseKey = 'your-license-key';
 createRoot(document.getElementById('root')!).render(<App />);
 ```
 
-**Next.js App Router:** there is no single client entry file. Set the key in the `"use client"` component that renders the Bryntum wrapper, after the wrapper import. A server module such as `app/layout.tsx` fails with `bryntum is not defined`.
+**Next.js App Router:** there is no single client entry file. Set the key in the `"use client"` component that renders the Bryntum wrapper and is loaded with `ssr : false` (see Next.js above), after the wrapper import. A server module such as `app/layout.tsx` fails with `bryntum is not defined`.
 
 ### Vite
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Vite: see the `bryntum` skill; the names to add only on the loaded-multiple-times error are `'@bryntum/gantt-enterprise'` and `'@bryntum/gantt-react-enterprise'`.
+Vite: see the `bryntum` skill. On the loaded-multiple-times error, add every `@bryntum/*` package the app imports from, e.g. `'@bryntum/gantt-enterprise'`, `'@bryntum/gantt-react-enterprise'` and, if used, `'@bryntum/core-react-enterprise'`.
 
 ### Sizing
 
