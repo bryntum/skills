@@ -15,7 +15,7 @@ metadata:
   tags: bryntum, migrate, upgrade, update, changelog, breaking-changes, codemod, versions, schedulerpro, tier
 ---
 
-Load the `bryntum` skill and the app's framework skill alongside this one (fallback: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/<skill>/SKILL.md`). They are version-aware for 7.x and 8.x, so load them normally. A 7.x → 8.x app detects as 7.x in those skills: their `SKILL.md` body is the 8.0 target, their `references/v7.md` the 7.x source; `v7-to-v8.md` adds the migration-specific traps.
+Load the `bryntum` skill and the app's framework skill alongside this one (fallback: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/<skill>/SKILL.md`). They are version-aware for 7.x and 8.x, so load them normally. A 7.x → 8.x app detects as 7.x in those skills: their `SKILL.md` body is the 8.0 target, their `references/v7.md` the 7.x source; `v7-to-v8.md` adds the migration-specific traps. For a target below 8.0 (6.x → 7.x, 7.x → 7.y) the target is their `references/v7.md`, not the 8.0 code in the `SKILL.md` body.
 
 For API lookups use `mcp__bryntum__search_bryntum_docs` with the **target** `version`. Without the MCP, read `<docs host>/products/<product>/docs-llm/api/<Product>/<path>/<Class>.md` (e.g. `.../docs-llm/api/Core/helper/TimeZoneHelper.md`; `docs-llm/llms.txt` lists them all), or grep the packed target package.
 

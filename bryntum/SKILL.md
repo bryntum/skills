@@ -17,8 +17,8 @@ Read the app's `package.json` and pick the branch (in a monorepo, the workspace 
 
 | `@bryntum/*` dependencies | Version | Do |
 |---|---|---|
-| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
-| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json`; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
+| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it, other than `@bryntum/demo-resources`, are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
+| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json` (`<product>-thin` for a thin app), or from the lockfile when nothing is installed; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
 | None, and no `build/` folder | **New app on 8.0** | Follow this file |
 | No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification in the `bryntum` skill) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
 
@@ -135,7 +135,7 @@ Every package name ends with its tier: `@bryntum/<product>-<tier>`; wrappers `@b
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Three cumulative tiers — **Community** (free, MIT, no license key), **Business**, **Enterprise** (every feature) — each includes the tiers below it. Every `@bryntum/*` package in an app is the same tier at the same exact version.
+Three cumulative tiers — **Community** (free, MIT, no license key), **Business**, **Enterprise** (every feature) — each includes the tiers below it. Every `@bryntum/*` package in an app is the same tier at the same exact version, with two exceptions: `@bryntum/demo-resources` has no tier, and Chart ships only as `@bryntum/chart-enterprise`.
 
 - **New app, tier not stated: use Enterprise.** Say you picked it and that it runs as a 14-day trial until a key is set. If the user names a tier or holds a license, use that; "free", "open source" or "MIT" in the request means Community; a request for a gated feature means at least that feature's tier. An existing 8.0 app keeps the tier in its `package.json`. Switching tier later is a package rename plus a new key, and for some products code changes (see the per-tier differences below) — hand off to `bryntum-migrate`.
 - Untiered `@bryntum/<product>` on npm is an **empty placeholder** — never install it or `npm view` it; use the tiered name.
@@ -200,7 +200,7 @@ import { Column } from '@bryntum/grid-enterprise';
 
 Wrappers follow suit: the product component from the product wrapper, Core widgets from the Core wrapper — React `import { BryntumButton } from '@bryntum/core-react-enterprise'`; Angular `BryntumCoreModule` from `@bryntum/core-angular-enterprise` next to `BryntumGanttModule`. The framework skills show each pattern.
 
-The same goes for features: a feature of another product registers only when that product's package is loaded. It is installed as a dependency, but the component fails with `Invalid type name` until you add `import '@bryntum/grid-<tier>';` — for example Grid's `cellTooltip` or `quickFind` in a Scheduler, or Scheduler's `timeRanges` in a Gantt.
+The same goes for features: a feature of another product registers only when that product's package is loaded. It is installed as a dependency, but the component fails with `Invalid type name` until you import that product's package — for example `import '@bryntum/grid-<tier>';` for Grid's `cellTooltip` or `quickFind` in a Scheduler, or `import '@bryntum/scheduler-<tier>';` for Scheduler's `timeRanges` in a Gantt.
 
 ---
 
@@ -208,7 +208,7 @@ The same goes for features: a feature of another product registers only when tha
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Leave `optimizeDeps` alone — 8.0 packages don't need it, and ignore a quick start's advice to pre-fill `optimizeDeps`. Add them to `optimizeDeps.include` only if the console reports "The Bryntum <Product> bundle was loaded multiple times by the application". Rollup/Vite may warn `CIRCULAR_DEPENDENCY` on the Bryntum ES module sources — expected; skip those in an `onLog` filter if the build treats warnings as errors.
+Leave `optimizeDeps` alone — 8.0 packages don't need it, and ignore a quick start's advice to pre-fill `optimizeDeps`. Add them to `optimizeDeps.include` only if the console reports "The Bryntum <Product> bundle was loaded multiple times by the application": list the tiered name of every `@bryntum/*` package the app imports from, wrappers included, and merge them into an existing `optimizeDeps.include` rather than overwriting `optimizeDeps`. Rollup/Vite may warn `CIRCULAR_DEPENDENCY` on the Bryntum ES module sources — expected; skip those in an `onLog` filter if the build treats warnings as errors.
 
 ---
 

@@ -16,8 +16,8 @@ Read the app's `package.json` and pick the branch (in a monorepo, the workspace 
 
 | `@bryntum/*` dependencies | Version | Do |
 |---|---|---|
-| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
-| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-react/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json`; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
+| Any tiered name: `@bryntum/<product>-community`, `-business` or `-enterprise` (untiered names next to it, other than `@bryntum/demo-resources`, are migration leftovers: finish with `bryntum-migrate`) | **8.0** | Follow this file |
+| Only untiered names: `@bryntum/<product>`, a wrapper without a tier suffix, `-trial`, `-thin`, `-lib` or `@bryntum/schedulerpro` (ignore `@bryntum/demo-resources`) | **7.x or older** | Load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-react/references/v7.md). Read the installed version from `node_modules/@bryntum/<product>/package.json` (`<product>-thin` for a thin app), or from the lockfile when nothing is installed; below 7.0, say this skill covers 7.x and 8.x and offer `bryntum-migrate`. Don't upgrade unless asked — that is `bryntum-migrate` |
 | None, and no `build/` folder | **New app on 8.0** | Follow this file |
 | No `@bryntum/*` dependency but a `build/` folder (distribution archive, see Workspace classification in the `bryntum` skill) | **from `build/package.json`** | `version` 8.x: follow this file. 7.x: load `references/v7.md` |
 
@@ -95,7 +95,7 @@ createRoot(document.getElementById('root')!).render(
 
 ### Next.js
 
-Bryntum does not support server-side rendering: render the wrapper client-side only.
+Bryntum does not support server-side rendering: render the wrapper client-side only, from a component loaded with `dynamic(() => import('../components/Gantt'), { ssr : false })` (as the Next.js examples do).
 
 ### Gantt and Scheduler Enterprise: project data
 
@@ -137,13 +137,13 @@ bryntum.licenseKey = 'your-license-key';
 createRoot(document.getElementById('root')!).render(<App />);
 ```
 
-**Next.js App Router:** there is no single client entry file. Set the key in the `"use client"` component that renders the Bryntum wrapper, after the wrapper import. A server module such as `app/layout.tsx` fails with `bryntum is not defined`.
+**Next.js App Router:** there is no single client entry file. Set the key in the `"use client"` component that renders the Bryntum wrapper and is loaded with `ssr : false` (see Next.js above), after the wrapper import. A server module such as `app/layout.tsx` fails with `bryntum is not defined`.
 
 ### Vite
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Vite: see the `bryntum` skill; the names to add only on the loaded-multiple-times error are `'@bryntum/gantt-enterprise'` and `'@bryntum/gantt-react-enterprise'`.
+Vite: see the `bryntum` skill. On the loaded-multiple-times error, add every `@bryntum/*` package the app imports from, e.g. `'@bryntum/gantt-enterprise'`, `'@bryntum/gantt-react-enterprise'` and, if used, `'@bryntum/core-react-enterprise'`.
 
 ### Sizing
 
