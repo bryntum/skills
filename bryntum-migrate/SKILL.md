@@ -27,7 +27,7 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 |------|------|
 | `sources.md` | Gathering material: the migration index, fallback docs URLs, sibling products, what to read closely |
 | `v6-to-v7.md` | Range crosses 7.0.0: kebab-case CSS, new themes, FontAwesome, Button colours, moved classes, `*Data` props, the CSS codemod |
-| `v7-to-v8.md` | Range crosses 8.0.0: tier package names, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
+| `v7-to-v8.md` | Range crosses 8.0.0: tier package names, registry and license key, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
 | `plan-template.md` | Writing the plan file |
 | `worked-example.md` | A real Gantt 6.0.3 → 7.2.1 hop, to calibrate scope |
 
@@ -36,7 +36,7 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 - **All `@bryntum/*` product and wrapper packages must be on the same exact version.** A mismatch throws `CSS version X doesn't match bundle version Y` at runtime; one that already exists is the first plan item. 7.x `@bryntum/*-lib` helpers (gone in 8.0) have their own numbers and come in as dependencies. `@bryntum/demo-resources` follows the product version from 7.0.0, so bump it too.
 - **Take the installed version from `node_modules/@bryntum/<pkg>/package.json`** (or the lockfile), not the semver range in `package.json`. For zip installs, read `build/package.json`.
 - **Breaking changes arrive through the products the app inherits from.** A Gantt app breaks on Grid and Scheduler changes too, and Core/Chart changes appear in their own changelogs (and, from 8.0.0, a Core upgrade guide). Read every sibling's material, not just the top-level product's.
-- **8.0 renames every package** (`@bryntum/<product>-<tier>`). The upgrade guides say so, but other docs and READMEs can still show 7.x names. Take names and paths from `v7-to-v8.md`, the upgrade guide and the packed target.
+- **8.0 renames every package** (`@bryntum/<product>-<tier>`). The v7 to v8 migration guide says so, but other docs and READMEs can still show 7.x names. Take names and paths from `v7-to-v8.md`, the migration guide and the packed target.
 - **A green build doesn't mean the migration is done.** Bryntum deprecations only show at runtime, in the browser console, and some never log at all (Later.js schedule parsing, deprecated in 7.3.0, runs silently in 7.3.7; `TimeZoneHelper` and `smoothZoom`, deprecated in 8.0.0, don't log either). List the deprecations named in the guides and changelogs yourself.
 - **Custom CSS can stop matching without being renamed.** The rename tables only cover class renames, not classes that moved to another element. Check custom selectors against the running app (see `v6-to-v7.md`).
 

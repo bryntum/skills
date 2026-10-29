@@ -47,7 +47,7 @@ Things that aren't obvious from the schema:
 - `tools.migrate6to7` and `tools.selectors` are present only when the files exist.
 - Relative links inside a guide: `(#Gantt/model/ProjectModel#config-x)` → `docsApiBaseUrl + "Gantt/model/ProjectModel#config-x"`. A guide link `(#<Product>/guides/<path>.md)` lives under the **linked** product's host with `guides/` dropped: `<docs host>/products/grid/docs-llm/guide/Grid/migration/migrate-to-new-css.md`.
 
-Other docs-llm pages that answer questions the guides don't: `docs-llm/api/<Product>/<path>/<Class>.md` (API docs, incl. `@deprecated`), `docs-llm/guide/<Product>/data/tiers.md` (8.x tiers), `docs-llm/guide/<Product>/integration/<framework>/guide.md`, and `docs-llm/llms.txt` (the full list).
+Other docs-llm pages that answer questions the guides don't: `docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md` (8.0 packages, registry, imports, CSS and license key; not in the index), `docs-llm/api/<Product>/<path>/<Class>.md` (API docs, incl. `@deprecated`), `docs-llm/guide/<Product>/data/tiers.md` (8.x tiers), `docs-llm/guide/<Product>/integration/<framework>/guide.md`, and `docs-llm/llms.txt` (the full list).
 
 ## Fallback: prerendered docs
 
@@ -60,6 +60,7 @@ The client-rendered guide pages (`/docs/guide/...`) return an empty HTML shell, 
 | What's new | `/docs/ssr/guide/<Product>/whats-new/<version>.html` |
 | All changelogs (one large page) | `/docs/ssr/guide/<Product>/changelog.html` |
 | v7 CSS migration guide | `/docs-llm/guide/<Product>/migration/migrate-to-new-css.md` |
+| v7 to v8 migration guide | `/docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md` |
 | Zip install | `docs/` + `changelog.md` inside the extracted archive |
 
 The guide text ends where `<div class="right-pane">` begins. Cut at that string, not at a line (some pages are a single line): `perl -0777 -pe 's/<div class="right-pane">.*//s' page.html | pandoc -f html -t gfm --wrap=none`, or strip the tags. Split `changelog.html` on its `## <x.y.z>` and `### <SECTION>` headings; pandoc escapes `[BREAKING]` to `\[BREAKING\]`. Guides exist sparsely, so a 404 for a version is normal. Pre-7.0 rollups have `## <Product> v6.2.0` headings (Scheduler Pro: `Scheduler Pro v6.2.0`); slice them to `(installed, target]`.
@@ -82,6 +83,7 @@ Reading list: every release in `(installed, target]`, ascending; per release, ev
 | Priority | Read | Why |
 |----------|------|-----|
 | 1 | Every upgrade guide, fully | Breaking changes and the Old/New code live here |
+| 1 | The v7 to v8 migration guide, when the range crosses 8.0.0 | Packages, registry, imports, CSS and license key |
 | 1 | Every changelog flagged breaking or deprecated (✱ in the plan): its `[BREAKING]` / `[DEPRECATED]` entries | Some changes are only in the changelog |
 | 2 | `api-changes` + `styling-changes` (digests, or those sections) | Renames, removals, CSS class/theme changes not in a guide |
 | 3 | What's-new, headings first; a section only when it names something the app uses or works around | New features that replace a customer workaround |
