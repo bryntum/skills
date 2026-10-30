@@ -1,32 +1,34 @@
 # Bryntum Skills
 
-Agent skills for working with [Bryntum](https://bryntum.com) components — Scheduler, Scheduler Pro, Gantt, Calendar, Grid, and TaskBoard. Compatible with Claude Code and Codex.
+Agent skills for working with [Bryntum](https://bryntum.com) components — Scheduler (incl. the former Scheduler Pro), Gantt, Calendar, Grid, and TaskBoard. Compatible with Claude Code and Codex.
+
+The skills serve both 8.0 and 7.x apps from this one `main` branch: the core `bryntum` skill detects the version from the app's `package.json`, and every skill with 7.x differences points to that check and loads its own `references/v7.md` for a 7.x app. A `SKILL.md` describes 8.0. On 8.0 every package is `@bryntum/<product>-<tier>`; the Community tier needs no license key, while Business and Enterprise run as a 14-day trial until a key is set.
 
 ## Skills
 
 ### `bryntum` _(required)_
 
-The core skill. Covers workspace and product identification, package installation and CSS styling, docs lookup via MCP, data loading rules, product-specific component defaults, sizing, and output verification. Always install this one — the framework and CRUD skills build on it.
+The core skill. Covers the version check, workspace and product identification, tiers and the license key, package installation (`@bryntum/<product>-<tier>`) and CSS styling, docs lookup via MCP, data loading rules, product-specific component defaults, sizing, and output verification. Always install this one — the framework and CRUD skills build on it.
 
 ### `bryntum-react`
 
-React-specific patterns: `<BryntumXxx>` component, JSX config props, `useRef` for instance access, and StrictMode double-mount handling.
+React-specific patterns: `<BryntumXxx>` component from `@bryntum/<product>-react-<tier>`, Core widgets from `@bryntum/core-react-<tier>`, JSX config props, `useRef` for instance access, and StrictMode double-mount handling.
 
 ### `bryntum-angular`
 
-Angular-specific patterns: `<bryntum-xxx>` selector, `[prop]="..."` template binding, standalone component setup, and how to separate Bryntum config from Angular's own `app.config.ts`.
+Angular-specific patterns: `<bryntum-xxx>` selector, `[prop]="..."` template binding, standalone component setup with `BryntumCoreModule` next to the product module, and how to separate Bryntum config from Angular's own `app.config.ts`.
 
 ### `bryntum-vue`
 
-Vue 3-specific patterns: `<bryntum-xxx>` component, `v-bind` config spreading, and typing config objects as `BryntumXxxProps` for type-safe binding.
+Vue patterns (`@bryntum/<product>-vue-<tier>`, no `-vue-3`): `<bryntum-xxx>` component, `v-bind` config spreading, and typing config objects as `BryntumXxxProps` for type-safe binding.
 
 ### `bryntum-vanilla`
 
-Vanilla JS patterns: direct class import from `@bryntum/{product}` and instantiation with `appendTo`.
+Vanilla JS patterns: direct class import from `@bryntum/<product>-<tier>` (Core helpers from `@bryntum/core-<tier>`) and instantiation with `appendTo`.
 
 ### `bryntum-crud`
 
-Backend persistence patterns: CrudManager (Scheduler, Scheduler Pro, Gantt, Calendar, TaskBoard) and AjaxStore (Grid), phantom ID handling, partial sync, and common data gotchas.
+Backend persistence patterns: the project as CrudManager (`loadUrl`/`syncUrl`; Scheduler, Gantt, Calendar, TaskBoard) and AjaxStore (Grid), phantom ID handling, partial sync, and common data gotchas.
 
 ### `bryntum-drag-and-drop`
 
@@ -34,19 +36,19 @@ How to implement drag and drop from a grid onto a Scheduler or Gantt.
 
 ### `bryntum-theming`
 
-Theme catalog, choosing a theme to match the host app (Material / Fluent), and dynamic light/dark switching via `DomHelper.setTheme()`.
+Theme catalog (family sheets and light/dark variants), choosing a theme to match the host app (Material / Fluent), and light/dark switching via `color-scheme`, `DomHelper.colorScheme` and `DomHelper.setTheme()`.
 
 ### `bryntum-styling`
 
-Custom event bar styling for Scheduler / Scheduler Pro (`eventRenderer` layouts, event bar DOM structure, padding CSS variables, sticky content) and widget `rendition` variants for buttons, text fields and tooltips, plus the form look. Depth lives in `references/`.
+Custom event bar styling for Scheduler (`eventRenderer` layouts, event bar DOM structure, padding CSS variables, sticky content) and widget `rendition` variants for buttons, text fields and tooltips, plus the form look. Depth lives in `references/`.
 
 ### `bryntum-editor`
 
-Customizing the built-in event/task editor — adding/removing fields and tabs via `eventEdit`/`taskEdit`, and the supported way to swap in a fully custom dialog.
+Customizing the built-in event/task editor — which editor each tier uses (`eventEdit`, `taskEdit`, Gantt Community's `basicTaskEdit`), adding/removing fields and tabs, and the supported way to swap in a fully custom dialog.
 
 ### `bryntum-features`
 
-Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-13:00 as lunch", "grey out weekends", "a totals row", "export to Excel", "swimlanes", "critical path") mapped to the built-in feature that does it, plus the commonly invented APIs that don't exist.
+Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-13:00 as lunch", "grey out weekends", "a totals row", "export to Excel", "swimlanes", "critical path") mapped to the built-in feature that does it and the tier it needs, plus the commonly invented APIs that don't exist.
 
 ### `bryntum-from-extjs`
 
@@ -54,7 +56,7 @@ For codebases and habits coming from Ext JS. Maps Ext idioms to their Bryntum eq
 
 ### `bryntum-migrate`
 
-Upgrading an existing Bryntum app to a newer version: detects installed and target versions, gathers the ordered upgrade guides / what's-new / changelogs across the product and the products it inherits from, cross-references them with your code, writes a migration plan you approve, then applies it (including the v6 → v7 CSS codemod) and verifies the build.
+Upgrading an existing Bryntum app to a newer version: detects installed and target versions, gathers the ordered upgrade guides / what's-new / changelogs across the product and the products it inherits from, cross-references them with your code, writes a migration plan you approve, then applies it (including the v6 → v7 CSS codemod and the 7.x → 8.0 tier package rename) and verifies the build.
 
 ---
 

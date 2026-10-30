@@ -15,7 +15,7 @@ metadata:
   tags: bryntum, migrate, upgrade, update, changelog, breaking-changes, codemod, versions, schedulerpro, tier
 ---
 
-Load the `bryntum` skill and the app's framework skill alongside this one (fallback: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/<skill>/SKILL.md`). For an 8.x target, their package names and CSS paths are 7.x ones: `v7-to-v8.md` wins.
+Load the `bryntum` skill and the app's framework skill alongside this one (fallback: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/<skill>/SKILL.md`). They are version-aware for 7.x and 8.x; for a 7.x → 8.x migration follow the migration rule under Version check in the `bryntum` skill (`SKILL.md` is the target, `references/v7.md` the source) instead of their 7.x branch. `v7-to-v8.md` adds the migration-specific traps. For a target below 8.0 (6.x → 7.x, 7.x → 7.y) the target is their `references/v7.md`, not the 8.0 code in the `SKILL.md` body.
 
 For API lookups use `mcp__bryntum__search_bryntum_docs` with the **target** `version`. Without the MCP, read `<docs host>/products/<product>/docs-llm/api/<Product>/<path>/<Class>.md` (e.g. `.../docs-llm/api/Core/helper/TimeZoneHelper.md`; `docs-llm/llms.txt` lists them all), or grep the packed target package.
 
@@ -76,8 +76,8 @@ Don't edit anything until the user approves the plan, and that includes `package
 - Edit `package.json` first, then run one install with the project's package manager (`npm uninstall` + `npm install` reorders the file). Rename packages (`v7-to-v8.md`), set Bryntum product, wrapper and `demo-resources` dependencies to the exact target version with no `^` or `~`, and update `postinstall` scripts that copy Bryntum files, since the install runs them; clear every one of their old destinations first. For targets below 8.0, preserve trial aliases and let `*-lib` / `*-lib-trial` helpers use the versions required by the target product; if listed directly, update their pins to those required versions. For an 8.x target, remove obsolete direct helper dependencies. After installing, confirm product, wrapper and `demo-resources` versions match the target, any 7.x helpers match the product's dependencies, and no obsolete package names remain.
 - For a 6 → 7 hop, run the CSS codemod if it's available (the index's `tools.migrate6to7` or a zip's `migrate.js`), dry-run first. Otherwise handle the selector renames as plan actions (`v6-to-v7.md`).
 - Apply the plan's actions in order and tick each one off in the plan file. Skip items marked *not applicable*.
-- Move CSS and theme imports to the target layout: `v7-to-v8.md` for 8.x, the `bryntum` skill's CSS setup section for 7.x.
-- Restart any running dev server after installing, with the bundler's cache cleared (`vite --force`, delete `.angular/cache`), so it re-optimises `@bryntum/*`.
+- Move CSS and theme imports to the target layout: `v7-to-v8.md` for 8.x, the CSS setup section of the `bryntum` skill's `references/v7.md` for 7.x.
+- Restart any running dev server after installing, with the bundler's cache cleared (`vite --force`, delete `.angular/cache`), so it re-optimises `@bryntum/*`. On 8.x, remove the `@bryntum/*` entries from `optimizeDeps.include`; if the console then reports "The Bryntum <Product> bundle was loaded multiple times by the application", add the tiered names of every `@bryntum/*` package the app imports from.
 
 ### 5. Verify
 

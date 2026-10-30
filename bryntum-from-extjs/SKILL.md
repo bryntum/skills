@@ -13,9 +13,15 @@ metadata:
 
 # Bryntum for Ext JS developers
 
+## Version check — do this first
+
+Detect the version as the `bryntum` skill's Version check says (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum/SKILL.md). Every code block in this file is 8.0 code. 7.x → also load `references/v7.md` (raw: https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-from-extjs/references/v7.md).
+
+---
+
 Bryntum used to ship Ext Scheduler (`Sch.panel.SchedulerGrid`) and Ext Gantt
-(`Gnt.panel.Gantt`) as Ext JS add-ons. Those products are discontinued. Today's Scheduler,
-Scheduler Pro, Gantt, Grid, Calendar and TaskBoard are standalone ES modules with no Ext JS
+(`Gnt.panel.Gantt`) as Ext JS add-ons. Those products are discontinued. Today's Scheduler
+(its Enterprise tier is the former Scheduler Pro), Gantt, Grid, Calendar and TaskBoard are standalone ES modules with no Ext JS
 dependency and no shared code, so answers and forum threads under `Sch.*` / `Gnt.*` don't apply.
 
 `Ext.create` rarely leaks in by accident. The real risk is the shared vocabulary: both
@@ -23,7 +29,7 @@ libraries have a `Store` with `first`, a `Container` with `items`, a column `ren
 `type` that looks like `xtype`. Several near-misses fail silently or with a confusing error
 rather than "Ext is not defined".
 
-Verified against Bryntum 7.3.6 source. The full Ext → Bryntum lookup (construction, component
+Verified against Bryntum 7.3.6 and 8.0.0 source. The full Ext → Bryntum lookup (construction, component
 queries, store, model, tree nodes, config names, dialogs, helpers, selection) is in
 [references/api-map.md](references/api-map.md).
 
@@ -43,7 +49,7 @@ queries, store, model, tree nodes, config names, dialogs, helpers, selection) is
 | button `handler` | `onClick` | Any `onXxx` config becomes a listener for `xxx`. `onClick : 'up.onSave'` calls `onSave` on an owning widget, like a ViewController method name |
 | positional `renderer(value, metaData, record, …)` | `renderer : ({ record, value, column, row, cellElement }) => …` | One object argument |
 | `node.insertChild(index, child)` | `node.insertChild(child, before)` | Arguments reversed, and the second is the sibling record to insert before, not an index |
-| `grid.getView().refresh()` | `grid.refreshRows()` | Grid has no `refresh()`; Calendar, TaskBoard, Scheduler and Gantt do |
+| `grid.getView().refresh()` | `grid.refresh()` | There is no `getView()`; the grid is its own view |
 
 Also watch:
 
@@ -55,7 +61,7 @@ Also watch:
   cells; use `grid.selectedRecords.includes(record)`.
 - In a grouped store, `find(fn)` skips group headers and does find records inside collapsed
   groups. Those records aren't in `store.records` and have no row until the group is expanded
-  (`grid.features.group.toggleCollapse(record, false)`). Pass `true` as the second argument to
+  (`grid.features.group.toggleCollapse(record, false)`; on 8.x `group` is Business+). Pass `true` as the second argument to
   include rows hidden by a filter.
 - Assigning `store.data = arr` replaces records but keeps sorters, filters, groupers and collapsed
   groups, unlike a fresh Ext `loadData`. Call `clearSorters()`, `clearFilters()` and
@@ -65,7 +71,7 @@ Also watch:
 
 ## Things with no Ext JS counterpart
 
-- The `ProjectModel` and scheduling engine. In Scheduler Pro and Gantt a constraint solver
+- The `ProjectModel` and scheduling engine. In Scheduler Enterprise (the former Scheduler Pro) and Gantt a constraint solver
   recalculates dates from dependencies, calendars and constraints. Don't write `endDate` to move
   a task; set `startDate` and `duration`, or a constraint, and let the engine resolve.
 - `features : { … }` is much broader than Ext `plugins`; see `bryntum-features`.
