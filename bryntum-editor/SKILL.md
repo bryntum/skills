@@ -53,6 +53,7 @@ Remove fields you don't want or add your own through the feature's `items`. Use 
 | Gantt Community (available at every Gantt tier) | `basicTaskEdit` | `nameField`, `startDateField`, `endDateField`, `durationField` |
 | Scheduler Enterprise | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
 | Scheduler (Community, Business), Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
+| Task Board | `taskEdit` | `name`, `description`, `resources`, `color`, `column`, `swimlane` — **no `Field` suffix**; `resources` and `swimlane` show only when the board uses them. Community has only `name`, `description`, `column` |
 
 Custom items can use any key (it becomes the new item's `ref`; `name` binds it to the data field). Only keys that change or remove a built-in item must match its ref exactly.
 
