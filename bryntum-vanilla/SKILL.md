@@ -91,7 +91,7 @@ Several products on one page: the thin sheets instead — see the `bryntum` skil
 
 8.x only.
 
-Vite: see the `bryntum` skill — set `build.cssTarget` so the production build keeps the theme colors. The `vanilla` and `vanilla-ts` templates have no `vite.config`, so create one (`vite.config.js`, or `vite.config.ts` in a TypeScript app). The name to add only on the loaded-multiple-times error is the product package, e.g. `'@bryntum/gantt-enterprise'`.
+Vite: see the `bryntum` skill — set `build.cssTarget` so the production build keeps the theme colors. The `vanilla` and `vanilla-ts` templates have no `vite.config`, so create one (`vite.config.js`, or `vite.config.ts` in a TypeScript app).
 
 ### Sizing
 
