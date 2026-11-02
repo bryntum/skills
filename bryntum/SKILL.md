@@ -141,7 +141,9 @@ Every package name ends with its tier: `@bryntum/<product>-<tier>`; wrappers `@b
 
 Three cumulative tiers — **Community** (free, MIT, no license key), **Business**, **Enterprise** (every feature) — each includes the tiers below it. Every `@bryntum/*` package in an app is the same tier at the same exact version, with two exceptions: `@bryntum/demo-resources` has no tier, and Chart ships only as `@bryntum/chart-enterprise`.
 
-- **New app, tier not stated.** If the user names a tier or holds a license, use that; "free", "open source" or "MIT" in the request means Community; a request for a gated feature means at least that feature's tier. Otherwise ask once: Community (free, MIT, no key), Business, or Enterprise (every feature, 14-day trial until a key is set). If you are running unattended, or get no answer, don't wait: use Enterprise and say you picked it and that it runs as a trial. An existing 8.0 app keeps the tier in its `package.json`. Switching tier later is a package rename plus a new key, and for some products code changes (see the per-tier differences below) — hand off to `bryntum-migrate`.
+- **New app: the tier.** Use the tier the user names or holds a license for; "free", "open source" or "MIT" means Community. Otherwise use **Enterprise** (every feature, 14-day trial until a key is set), whatever features they ask for, and say you picked it and that it runs as a trial.
+- **A feature above the user's tier.** If the user chose a lower tier, check every feature you use against it (`feature-availability.md` or the API page's badge). Keep their tier: leave a feature it lacks out, never configure it anyway, and tell them which tier has it so they can decide to switch. Don't build a workaround that imitates it.
+- **Existing 8.0 app:** keeps the tier in its `package.json`. Switching tier later is a package rename plus a new key, and for some products code changes (see the per-tier differences below) — hand off to `bryntum-migrate`.
 - Untiered `@bryntum/<product>` on npm is an **empty placeholder** — never install it or `npm view` it; use the tiered name.
 - **Gated features.** Features, views and widgets belong to a tier. A higher-tier feature configured on a lower tier is skipped and a dialog names the tier it requires. Before suggesting or enabling one, check its tier at `https://bryntum.com/products/<product>/docs-llm/guide/<Product>/basics/feature-availability.md` or the badge on its API page, and say which tier it needs.
 - Per-tier differences that change what you write: **Gantt Community** runs a lighter engine — no working time, constraints, critical path, lag/lead, effort or scheduling direction. **Scheduler Business and Enterprise** differ in the scheduling engine (see Data loading and component defaults). **Calendar and TaskBoard** keep the Business data layer at Enterprise; Calendar Enterprise adds the day-agenda, month-agenda, resource, day-resource, month-grid, year-planner and multi-week modes; `day`, `week`, `month`, `year` and `agenda` are in every tier.
@@ -213,6 +215,17 @@ The same goes for features: a feature of another product registers only when tha
 ## Using with Vite
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
+
+**Set a CSS target in every Vite app.** The family themes (`svalbard.css` and the other suffix-less sheets) use CSS `light-dark()`. Vite's default CSS target predates it, so `npm run build` rewrites it into fallbacks that are invalid unless the page declares a `color-scheme`: the built app loses its theme colors (transparent event bars, black grid lines) while `npm run dev` still looks right. Add to `vite.config.ts` (or `.js`), merging into an existing `build`:
+
+```javascript
+export default defineConfig({
+    // ...
+    build : {
+        cssTarget : ['chrome123', 'edge123', 'firefox120', 'safari17.5']
+    }
+});
+```
 
 Leave `optimizeDeps` alone — 8.0 packages don't need it, and ignore a quick start's advice to pre-fill `optimizeDeps`. Add them to `optimizeDeps.include` only if the console reports "The Bryntum <Product> bundle was loaded multiple times by the application": list the tiered name of every `@bryntum/*` package the app imports from, wrappers included, and merge them into an existing `optimizeDeps.include` rather than overwriting `optimizeDeps`. Rollup/Vite may warn `CIRCULAR_DEPENDENCY` on the Bryntum ES module sources — expected; skip those in an `onLog` filter if the build treats warnings as errors.
 
@@ -423,7 +436,7 @@ This doesn't apply to migrations or when adding Bryntum to an existing app. Keep
 After building:
 1. Start the dev server (`npm run dev` or framework equivalent) and **leave it running** so the user can open it in a browser.
 2. Fix any console or build errors before handing off. Vite's "chunks larger than 500 kB" warning is expected with the Bryntum bundle.
-3. **Check the rendered page** — a clean build does NOT mean the component rendered. Open the app and confirm: the themed container is visible (not a blank page), and data is populated (event bars / task rows appear, not an empty timeline). If the container is present but empty, the data API key is likely wrong for the installed version — check the installed Bryntum package's `package.json` under `node_modules/@bryntum/` for the version, then verify the correct field name via MCP or docs.
+3. **Check the rendered page** — a clean build does NOT mean the component rendered. Open the app and confirm: the themed container is visible (not a blank page), and data is populated (event bars / task rows appear, not an empty timeline). Check the production build too (`npm run build`, then `npm run preview` for Vite): it can lose the theme colors while the dev server looks fine — see Using with Vite. If the container is present but empty, the data API key is likely wrong for the installed version — check the installed Bryntum package's `package.json` under `node_modules/@bryntum/` for the version, then verify the correct field name via MCP or docs.
 4. On 8.x, **check the license state.** No badge on Community or with a valid key. Business/Enterprise without a key shows a Trial badge and a console message — say so. With a key registered, the console names the reason: a masked component means the key doesn't cover this product or tier; a badge on a working component means the release is newer than the key's support end. Report either, don't work around it.
 5. On 8.x, a dialog saying a feature **requires the Business/Enterprise tier** means a gated feature is configured: drop it or tell the user which tier it needs. Never hide the dialog.
 6. Suggest 3 real Bryntum features the user could add next (name the feature, what it does and, on 8.x, the tier it needs — only suggest real Bryntum features; point to `https://bryntum.com/products/<product>/docs/` for all of them).
