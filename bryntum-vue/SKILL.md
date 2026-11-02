@@ -106,7 +106,7 @@ createApp(App).mount('#app');
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Vite: see the `bryntum` skill; the names to add only on the loaded-multiple-times error are `'@bryntum/gantt-enterprise'` and `'@bryntum/gantt-vue-enterprise'`.
+Vite: see the `bryntum` skill — set `build.cssTarget` so the production build keeps the theme colors. The names to add only on the loaded-multiple-times error are `'@bryntum/gantt-enterprise'` and `'@bryntum/gantt-vue-enterprise'`.
 
 ### Sizing
 

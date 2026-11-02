@@ -136,7 +136,7 @@ createRoot(document.getElementById('root')!).render(<App />);
 
 8.x only. On 7.x, `references/v7.md` replaces this section.
 
-Vite: see the `bryntum` skill. On the loaded-multiple-times error, add every `@bryntum/*` package the app imports from, e.g. `'@bryntum/gantt-enterprise'`, `'@bryntum/gantt-react-enterprise'` and, if used, `'@bryntum/core-react-enterprise'`.
+Vite: see the `bryntum` skill — set `build.cssTarget` so the production build keeps the theme colors. On the loaded-multiple-times error, add every `@bryntum/*` package the app imports from, e.g. `'@bryntum/gantt-enterprise'`, `'@bryntum/gantt-react-enterprise'` and, if used, `'@bryntum/core-react-enterprise'`.
 
 ### Sizing
 
