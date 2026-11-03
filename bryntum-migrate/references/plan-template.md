@@ -6,7 +6,7 @@ Write it to `./bryntum-migration-<from>-to-<to>.md` in the project root. Group a
 # Bryntum migration: <Product> <from> → <to>
 
 Product: <Product> (+ siblings: …) · Framework: <framework> · Package manager: <pm>
-Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise the tier their 7.x product moves to, `v7-to-v8.md`)
+Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise Enterprise; Business for a Scheduler app, not Scheduler Pro, `v7-to-v8.md`)
 Releases crossed: <n> (<list>) · Upgrade guides read: <n>
 Docs host: <docs host> · Source: index.json | prerendered docs (index 404)
 Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop and ask before planning further)

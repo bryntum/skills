@@ -37,10 +37,12 @@ have untiered placeholder packages without product code.
 `<product>` is `grid`, `scheduler`, `gantt`, `calendar`, `taskboard`, `core`, `chart` or `engine`. Chart has an
 `-enterprise` package only.
 
-**The tier: the one the user names or holds a licence for, otherwise the tier their 7.x product moves to.** With no
-tier named, existing customers move to **Enterprise**, except Scheduler (not Scheduler Pro), which moves to
-**Business**; Scheduler Pro moves to Enterprise. Use that tier whatever features the app uses: don't pick the lowest
-tier the app needs, since the tier is a licensing choice, not a feature fit. Check the registry has it
+**The tier: the one the user names, otherwise Enterprise, except Business for a Scheduler app.** Every 7.x licence
+moves to Enterprise, so install the **Enterprise** packages. The exception is an app on Scheduler (not Scheduler Pro):
+it migrates to the **Business** packages (`@bryntum/scheduler-business`, `@bryntum/scheduler-<framework>-business`),
+even with an Enterprise licence. A Scheduler Pro app migrates to Enterprise. Use that tier whatever features the app
+uses: don't pick the lowest tier the app needs, since the tier is a licensing choice, not a feature fit. Check the
+registry has it
 (`npm view @bryntum/<product>-<tier> version`), and in the plan and your final message say which tier you picked, that
 Business and Enterprise run as a 14-day trial until the licence key is set, and that the user can name another tier.
 
