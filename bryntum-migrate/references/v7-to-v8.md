@@ -37,14 +37,18 @@ have untiered placeholder packages without product code.
 `<product>` is `grid`, `scheduler`, `gantt`, `calendar`, `taskboard`, `core`, `chart` or `engine`. Chart has an
 `-enterprise` package only.
 
-**The tier is the customer's licence, so ask.** First check which tiers the customer's registry has
-(`npm view @bryntum/<product>-{community,business,enterprise} version`), then put the question under *Unsure* in the
-plan, with the lowest tier the app needs. For Scheduler Pro, only confirm Enterprise.
+**The tier: the one the user names or holds a licence for, otherwise the tier their 7.x product moves to.** With no
+tier named, existing customers move to **Enterprise**, except Scheduler (not Scheduler Pro), which moves to
+**Business**; Scheduler Pro moves to Enterprise. Use that tier whatever features the app uses: don't pick the lowest
+tier the app needs, since the tier is a licensing choice, not a feature fit. Check the registry has it
+(`npm view @bryntum/<product>-<tier> version`), and in the plan and your final message say which tier you picked, that
+Business and Enterprise run as a 14-day trial until the licence key is set, and that the user can name another tier.
 
-- Check what the app uses against the tier of each class in the packed target: `grep -rl "static tier = '" lib/`
-  lists the classes that need more than Community (for example Grid's `Group` feature is Business). A lower-tier
-  package doesn't contain higher-tier classes: an imported class fails the build, a feature enabled by config fails
-  at runtime (`Invalid type name`).
+- If the user names a lower tier, check what the app uses against it in the packed target:
+  `grep -rl "static tier = '" lib/` lists the classes that need more than Community (for example Grid's `Group`
+  feature is Business). A lower-tier package doesn't contain higher-tier classes: an imported class fails the build, a
+  feature enabled by config fails at runtime (`Invalid type name`). Keep their tier and tell them which features need
+  a higher one, so they can decide.
 - Read the product's `guides/data/tiers.md` (docs-llm) for what each tier adds. Feature tiers are in `static tier`
   (Calendar also has `CalendarFeature.featureTiers`), widget and config tiers only in `@tier` source comments.
 - **Calendar and TaskBoard keep the basic data layer at every tier**, as in 7.x: their models and project resolve to
