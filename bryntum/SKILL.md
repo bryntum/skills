@@ -189,7 +189,7 @@ npm install --save-exact @bryntum/gantt-react-enterprise@8.x.y    # React app
 npm install --save-exact @bryntum/gantt-enterprise@8.x.y          # vanilla JS
 ```
 
-- **`.npmrc` trap:** a 7.x `@bryntum:registry=https://npm.bryntum.com` line in `~/.npmrc` or the project makes the tier packages 404. Add an `.npmrc` next to `package.json` with `@bryntum:registry=https://registry.npmjs.org/` or delete the 7.x mapping, and drop any `npm:@bryntum/<product>-trial` alias.
+- **`.npmrc` trap:** a 7.x `@bryntum:registry=https://npm.bryntum.com` line in `~/.npmrc` or the project makes the tier packages 404. Add an `.npmrc` next to `package.json` with `@bryntum:registry=https://registry.npmjs.org/` (Yarn v2+: `npmScopes.bryntum.npmRegistryServer` in `.yarnrc.yml`; Yarn v1: `"@bryntum:registry"` in `.yarnrc`). Prefer this project override over deleting the 7.x mapping from `~/.npmrc` or the global config: other 7.x projects on the machine still need it. Delete the mapping only when every project moves to 8.0. Drop any `npm:@bryntum/<product>-trial` alias.
 - Declared because pnpm and Yarn PnP resolve declared dependencies only. A second tier or version installs a second Core and breaks themes, locales and shared state.
 
 ---

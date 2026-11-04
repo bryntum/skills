@@ -14,7 +14,12 @@ does not. These command-line overrides leave the customer's configuration unchan
 
 Include project and CI registry changes in the plan: override or remove the old Bryntum mapping in `.npmrc` or Yarn's
 `.yarnrc.yml` so the eventual install uses the selected target registry. Check inherited user configuration too; avoid
-changing shared user settings that other 7.x apps still need. Apply approved project and CI changes before installing.
+changing shared user settings that other 7.x apps still need. Prefer a project-level override (`.npmrc`:
+`@bryntum:registry=https://registry.npmjs.org/`; Yarn v2+ `.yarnrc.yml`: `npmScopes.bryntum.npmRegistryServer`;
+Yarn v1 `.yarnrc`: `"@bryntum:registry"`) and delete the old mapping only when every project moves to 8.0. Verify from
+the project folder with the project's own package manager: `npm config get @bryntum:registry` (npm, pnpm),
+`yarn config get npmScopes.bryntum.npmRegistryServer` (Yarn v2+) or `yarn config get @bryntum:registry` (Yarn v1); a
+Yarn project must not be judged by npm's output. Apply approved project and CI changes before installing.
 Read the full `docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md` guide linked from the 8.0.0 upgrade guide
 for registry migration and license-key setup.
 
