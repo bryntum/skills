@@ -14,7 +14,12 @@ does not. These command-line overrides leave the customer's configuration unchan
 
 Include project and CI registry changes in the plan: override or remove the old Bryntum mapping in `.npmrc` or Yarn's
 `.yarnrc.yml` so the eventual install uses the selected target registry. Check inherited user configuration too; avoid
-changing shared user settings that other 7.x apps still need. Apply approved project and CI changes before installing.
+changing shared user settings that other 7.x apps still need. Prefer a project-level override (`.npmrc`:
+`@bryntum:registry=https://registry.npmjs.org/`; Yarn v2+ `.yarnrc.yml`: `npmScopes.bryntum.npmRegistryServer`;
+Yarn v1 `.yarnrc`: `"@bryntum:registry"`) and delete the old mapping only when every project moves to 8.0. Verify from
+the project folder with the project's own package manager: `npm config get @bryntum:registry` (npm, pnpm),
+`yarn config get npmScopes.bryntum.npmRegistryServer` (Yarn v2+) or `yarn config get @bryntum:registry` (Yarn v1); a
+Yarn project must not be judged by npm's output. Apply approved project and CI changes before installing.
 Read the full `docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md` guide linked from the 8.0.0 upgrade guide
 for registry migration and license-key setup.
 
@@ -37,14 +42,20 @@ have untiered placeholder packages without product code.
 `<product>` is `grid`, `scheduler`, `gantt`, `calendar`, `taskboard`, `core`, `chart` or `engine`. Chart has an
 `-enterprise` package only.
 
-**The tier is the customer's licence, so ask.** First check which tiers the customer's registry has
-(`npm view @bryntum/<product>-{community,business,enterprise} version`), then put the question under *Unsure* in the
-plan, with the lowest tier the app needs. For Scheduler Pro, only confirm Enterprise.
+**The tier: the one the user names, otherwise Enterprise, except Business for a Scheduler app.** Every 7.x licence
+moves to Enterprise, so install the **Enterprise** packages. The exception is an app on Scheduler (not Scheduler Pro):
+it migrates to the **Business** packages (`@bryntum/scheduler-business`, `@bryntum/scheduler-<framework>-business`),
+even with an Enterprise licence. A Scheduler Pro app migrates to Enterprise. Use that tier whatever features the app
+uses: don't pick the lowest tier the app needs, since the tier is a licensing choice, not a feature fit. Check the
+registry has it
+(`npm view @bryntum/<product>-<tier> version`), and in the plan and your final message say which tier you picked, that
+Business and Enterprise run as a 14-day trial until the licence key is set, and that the user can name another tier.
 
-- Check what the app uses against the tier of each class in the packed target: `grep -rl "static tier = '" lib/`
-  lists the classes that need more than Community (for example Grid's `Group` feature is Business). A lower-tier
-  package doesn't contain higher-tier classes: an imported class fails the build, a feature enabled by config fails
-  at runtime (`Invalid type name`).
+- If the user names a lower tier, check what the app uses against it in the packed target:
+  `grep -rl "static tier = '" lib/` lists the classes that need more than Community (for example Grid's `Group`
+  feature is Business). A lower-tier package doesn't contain higher-tier classes: an imported class fails the build, a
+  feature enabled by config fails at runtime (`Invalid type name`). Keep their tier and tell them which features need
+  a higher one, so they can decide.
 - Read the product's `guides/data/tiers.md` (docs-llm) for what each tier adds. Feature tiers are in `static tier`
   (Calendar also has `CalendarFeature.featureTiers`), widget and config tiers only in `@tier` source comments.
 - **Calendar and TaskBoard keep the basic data layer at every tier**, as in 7.x: their models and project resolve to
@@ -107,7 +118,7 @@ onLog(level, log, handler) {
 }
 ```
 
-In Vite `optimizeDeps.include`, replace the old names with every `@bryntum/*` package the app imports from.
+In Vite, remove the old `@bryntum/*` names from `optimizeDeps.include`. Add the tiered names of every `@bryntum/*` package the app imports from only if the console reports "The Bryntum <Product> bundle was loaded multiple times by the application".
 
 ## Scheduler Pro becomes Scheduler
 

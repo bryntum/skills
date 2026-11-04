@@ -6,7 +6,7 @@ Write it to `./bryntum-migration-<from>-to-<to>.md` in the project root. Group a
 # Bryntum migration: <Product> <from> → <to>
 
 Product: <Product> (+ siblings: …) · Framework: <framework> · Package manager: <pm>
-Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the customer's licence)
+Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise Enterprise; Business for a Scheduler app, not Scheduler Pro, `v7-to-v8.md`)
 Releases crossed: <n> (<list>) · Upgrade guides read: <n>
 Docs host: <docs host> · Source: index.json | prerendered docs (index 404)
 Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop and ask before planning further)
@@ -57,6 +57,6 @@ Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop 
 - [ ] Manual: open the app, the console has no errors, no `Deprecation warning` and no `CSS issues detected`
 
 ## Unknowns for the user
-- Licence tier (8.x), theme choice (`v6-to-v7.md` for 6 → 7), anything the guides leave to the customer
+- Licence tier (8.x): the tier picked and that another can be named, theme choice (`v6-to-v7.md` for 6 → 7), anything the guides leave to the customer
 - …
 ````

@@ -1,17 +1,23 @@
-# Timeline features (Scheduler, Scheduler Pro, Gantt)
+# Timeline features (Scheduler, Gantt)
+
+Tier marks are 8.x; an unmarked feature is in every tier. On 8.x a Gantt loads `nonWorkingTime`,
+`percentBar`, `labels` and `dependencies` itself; `timeRanges`, `resourceTimeRanges`,
+`timeSelection`, `timeSpanHighlight` and `dependencyEdit` register only after
+`import '@bryntum/scheduler-<tier>';` — without it the Gantt fails with `Invalid type name`.
 
 ## Time bands and non-working time
 
-| The user asks for | Use | Snippet |
-|---|---|---|
-| A band across the whole timeline | `timeRanges` + `project.timeRanges` | `features : { timeRanges : true }`, `project : { timeRanges : [{ startDate, endDate, name : 'Lunch', cls : 'lunch' }] }` |
-| A band for one resource | `resourceTimeRanges` + `project.resourceTimeRanges` | `project : { resourceTimeRanges : [{ resourceId : 'r1', startDate, endDate, name : 'PTO' }] }` |
-| A "now" line | `timeRanges` | `features : { timeRanges : { showCurrentTimeLine : true } }` |
-| Grey the time axis (weekends, off-hours) | `nonWorkingTime` | `features : { nonWorkingTime : true }` |
-| Grey the non-working part inside an event bar | `eventNonWorkingTime` (Scheduler) | `features : { eventNonWorkingTime : true }` |
-| Grey per resource row, each with its own calendar | `resourceNonWorkingTime` (Scheduler Pro) | `nonWorkingTime` only knows the project calendar |
-| Gantt: grey inside task rows or bars, on top of the time axis | `taskNonWorkingTime` | `features : { taskNonWorkingTime : { mode : 'row' } }` (or `'bar'`, `'both'`). Gantt weekends on the axis are still `nonWorkingTime` |
-| Vertical tick lines | `columnLines` (already on for Scheduler / Gantt) | Draws from ViewPreset tick levels only — it cannot draw a line from a time range |
+| The user asks for | Use | Tier | Snippet |
+|---|---|---|---|
+| A band across the whole timeline | `timeRanges` + `project.timeRanges` | Business | `features : { timeRanges : true }`, `project : { timeRanges : [{ startDate, endDate, name : 'Lunch', cls : 'lunch' }] }` |
+| A band for one resource | `resourceTimeRanges` + `project.resourceTimeRanges` | Business | `project : { resourceTimeRanges : [{ resourceId : 'r1', startDate, endDate, name : 'PTO' }] }` |
+| A "now" line | `timeRanges` | Business | `features : { timeRanges : { showCurrentTimeLine : true } }` |
+| Grey the time axis (weekends, off-hours) | `nonWorkingTime` (on by default) | Business | `features : { nonWorkingTime : true }` |
+| Grey the non-working part inside an event bar | `eventNonWorkingTime` (Scheduler) | Enterprise | `features : { eventNonWorkingTime : true }` |
+| Grey per resource row, each with its own calendar | `resourceNonWorkingTime` (Scheduler) | Enterprise | `nonWorkingTime` only knows the project calendar |
+| Gantt: grey inside task rows or bars, on top of the time axis | `taskNonWorkingTime` | Business | `features : { taskNonWorkingTime : { mode : 'row' } }` (or `'bar'`, `'both'`). Gantt weekends on the axis are still `nonWorkingTime` |
+| Vertical tick lines | `columnLines` (already on for Scheduler / Gantt) | | Draws from ViewPreset tick levels only — it cannot draw a line from a time range |
+| Text beside, above or below a bar | `labels` | Business | `features : { labels : { left : { field : 'name' } } }` (also `top`, `right`, `bottom`) |
 
 A time range is a `TimeSpan`: `startDate` plus `endDate` or `duration` + `durationUnit`, and
 optional `name`, `cls`, `iconCls`, `style`. `ResourceTimeRangeModel` adds `resourceId` and
@@ -21,11 +27,12 @@ Store properties are singular — `project.timeRangeStore`, `project.resourceTim
 inline data configs are plural (`timeRanges`, `resourceTimeRanges`); `timeRangesData` /
 `resourceTimeRangesData` are deprecated as of 6.3.0.
 
-## Working hours (Scheduler Pro / Gantt)
+## Working hours (Scheduler Enterprise / Gantt Business and Enterprise)
 
-Non-working time in Pro and Gantt comes from the project calendar, which is also what makes the
-engine skip weekends when scheduling. Grey boxes drawn on top look the same but don't affect
-scheduling.
+Non-working time in Scheduler Enterprise and Gantt comes from the project calendar, which is also
+what makes the engine skip weekends when scheduling. Grey boxes drawn on top look the same but
+don't affect scheduling. Gantt Community runs the lighter engine: calendars don't affect
+scheduling there and `nonWorkingTime` (Business) is not available.
 
 ```javascript
 const project = new ProjectModel({
@@ -45,14 +52,14 @@ Use `calendars`, not the deprecated `calendarsData`.
 
 ## Highlighting and selecting time
 
-- `timeSpanHighlight` (Pro / Gantt): `scheduler.features.timeSpanHighlight.highlightTimeSpan({ startDate, endDate })`,
+- `timeSpanHighlight` (Enterprise): `scheduler.features.timeSpanHighlight.highlightTimeSpan({ startDate, endDate })`,
   cleared with `unhighlightTimeSpans()`. Better than adding and removing a time range record.
-- `timeSelection`: lets the user drag-select a span in the header.
+- `timeSelection` (Business): lets the user drag-select a span in the header.
 
 ## Dependencies
 
-`dependencies` is off by default in Scheduler and on in Scheduler Pro and Gantt. Add
-`dependencyEdit` (off by default) to let the user edit them.
+`dependencies` is off by default in Scheduler Community and Business, on in Scheduler Enterprise
+and Gantt. Add `dependencyEdit` (Business, off by default) to let the user edit them.
 
 ```javascript
 features : { dependencies : true },
@@ -64,9 +71,9 @@ Persist `from` / `to`; `fromEvent` / `toEvent` are resolved accessors. `type` is
 
 ## Nesting and segments
 
-- `nestedEvents` (Scheduler Pro, off by default): nesting is a `children` array on the event,
+- `nestedEvents` (Scheduler Enterprise, off by default): nesting is a `children` array on the event,
   not a `parentId`.
-- `eventSegments` (Pro, on by default): split with `await eventRecord.splitToSegments(splitDate, 2, 'day')`;
+- `eventSegments` (Enterprise, on by default): split with `await eventRecord.splitToSegments(splitDate, 2, 'day')`;
   also `setSegments()`, `mergeSegments()`.
 - The `split` feature is unrelated — it splits the view into side-by-side panes.
 
