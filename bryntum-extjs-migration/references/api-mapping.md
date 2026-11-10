@@ -1,23 +1,43 @@
-# API mapping: Ext JS → Bryntum 7
+# API mapping: Ext JS → Bryntum 8
 
-Verified against Bryntum **7.3.7**. For a newer installed version, confirm anything tagged other than SRC with the MCP
+Source names checked against the Bryntum **8.0.0** packages (7.3.7 for rows that say so; 7.x differences are in
+`v7.md`). For a newer installed version, confirm anything tagged other than SRC with the MCP
 `search_bryntum_docs` tool (pass the installed `version`) or the docs.
 
 Tags:
 
 - **G-S** / **G-G** — stated in the official Ext → Bryntum Scheduler / Gantt migration guide (corrected where wrong)
-- **SRC** — confirmed in the 7.3.7 source (check it in `node_modules/@bryntum/<product>/` for the installed version)
-- **DOC** — added for general Ext app migrations; the name is confirmed in the 7.3.7 typings (`*.d.ts`), but the
+- **SRC** — confirmed in the 8.0 / 7.3.7 source (check it in `node_modules/@bryntum/<product>-<tier>/` for the installed version)
+- **DOC** — added for general Ext app migrations; the name is confirmed in the 7.3.7/8.0 typings (`*.d.ts`), but the
   mapping hasn't been verified end to end — check config details in the docs before relying on them
 - **UNV** — the Bryntum name exists, but equivalence to the Ext behavior is not verified
 
 Product-specific rows only apply to that product. Don't generalize a Gantt row to Scheduler or vice versa.
 
+## 0. Tiers: what each Ext feature needs on 8.0
+
+A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before you
+promise it (read from `static tier` in the 8.0.0 packages; Community = everything not listed):
+
+| Product | Business (and Enterprise) | Enterprise only |
+|---|---|---|
+| Grid | `group`, `groupSummary`, `summary`, `filter` (header-menu filter), `cellTooltip`, `cellCopyPaste`, `rowCopyPaste`, `rowReorder`, `rowExpander`, `treeGroup`, `mergeCells`, `lockRows`, `split`, `stickyCells`, `columnRename`, `pinColumns`, `charts`, exporters / `pdfExport` / `print` | `rowEdit`, `fillHandle`, `rowResize`, AI |
+| Scheduler | `taskEdit`, `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventFilter`, `nonWorkingTime`, `timeRanges`, `resourceTimeRanges`, `stickyEvents`, `eventDragSelect`, `percentBar`, `labels`, `pan`, `scrollButtons`, `summary`, `timelineSummary`, `rowReorder`, `split`, exporters | `eventSegments`, `eventBuffer`, `nestedEvents`, `groupRollups`, `resourceEdit`, `resourceNonWorkingTime`, `calendarHighlight`, `versions`, `allocationCellEdit`, AI |
+| Gantt | `taskEdit`, `taskCopyPaste`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `summary`, `treeGroup`, exporters | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, `mspExport`, `versions`, `print`, AI |
+
+- Scheduler's `eventEdit` is Community; the engine-based `taskEdit` (default editor at Enterprise, `eventEdit` is off
+  there) is Business. Business and Enterprise differ in the scheduling engine (Enterprise is the former Scheduler Pro: `project`
+  data, dependency-driven rescheduling, calendars). Confirm what Business covers in the product's `tiers.md` guide
+  before choosing it for an app that had dependencies or calendars.
+- Gantt Community runs a lighter engine: no working time, constraints, critical path, lag/lead, effort or scheduling
+  direction. Ext Gantt apps that use them need Enterprise.
+- Re-check the list in the installed package: `grep -rl "static tier = 'business'" node_modules/@bryntum/<product>-<tier>/lib`.
+
 ## 1. Classes and application structure
 
-| Ext JS | Bryntum 7 | Notes | Tag |
+| Ext JS | Bryntum 8 | Notes | Tag |
 |---|---|---|---|
-| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })` | G-S |
+| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })`. With dependencies, assignments or calendars: Enterprise tier (7.x: `SchedulerPro`, see `v7.md`) | G-S |
 | `Gnt.panel.Gantt` | `Gantt` | | G-G |
 | `Ext.grid.Panel` / `Ext.grid.Grid` (Modern) | `Grid` | | DOC |
 | `Ext.tree.Panel` | `TreeGrid` (or `Grid` with a tree store + `type : 'tree'` column) | | DOC |
@@ -210,8 +230,8 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 - Ext data proxies beyond plain AJAX/JSON/REST (`direct`, `jsonp`, custom writers, `LocalStorage` proxy)
 - `Ext.app.ViewModel` `bind : '{...}'` and `formulas` — rewrite as explicit handlers or framework state, item by item
 - Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV). Bryntum Chart
-  isn't in the product packages: it ships as the separate thin package `@bryntum/chart-thin`, so check its install
-  docs (trial and licensed) before planning a chart replacement, and otherwise report the chart as unmapped
+  isn't in the product packages: it ships as the separate package `@bryntum/chart-enterprise` (Enterprise only; 7.x: `@bryntum/chart-thin`), so check
+  its install docs before planning a chart replacement, and otherwise report the chart as unmapped
 - `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`) — Bryntum fields have `required`,
   `validateOnInput`, etc., but the model differs (UNV)
 - `Ext.util.History` / routing — use the target framework's router
@@ -221,7 +241,7 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 
 ## 9. Outdated advice (official guides, old blog posts)
 
-Verified against the 7.3.7 source. Correct these whenever you read older material:
+Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read older material:
 
 - Scheduler `eventRenderer` argument `tplData` → **`renderData`**.
 - `eventEdit.editorConfig.showResourceField`, `startTimeConfig`, `endTimeConfig` → don't exist. Use
@@ -233,9 +253,11 @@ Verified against the 7.3.7 source. Correct these whenever you read older materia
 - `.b-rownumber-cell` → **`.b-row-number-cell`**; 7.x renamed selectors to kebab-case throughout.
 - `material2-light/dark.css` → **`material3-light/dark.css`**; `high-contrast-light/dark.css` also exists.
 - Pre-7.0 combined theme files (`gantt.stockholm.css`) → `gantt.css` + `stockholm-light.css` + FontAwesome CSS
-  (separate since 7.0).
+  (separate since 7.0; on 8.0 from `@bryntum/<product>-<tier>` and `@bryntum/core-<tier>/fontawesome`).
 - `pan : true` at the widget top level → inside `features`.
-- `@bryntum/gantt ^5.x` pins → current 7.x, exact version.
+- `@bryntum/gantt ^5.x` pins → `@bryntum/gantt-<tier>` at the current 8.x, exact version (7.x: `@bryntum/gantt`).
+- Guides that install `@bryntum/<product>` from `npm.bryntum.com`, or a `-trial` alias → public npm tiered package, no login.
+- Guides that name Scheduler Pro (`Sch.panel.SchedulerPro`, `@bryntum/schedulerpro`) → Scheduler at the Enterprise tier.
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
 - Setting an editor title in `eventEditBeforeSetRecord` is overwritten in 7.3.7; set it in `beforeEventEditShow`.
 - `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources`.

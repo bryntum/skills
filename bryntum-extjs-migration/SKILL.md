@@ -1,7 +1,7 @@
 ---
 name: bryntum-extjs-migration
 description: >
-  Migrate an Ext JS application to Bryntum 7 — legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`),
+  Migrate an Ext JS application to Bryntum 8 (or 7.x) — legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`),
   Bryntum components wrapped in an Ext JS shell, or plain Ext grids and tree grids
   (`Ext.grid.Panel`, `Ext.tree.Panel`) — targeting vanilla JS, React, Angular, or Vue. Use alongside
   the `bryntum` skill. Trigger on phrases like "migrate from Ext JS", "port our Ext app", "replace
@@ -16,8 +16,13 @@ metadata:
 
 # Ext JS → Bryntum migration
 
-Turns an Ext JS app (Classic or Modern) into a Bryntum 7 app with no Ext left. For an incremental path, the Ext
+Turns an Ext JS app (Classic or Modern) into a Bryntum app with no Ext left. For an incremental path, the Ext
 components are replaced first and the Ext shell is removed afterwards.
+
+**Version.** The target is Bryntum **8.0**: tiered packages (`@bryntum/<product>-<tier>`, tier = `community`,
+`business` or `enterprise`) on public npm. Pick the branch with the version check in the core `bryntum` skill. Every
+code block in this skill and its references is 8.0 code, except where a line says "7.x". For an app that stays on 7.x
+(or a Bryntum-in-Ext screen already on 7.x, see below) read `references/v7.md` too: it lists what differs.
 
 Not migrating, just writing Bryntum code with Ext JS habits? Read `references/idioms.md`: Bryntum shares Ext's
 vocabulary (`Store`, `items`, `renderer`, `type`) but several look-alike calls fail silently.
@@ -36,14 +41,15 @@ Read only the references the app needs. If this skill isn't installed locally, f
 | `references/data-migration.md` | Models, stores, field mapping vs data conversion, CrudManager, Gantt data changes |
 | `references/patterns.md` | Idiom rewrites: app shell, classes, toolbars, dialogs, editors, renderers, locales, undo/redo, framework targets |
 | `references/styling.md` | Theme choice, dropping Ext chrome, selector renames, color tokens |
-| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro`, `gantt` |
+| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro` (Scheduler at the Enterprise tier on 8.0), `gantt` |
 | `references/templates.md` | Inventory checklist, `MIGRATION_PLAN.md` / `MIGRATION_REPORT.md` formats, verification checklist |
+| `references/v7.md` | Only for 7.x targets: package names, trial/licensed install, imports, CSS, Scheduler Pro, known 7.3.7 bugs |
 
 ## Principles
 
-- **Only use names you can confirm.** Old Ext → Bryntum material is full of plausible names that don't exist in 7.x.
-  Look names up in this order: `references/` (verified against 7.3.7), then `mcp__bryntum__search_bryntum_docs` for
-  the installed version, then the package source in `node_modules/@bryntum/` (its `*.d.ts` typings are the quickest check when the docs
+- **Only use names you can confirm.** Old Ext → Bryntum material is full of plausible names that don't exist in 7.x or 8.x.
+  Look names up in this order: `references/` (checked against the 8.0.0 packages; items tagged 7.3.7 were not
+  rechecked on 8.x), then `mcp__bryntum__search_bryntum_docs` (pass `product` and the installed `version`), then the package source in `node_modules/@bryntum/` (its `*.d.ts` typings are the quickest check when the docs
   search tool isn't available). If none of these confirms a name, treat
   the item as **unmapped**: leave a `// MIGRATION:` comment where it was and list it in the report.
 - **Report every loss.** Anything removed, changed or unmapped goes in the report with a reason. Count the key records
@@ -59,10 +65,21 @@ Read only the references the app needs. If this skill isn't installed locally, f
 
 Ask the user about anything they haven't already told you, and record the answers in `MIGRATION_PLAN.md`:
 
-- **Trial or licensed package.** Trial: `npm install @bryntum/{product}@npm:@bryntum/{product}-trial` (watermarked).
-  Licensed: the `npm.bryntum.com` registry or a local build. `@bryntum/{product}` on public npm is a placeholder. If
-  licensed access fails, do the work that doesn't need the package and mark verification as blocked. Don't switch to
-  the trial without asking.
+- **Tier and license.** Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
+  the user names or holds a license for ("free" / "open source" means Community). Otherwise use **Enterprise**, say you
+  picked it, and say it runs as a 14-day trial until `bryntum.licenseKey` is set (Community has no key). Don't choose the
+  lowest tier by feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md`
+  §0): a feature above the tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
+  Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
+  Plan on **Enterprise** for an Ext Gantt (constraints, calendars, baselines, critical path) and for an Ext Scheduler
+  that relied on dependencies, assignments or calendars (the former Scheduler Pro engine).
+- **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
+  (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
+  gives the version. Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
+  `@bryntum:registry=https://npm.bryntum.com` line in `~/.npmrc` or the project makes every tiered package 404: add a
+  project `.npmrc` with `@bryntum:registry=https://registry.npmjs.org/` (Yarn v2+ `npmScopes.bryntum.npmRegistryServer`,
+  Yarn v1 `"@bryntum:registry"` in `.yarnrc`) instead of deleting the user-level mapping, which other 7.x projects
+  still need. If the package can't be installed, do the work that doesn't need it and mark verification as blocked.
 - **Target stack**: vanilla + Vite (closest to Ext's config-object style), React, Angular or Vue, in TS or JS.
 - **Big-bang or incremental.** Incremental means Bryntum widgets run inside the Ext shell for a while, with the
   UMD/module build loaded next to Ext. Confirm the team accepts that interim state.
@@ -74,7 +91,7 @@ Ask the user about anything they haven't already told you, and record the answer
 | Type | How to tell | What changes |
 |---|---|---|
 | **A. Legacy Ext Scheduler / Gantt** | `Sch.*`, `Gnt.*`, `ptype` plugins, PascalCase data (`StartDate`) | Everything: shell, configs, plugins, columns, renderers, **data** |
-| **B. Bryntum embedded in Ext** | `bryntum.<product>.*` globals or wrappers, an Ext panel around a Bryntum widget, camelCase data | Only the Ext shell. Copy the Bryntum configs inside and re-check them against 7.x defaults. The data usually copies as is |
+| **B. Bryntum embedded in Ext** | `bryntum.<product>.*` globals or wrappers, an Ext panel around a Bryntum widget, camelCase data | Only the Ext shell. Copy the Bryntum configs inside and re-check them against the target version's defaults. The data usually copies as is. If that Bryntum code is 7.x or older, the screen also needs the 7.x → 8.x hop (package renames, tiers, imports, Scheduler Pro → Scheduler): do it with `bryntum-migrate` |
 | **C. Plain Ext components** | `Ext.grid.Panel`, `Ext.tree.Panel`, no Bryntum | `Grid` / `TreeGrid` (`references/products/grid.md`). Other Ext UI maps to the framework or to Bryntum widgets |
 
 Flag these for a human instead of migrating them by guesswork: Ext Charts, Pivot, `Ext.calendar` (Bryntum Calendar is
@@ -85,7 +102,7 @@ possible, but mark it limited), Ext Direct, routing, and overrides of private Ex
 Build the inventory and plan from the checklist in `references/templates.md`. For scaffolding (install, CSS, sizing,
 Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
 
-- Remove every Ext script, stylesheet and build file. Rebuild the styling for Bryntum 7 instead of porting the Ext
+- Remove every Ext script, stylesheet and build file. Rebuild the styling for Bryntum 8 instead of porting the Ext
   chrome (`references/styling.md`).
 - Choose **one** data strategy per app, field mapping or conversion (`references/data-migration.md`). Gantt calendars,
   `TaskType` and baselines can only be converted.
@@ -102,6 +119,12 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
   delete confirmation. Two defaults that change Ext behavior without a feature flag: multi-row selection
   (`selectionMode.multiSelect`) and Ctrl-click multi-column sort (`sort : { multiSort }`); Ext grids select one row
   and sort one column.
+- Import each class from the package that owns it: an 8.0 package exports its own classes only (`Store`,
+  `DateHelper`, `Popup`, `Toolbar`, `LocaleHelper` from `@bryntum/core-<tier>`, `Column` from `@bryntum/grid-<tier>`).
+  Features of another product register only when that package is imported (`import '@bryntum/grid-<tier>'` for
+  `cellTooltip` in a Scheduler).
+- In a Vite target set `build.cssTarget` (core skill, "Using with Vite"), or the built app loses its theme colors while
+  `npm run dev` looks right. Leave `optimizeDeps` alone.
 - Ext apps often replaced the event editor with a custom dialog. Customize the built-in `eventEdit`/`taskEdit`
   instead. Other dialogs become a `Popup` subclass, or the host framework's dialog when the app has its own component
   system.
@@ -127,16 +150,18 @@ features the Ext app didn't have.
 
 - The official Ext → Bryntum guides and old blog posts predate 7.x in places. `references/api-mapping.md` §9 lists the
   corrections.
-- 7.3.7 bug: `items : { someBuiltIn : true }` on a menu or editor blanks the built-in item. Leave kept
+- 7.3.7 bug (recheck on 8.x): `items : { someBuiltIn : true }` on a menu or editor blanks the built-in item. Leave kept
   built-ins out of `items`, or override only the properties you change.
 - Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
   feature enabled and return `false` from the hook (`bryntum-editor`).
-- 7.3.7 bug: a function `field` in the store's `groupers` config throws (`store.group(fn)` works). Group on a
+- 7.3.7 bug (recheck on 8.x): a function `field` in the store's `groupers` config throws (`store.group(fn)` works). Group on a
   calculated field instead.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use
   `widgetMap`), and setting an undeclared record field (never saved). Check ported code against
   `references/idioms.md`.
-- When switching between trial and licensed packages, move `package-lock.json` and `node_modules/` aside first. The
-  lockfile silently keeps the old package source.
+- When switching tier, version or registry, move `package-lock.json` and `node_modules/` aside first. The lockfile
+  silently keeps the old package source (look for `npm.bryntum.com` in `resolved` URLs).
+- Verify the license state in the browser: no badge on Community or with a valid key; a Trial badge on Business /
+  Enterprise without a key. Report either, and a "requires the Business/Enterprise tier" dialog, in the report.
