@@ -21,7 +21,7 @@ Idiom-level rewrites. Tags as in `api-mapping.md`. Examples use vanilla JS; §10
 Ext.define('App.view.AppToolbar', { extend : 'Ext.Toolbar', xtype : 'apptoolbar', ... });
 
 // Bryntum
-import { Toolbar } from '@bryntum/<product>';
+import { Toolbar } from '@bryntum/core-<tier>';
 
 export default class AppToolbar extends Toolbar {
     static type  = 'apptoolbar';
@@ -110,7 +110,7 @@ Only build a custom dialog when the user explicitly asks — then keep the featu
 ## 6. Other dialogs → `Popup` subclass (vanilla) (SRC)
 
 ```js
-import { Popup } from '@bryntum/<product>';
+import { Popup } from '@bryntum/core-<tier>';
 
 export default class RangeEditor extends Popup {
     static $name = 'RangeEditor';
@@ -156,7 +156,7 @@ export default class RangeEditor extends Popup {
 RangeEditor.initClass();
 ```
 
-Checked against 7.3.7: Cancel closes the dialog, and Enter saves only when the fields are valid.
+Checked against 7.3.7 (recheck on 8.x): Cancel closes the dialog, and Enter saves only when the fields are valid.
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (core skill, widget-first rule).
 
@@ -180,8 +180,8 @@ for app-level dialogs instead (core skill, widget-first rule).
 ## 8. Localization
 
 ```js
-import { LocaleHelper } from '@bryntum/<product>';
-import '@bryntum/<product>/locales/<product>.locale.Es';
+import { LocaleHelper } from '@bryntum/core-<tier>';
+import '@bryntum/<product>-<tier>/locales/<product>.locale.Es'; // 7.x: '@bryntum/<product>/locales/...'
 
 export default LocaleHelper.publishLocale({
     localeName : 'Es', localeDesc : 'Español', localeCode : 'es',
@@ -197,7 +197,7 @@ export default LocaleHelper.publishLocale({
 ## 9. Undo / redo
 
 Ext state-tracking manager → the project/store `stm`: `project : { stm : { autoRecord : true } }` plus an `undoredo`
-toolbar widget (Gantt, Scheduler Pro — G-G). For Scheduler/Grid, confirm the StateTrackingManager wiring in the docs.
+toolbar widget (Gantt, Scheduler Enterprise — G-G). For Scheduler/Grid, confirm the StateTrackingManager wiring in the docs.
 
 ## 10. Framework targets
 

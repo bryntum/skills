@@ -1,7 +1,7 @@
 # Ext idioms and silent near-misses
 
 Method- and property-level Ext → Bryntum differences, for code being ported line by line. Verified against the
-Bryntum 7.3.7 source. Rows where the name and behaviour are identical are omitted. Class, config, plugin and column
+Bryntum 7.3.7 source and spot-checked on 8.0.0 (names, not behavior: recheck anything that surprises you). Rows where the name and behaviour are identical are omitted. Class, config, plugin and column
 mappings are in `api-mapping.md`.
 
 ## The near-misses that fail silently
@@ -45,7 +45,7 @@ Also watch:
 
 | Ext JS | Bryntum | Note |
 |---|---|---|
-| `requires` / `Ext.require` | `import { Grid } from '@bryntum/grid'` | |
+| `requires` / `Ext.require` | `import { Grid } from '@bryntum/grid-<tier>'` | Import each class from the package that owns it: `Store`, `DateHelper`, `Popup` from `@bryntum/core-<tier>`, `Column` from `@bryntum/grid-<tier>` (7.x: everything from the product package) |
 | `renderTo : 'app'` | `appendTo : 'app'` | Also `insertBefore`, `insertFirst`, `adopt`. No `renderTo` |
 | `config` + generated `getFoo()` / `setFoo()` | `static configurable` + property access (`widget.foo = 1`) | No generated getters/setters |
 | `applyFoo` / `updateFoo` | `changeFoo(value, old)` / `updateFoo(value, old)` | `change` normalizes, `update` reacts |
@@ -117,6 +117,6 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 
 ## No Ext counterpart
 
-- Scheduler Pro and Gantt run a scheduling engine (`ProjectModel`): it recalculates dates from dependencies,
+- Scheduler at the Enterprise tier (the former Scheduler Pro) and Gantt run a scheduling engine (`ProjectModel`): it recalculates dates from dependencies,
   calendars and constraints. Don't write `endDate` to move a task; set `startDate` and `duration` (or a constraint)
   and let the engine resolve, then `await project.commitAsync()` before reading results.

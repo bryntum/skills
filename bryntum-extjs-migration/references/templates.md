@@ -23,7 +23,8 @@ models → app logic → extras → styling.
 ```markdown
 # Migration plan: <app or screen> → Bryntum <Product> <version> (<target stack>)
 
-- **Package:** trial | licensed (registry) | licensed (local build) | licensed (unverified — verification blocked)
+- **Bryntum:** 8.x | 7.x (`<exact version>`), tier community | business | enterprise (chosen by: user | license | default), packages `@bryntum/<product>-<tier>`
+- **License:** key registered | trial (Business/Enterprise, 14 days) | none needed (Community) | install blocked — verification blocked
 - **Target:** <vanilla + Vite | React | Angular | Vue 3>, <TypeScript | JavaScript>
 - **Approach:** big-bang | incremental (phase 1: Bryntum inside Ext shell; phase 2: shell removed)
 - **Source:** <path>, Ext JS <version> <Classic|Modern>, type <A|B|C> per screen
@@ -49,7 +50,7 @@ models → app logic → extras → styling.
 
 - **Source:** <path> (<n> JS files, <n> lines)
 - **Target:** <package + version>, <stack> (<n> files, <n> lines)
-- **Package:** <as in the plan>
+- **Bryntum / tier / license:** <as in the plan>
 - **Status:** ✅ verified | ⚠️ verified with open items | ⛔ migration prepared, verification blocked (<reason>)
 
 ## File-by-file
@@ -84,10 +85,12 @@ Check both the `npm run build` output and the dev server, using headless Chromiu
 
 Load and data:
 
-- [ ] build passes; dev server starts; FontAwesome icons and fonts load in dev (no 404s)
+- [ ] every `@bryntum/*` dependency is one tier and one exact version; no `npm.bryntum.com` in `.npmrc` or the lockfile; `npm view @bryntum/<product>-<tier> version` prints a version
+- [ ] build passes; `npm run preview` (the production build) shows theme colors; dev server starts; FontAwesome icons and fonts load in dev (no 404s)
 - [ ] 0 console errors and 0 warnings on load (including no "sized by its predefined minHeight" warning)
 - [ ] store/project record counts equal the counts recorded in the report
 - [ ] the component renders data — rows/bars visible, not an empty timeline
+- [ ] license state as planned: no badge (Community or valid key), or a Trial badge and console message (no key; report it); no "requires the Business/Enterprise tier" dialog — if one shows, drop the feature or report the tier it needs
 
 Structure:
 

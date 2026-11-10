@@ -14,14 +14,14 @@ renderers.
 - Multi-resource events: `assignments` store instead of `resourceId` on events.
 - Date + time field pairs in forms: `datefield` with `partner : '<timeFieldRef>'` plus a `timefield`, laid out
   with `layout : { type : 'box', horizontal : true, wrap : true, align : 'end' }` and `flex : '1 0 45%'` on each.
-  (7.3.7 bug: a combined `datetimefield` label overlaps the input in Material3.)
+  (7.3.7 bug, recheck on 8.x: a combined `datetimefield` label overlaps the input in Material3.)
 - Drag-create opens `eventEdit` for the new record. The name field is empty, with the model's `name` default or
   "New event" as its placeholder, and Cancel removes the record. If the Ext app created events silently, either keep
   the editor (a visible behavior change for the report) or turn it off. Without an event editor, drag-create adds the
   record directly, still named "New event" (or the model's `name` default). `eventEdit : false` also removes
   double-click editing. `beforeEventAdd` returning `false` vetoes the add. (SRC)
 - Open the editor for a new record from a button: `scheduler.editEvent(new eventStore.modelClass({...}))`.
-- Editor title: set it in `beforeEventEditShow` (earlier hooks are overwritten in 7.3.7).
+- Editor title: set it in `beforeEventEditShow` (earlier hooks are overwritten in 7.3.7; recheck on 8.x).
 - Ext validators (`dndValidatorFn`, `resizeValidatorFn`, `createValidatorFn`) → the `validatorFn` of `eventDrag`,
   `eventResize`, `eventDragCreate` (UNV — verify the argument shape and test the rejection paths).
 - An Ext `beforeeventdrop` veto → `beforeEventDropFinalize` with `context.valid = false`. There is no

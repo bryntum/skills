@@ -31,7 +31,7 @@ both counts in the report.
 | Sch/Gnt model subclasses (`Sch.model.Event`, `Gnt.model.Task`) | `EventModel`, `ResourceModel`, `TaskModel`, `DependencyModel`, `AssignmentModel`, `CalendarModel` | G-S, G-G |
 
 Leave the `id` field untyped, even when Ext declared `{ name : 'Id', type : 'int' }`; JSON numeric ids stay numbers
-anyway (7.3.7 bug: a typed `id` gives wrong record counts in a grouped store).
+anyway (7.3.7 bug, recheck on 8.x: a typed `id` gives wrong record counts in a grouped store).
 
 Extra fields that keep their name can be declared as strings: `fields : ['location', { name : 'eventType', defaultValue : 'appointment' }]`
 (SRC). Declare only fields the app actually uses.
@@ -45,9 +45,9 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `proxy : { type : 'rest', url }` | AjaxStore with per-operation URLs + `httpMethods` — verify request shape against the server | DOC |
 | `reader : { rootProperty : 'data' }` | AjaxStore `responseDataProperty` | DOC |
 | `remoteSort` / `remoteFilter` / paging (`pageSize`) | AjaxStore `remoteSort` / `remoteFilter` / `remotePaging` + `pageSize` | DOC |
-| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (7.3.7 bug: a function `field` in the `groupers` config throws; `store.group(fn)` works) | SRC |
+| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (7.3.7 bug, recheck on 8.x: a function `field` in the `groupers` config throws; `store.group(fn)` works) | SRC |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
-| Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `crudManager` (Scheduler) or `project` (Scheduler Pro, Gantt) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
+| Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `crudManager` (Scheduler Community/Business) or `project` (Scheduler Enterprise, Gantt) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
 | separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `crudManager` load for both | SRC |
 | `Ext.data.proxy.LocalStorage`, `direct`, `jsonp` | unmapped — flag for a human (`api-mapping.md` §8) | — |
 
@@ -86,7 +86,7 @@ crudManager : {
 To map fields in a model subclass instead, use the same `{ name, dataSource }` entries in `static fields` on an
 `EventModel` / `ResourceModel` subclass, with `eventStore : { modelClass }`. (G-S)
 
-## Scheduler Pro
+## Scheduler Enterprise (the former Scheduler Pro)
 
 Put `resources`/`events`/`assignments`/`dependencies`/`calendars` on a `project` (the data + scheduling engine hub),
 not ad hoc stores, whenever the app has dependencies, assignments or calendars. See `products/schedulerpro.md`.

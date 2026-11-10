@@ -1,15 +1,19 @@
 # Styling
 
-Rebuild styling for Bryntum 7. Don't port Ext theme chrome. The result should look like a Bryntum 7 app that keeps the
+Rebuild styling for Bryntum 8. Don't port Ext theme chrome. The result should look like a Bryntum 8 app that keeps the
 old app's domain meaning (status colors, holidays, custom renderer markup) — not an Ext app with the old skin pasted on.
 
 ## CSS setup
 
-Use plain CSS `@import`s as in the core `bryntum` skill. Ext Sass variables and theme packages don't carry over.
+Use plain CSS `@import`s as in the core `bryntum` skill ("CSS setup"). On 8.0: Font Awesome from
+`@bryntum/core-<tier>/fontawesome/css/`, the structural `<product>.css` and one theme from `@bryntum/<product>-<tier>/`;
+several products on one page use the `*.thin.css` sheets. Ext Sass variables and theme packages don't carry over.
+The suffix-less family sheets (`svalbard.css`) use `light-dark()`: set `color-scheme` (`:root { color-scheme : light dark }`)
+or import a fixed `-light`/`-dark` sheet, and set `build.cssTarget` in Vite or the production build loses its colors.
 
 ## Choosing a theme
 
-Themes in 7.3: `svalbard`, `visby`, `stockholm`, `material3`, `fluent2`, `high-contrast`, each `-light` / `-dark`.
+Themes in 8.0 (same set in 7.3): `svalbard`, `visby`, `stockholm`, `material3`, `fluent2`, `high-contrast`, each `-light` / `-dark`.
 
 | Source app | Start from |
 |---|---|
@@ -17,8 +21,8 @@ Themes in 7.3: `svalbard`, `visby`, `stockholm`, `material3`, `fluent2`, `high-c
 | Ext Modern Material | `material3-light` / `material3-dark` |
 | Framework target with Material UI / Angular Material / Vuetify | `material3-*` |
 | Fluent / Microsoft-style host | `fluent2-*` |
-| Bryntum-in-Ext app that already set a 7.x theme | keep that theme |
-| Pre-7.0 combined file (`gantt.stockholm.css`) | the matching 7.x theme (`stockholm-light.css`) |
+| Bryntum-in-Ext app that already set a 7.x/8.x theme | keep that theme |
+| Pre-7.0 combined file (`gantt.stockholm.css`) | the matching theme file (`stockholm-light.css`) |
 | Otherwise | `svalbard-light` (default) |
 
 These are starting points; confirm the choice with the user when the look matters. Dark mode and runtime switching: the
@@ -43,7 +47,7 @@ Keep and rewrite:
 - Ext Scheduler `sch-*` → Bryntum `b-sch-*` (e.g. `.sch-event-header` → `.b-sch-event-header`).
 - Ext Gantt `sch-gantt-*` / `gnt-*` → `b-gantt-*` or `b-sch-*` depending on the element. Inspect the rendered DOM; don't
   guess.
-- 7.x kebab-case renames: `.b-rownumber-cell` → `.b-row-number-cell`, `.b-timeranges` → `.b-time-ranges`,
+- Kebab-case renames (since 7.0): `.b-rownumber-cell` → `.b-row-number-cell`, `.b-timeranges` → `.b-time-ranges`,
   `.b-sch-timerange` → `.b-sch-time-range`, `.b-timeline-subgrid` → `.b-timeline-sub-grid`,
   `.b-buttongroup` → `.b-button-group`, `.b-sch-header-timeaxis-cell` → `.b-sch-header-time-axis-cell`. Full list:
   `https://bryntum.com/products/<product>/docs-llm/guide/<Product>/migration/migrate-to-new-css.md`.
@@ -58,7 +62,7 @@ data-driven.
 
 - Tokens: `--b-primary`, `--b-neutral-<n>`, `--b-text-<n>`, `--b-border-<n>`; component variables such as
   `--b-grid-header-background`, `--b-grid-header-font-weight`, `--b-grid-cell-font-size`, `--b-panel-header-background`.
-- Named colors (`Core/Colors.css` in 7.3): `--b-color-red`, `-orange`, `-deep-orange`, `-amber`, `-yellow`, `-lime`,
+- Named colors (`Core/Colors.css`, checked in 7.3 and 8.0): `--b-color-red`, `-orange`, `-deep-orange`, `-amber`, `-yellow`, `-lime`,
   `-light-green`, `-green`, `-teal`, `-cyan`, `-light-blue`, `-blue`, `-indigo`, `-violet`, `-purple`, `-deep-purple`,
   `-magenta`, `-pink`, `-brown`, `-light-gray`, `-lighter-gray`, `-gray`, `-black`. Check the file in the installed
   package for the current list.
