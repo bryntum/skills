@@ -21,8 +21,8 @@ Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop 
 - [ ] **Rename and bump Bryntum product, wrapper and `@bryntum/demo-resources` packages to exactly `<to>`**
   Files: `package.json`, lockfile · first update any `postinstall` script that copies Bryntum files
   For targets below 8.0, preserve trial aliases and use each target product's required `*-lib` / `*-lib-trial` versions for direct helper pins; for 8.x, remove obsolete direct helper dependencies.
-- [ ] **Leaving 8.0.0: rename the `-business` packages to `-core`** (same tier, renamed in 8.0.1 — `v7-to-v8.md`)
-  Files: `package.json`, lockfile · also any `tier : 'business'` config in `src/`
+- [ ] **Only when `<from>` is 8.0.0: rename the `-business` packages to `-core`** (same tier, renamed in 8.0.1 — `v7-to-v8.md`); drop this line otherwise, including every 7.x source, which never had the name
+  Files: `package.json`, lockfile · also `'business'` in app code: the `tier` config, and any tier string compared or passed through
 - [ ] **Imports and CSS paths** from the packed target package (owning package per class, FontAwesome, themes)
 - [ ] **For the 8.x Core or Enterprise tier, register the license key** (`v7-to-v8.md`; ask for it, never invent one)
 
