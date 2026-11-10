@@ -2,13 +2,13 @@
 
 Agent skills for working with [Bryntum](https://bryntum.com) components — Scheduler (incl. the former Scheduler Pro), Gantt, Calendar, Grid, and TaskBoard. Compatible with Claude Code and Codex.
 
-The skills serve both 8.0 and 7.x apps from this one `main` branch: the core `bryntum` skill detects the version from the app's `package.json`, and every skill with 7.x differences points to that check and loads its own `references/v7.md` for a 7.x app. A `SKILL.md` describes 8.0. On 8.0 every package is `@bryntum/<product>-<tier>`; the Community tier needs no license key, while the Core and Enterprise tiers run as a 14-day trial until a key is set.
+The skills serve both 8.0 and 7.x apps from this one `main` branch: the base `bryntum` skill detects the version from the app's `package.json`, and every skill with 7.x differences points to that check and loads its own `references/v7.md` for a 7.x app. A `SKILL.md` describes 8.0. On 8.0 every package is `@bryntum/<product>-<tier>`; the Community tier needs no license key, while the Core and Enterprise tiers run as a 14-day trial until a key is set.
 
 ## Skills
 
 ### `bryntum` _(required)_
 
-The core skill. Covers the version check, workspace and product identification, tiers and the license key, package installation (`@bryntum/<product>-<tier>`) and CSS styling, docs lookup via MCP, data loading rules, product-specific component defaults, sizing, and output verification. Always install this one — the framework and CRUD skills build on it.
+The base skill. Covers the version check, workspace and product identification, tiers and the license key, package installation (`@bryntum/<product>-<tier>`) and CSS styling, docs lookup via MCP, data loading rules, product-specific component defaults, sizing, and output verification. Always install this one — the framework and CRUD skills build on it.
 
 ### `bryntum-react`
 

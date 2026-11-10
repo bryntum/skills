@@ -22,7 +22,7 @@ On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→sto
 
 ## Dragging from an external (non-Bryntum) source
 
-Core use case: a sidebar/pool of unscheduled jobs that the user drags onto a resource row in the Scheduler.
+Main use case: a sidebar/pool of unscheduled jobs that the user drags onto a resource row in the Scheduler.
 
 Use Bryntum's [`DragHelper`](https://bryntum.com/products/scheduler/docs/api/Core/helper/DragHelper) and point it at your OWN DOM elements, reading data from your OWN source. `DragHelper` works with any draggable HTML element — it is not limited to Bryntum stores.
 

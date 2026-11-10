@@ -81,6 +81,6 @@ docs or MCP search described in the `bryntum` skill.
 
 ## Related
 
-- `bryntum` — core skill; install first.
+- `bryntum` — the base skill; install first.
 - `bryntum-features` — the built-in feature for what the user is describing.
 - `bryntum-crud` — CrudManager and AjaxStore backends (the `proxy` replacement).
