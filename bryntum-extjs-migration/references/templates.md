@@ -13,6 +13,9 @@ Read every file in scope and give each item its own row in the plan:
   dependencies)
 - ViewModel bindings, localization, undo/redo, custom CSS
 
+Detect products by namespace: `Sch.*` → Scheduler (engine use → Scheduler Enterprise), `Gnt.*` → Gantt, `Cal.*` → Calendar,
+`Kanban.*` → TaskBoard. A screen may mix them (shared resource store); report each separately.
+
 Also record the toolkit (Classic / Modern), Ext version, build (Sencha Cmd or other) and backend proxies.
 
 A workable conversion order: root widget + data hub → configs → plugins → columns → renderers → toolbars/dialogs →

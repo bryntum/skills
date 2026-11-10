@@ -14,7 +14,7 @@ any of these as a gap if the user keeps Community.
 
 ### Timeline companion
 
-An overview strip above/below the Gantt is a `Timeline` sharing the Gantt's `project` — not a second Gantt:
+An overview strip above/below the Gantt is a `Timeline` sharing the Gantt's `project` — not a second Gantt. On 8.0 `Timeline` is exported by `@bryntum/scheduler-<tier>` (declare it as a dependency), `ProjectModel` by the Gantt package:
 
 ```js
 const project  = new ProjectModel({ transport : { load : { url : 'api/load' } }, autoLoad : true });

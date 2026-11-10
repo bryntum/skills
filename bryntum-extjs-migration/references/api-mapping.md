@@ -241,7 +241,7 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 - Ext data proxies beyond plain AJAX/JSON/REST (`direct`, `jsonp`, custom writers, `LocalStorage` proxy)
 - `Ext.app.ViewModel` `bind : '{...}'` and `formulas` — rewrite as explicit handlers or framework state, item by item
 - Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV). Bryntum Chart
-  isn't in the product packages: it ships as the separate package `@bryntum/chart-enterprise` (Enterprise only; 7.x: `@bryntum/chart-thin`), so check
+  isn't in the product packages: it ships as the separate package `@bryntum/chart-enterprise` (Enterprise only; 7.x: `@bryntum/chart-thin`); 8.0's `Chart` widget uses AG Charts instead of Chart.js, so check
   its install docs before planning a chart replacement, and otherwise report the chart as unmapped
 - `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`) — Bryntum fields have `required`,
   `validateOnInput`, etc., but the model differs (UNV)
@@ -268,6 +268,12 @@ Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read old
 - `pan : true` at the widget top level → inside `features`.
 - `@bryntum/gantt ^5.x` pins → `@bryntum/gantt-<tier>` at the current 8.x, exact version (7.x: `@bryntum/gantt`).
 - Guides that install `@bryntum/<product>` from `npm.bryntum.com`, or a `-trial` alias → public npm tiered package, no login.
+- The official Gantt-for-Ext guide's imports (`LocaleHelper`, `Toast`, `Timeline` from `@bryntum/gantt-<tier>`) fail on
+  8.0, where a package exports its own classes only. Owners (checked in the 8.0.0 `entry.js` files): `LocaleHelper`,
+  `Toast`, `MessageDialog`, `TabPanel`, `PagingToolbar`, `Popup`, `Toolbar`, `Store`, `DateHelper` → `@bryntum/core-<tier>`;
+  `Grid`, `TreeGrid`, `Column` → `@bryntum/grid-<tier>`; `Scheduler`, `Timeline`, `PresetManager`, `EventModel` →
+  `@bryntum/scheduler-<tier>`; `Gantt`, `ProjectModel`, `TaskModel` (Gantt's own) → `@bryntum/gantt-<tier>`. Always confirm
+  in the installed `entry.js` or `*.d.ts`.
 - Guides that name Scheduler Pro (`Sch.panel.SchedulerPro`, `@bryntum/schedulerpro`) → Scheduler at the Enterprise tier.
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
 - Setting an editor title in `eventEditBeforeSetRecord` is overwritten in 7.3.7; set it in `beforeEventEditShow`.
