@@ -8,7 +8,7 @@ Tier marks are 8.x; an unmarked feature is in every tier.
   (Scheduler Enterprise, on there; Gantt Core and Enterprise, on; TaskBoard, on). Gantt
   Community has the simpler `basicTaskEdit` as its default (it exists in every tier). For adding,
   removing or replacing fields and tabs, load the `bryntum-editor` skill.
-- Lighter inline editor (name field only): `simpleEventEdit` (Scheduler, Core, off).
+- Lighter inline editor (name field only): `simpleEventEdit` (Scheduler, Core tier, off).
 - Bar tooltip: the feature name differs by product.
   - Scheduler: `eventTooltip : { template : ({ eventRecord }) => … }`.
   - Gantt: `taskTooltip : { template : ({ taskRecord, startClockHtml, endClockHtml }) => … }`. Gantt
@@ -17,13 +17,13 @@ Tier marks are 8.x; an unmarked feature is in every tier.
 - End dates are exclusive: with 24-hour working days, a task that finishes Friday has `endDate`
   at Saturday 00:00. With an 08:00–17:00 calendar it ends Friday 17:00, so subtracting a day would
   show Thursday. Use `new Date(endDate - 1)` (1 ms) for an inclusive end date in a custom template.
-- Grid cell tooltip: `cellTooltip` (Core, off),
+- Grid cell tooltip: `cellTooltip` (Core tier, off),
   `cellTooltip : { tooltipRenderer : ({ record }) => record.name }`.
 
 ## Undo / redo
 
-Undo needs the Core tier or Enterprise: the `StateTrackingManager` and the `UndoRedo` widget are
-Core-tier, TaskBoard's undo widget is Enterprise. It needs two independent settings on the project's
+Undo needs the Core or Enterprise tier: the `StateTrackingManager` and the `UndoRedo` widget are
+Core tier, TaskBoard's undo widget is Enterprise tier. It needs two independent settings on the project's
 `StateTrackingManager`:
 
 - **Recording:** `project : { stm : { autoRecord : true } }`. Without it, edits aren't captured
@@ -43,7 +43,7 @@ list). Gantt disables the STM while it recalculates after an undo, so `canUndo` 
 at `restoringStop`; the correct value only appears on the `disabled` event that follows.
 
 `UndoRedo` widget types: `{ type : 'undoredo' }` for Scheduler and Gantt, and
-`{ type : 'taskboardundoredo' }` for TaskBoard (Enterprise). On 8.x a Gantt gets the `undoredo`
+`{ type : 'taskboardundoredo' }` for TaskBoard (Enterprise tier). On 8.x a Gantt gets the `undoredo`
 widget from the Scheduler package — add `import '@bryntum/scheduler-<tier>';` or the toolbar item
 fails with `Invalid type name`. Useful configs: `text : true` (button
 labels), `showZeroActionBadge`, and `items : { transactionsCombo : null }` (hide the history combo).
@@ -62,7 +62,7 @@ stm.enable();          // nothing is recorded until this is called
 
 ## Getting data out
 
-All of these are Enterprise.
+All of these need the Enterprise tier.
 
 | Output | Feature | Call | Gotcha |
 |---|---|---|---|

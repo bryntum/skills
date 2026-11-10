@@ -1,7 +1,7 @@
 # Gantt and Scheduler Enterprise features
 
-Tier marks are 8.x; an unmarked feature is in every tier. Everything below needs Gantt Core or
-Enterprise (Community runs the lighter engine — see timeline.md).
+Tier marks are 8.x; an unmarked feature is in every tier. Everything below needs Gantt at the Core or Enterprise tier
+(the Community tier runs the lighter engine — see timeline.md).
 
 | The user asks for | Use | Tier | Snippet / note |
 |---|---|---|---|
@@ -20,6 +20,6 @@ Enterprise (Community runs the lighter engine — see timeline.md).
 ## Resource load (Scheduler Enterprise)
 
 `ResourceHistogram` (load per resource) and `ResourceUtilization` (assignments per resource per
-period) are view classes, not features, and Enterprise only. Import them from
+period) are view classes, not features, and Enterprise tier only. Import them from
 `@bryntum/scheduler-<tier>` — the Gantt package does not export them. Give them the same `project`
 as the scheduler, or link them with `partner` so they scroll together.

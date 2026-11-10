@@ -78,7 +78,7 @@ over `id`: `id` must be unique across the document, `ref` need not be.
 | `node.isLeaf()` | `node.isLeaf` | Getter |
 | `node.getDepth()` | `node.childLevel` | |
 | `node.cascadeBy(fn)` | `node.traverse(fn, skipSelf, options)` | |
-| grouping `expand(name)` / `collapseAll()` | `await grid.features.group.toggleCollapse(memberRecord, false)` / `grid.expandAll()` / `grid.collapseAll()` | Pass any record in the group, or its header. `expandAll` / `collapseAll` are added to the grid by the `group` feature (on 8.x `group` is Core+) |
+| grouping `expand(name)` / `collapseAll()` | `await grid.features.group.toggleCollapse(memberRecord, false)` / `grid.expandAll()` / `grid.collapseAll()` | Pass any record in the group, or its header. `expandAll` / `collapseAll` are added to the grid by the `group` feature (on 8.x `group` needs the Core tier or above) |
 | `node.expand()` | `await grid.features.tree.expand(record)` | Driven by the `tree` feature. Also `collapse`, `toggleCollapse`, `expandAll`, `collapseAll`, `expandTo`, `expandToLevel` |
 
 ## Config names

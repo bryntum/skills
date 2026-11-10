@@ -32,7 +32,7 @@ have snippets, tiers and per-product differences.
 - The key is the class name with a lowercase first letter: `GroupSummary` → `groupSummary`,
   `CriticalPaths` → `criticalPaths`. `true` enables with defaults, an object configures, `false`
   turns off one that is on by default.
-- On 8.x every feature belongs to a tier — Community, Core or Enterprise, cumulative. The
+- On 8.x every feature belongs to a tier — the Community, Core or Enterprise tier, cumulative. The
   tier in the Index and the reference files is the lowest tier that has it; unmarked entries are
   in every tier. A feature above the app's tier is skipped and a dialog names the tier it needs,
   so say the tier when you suggest one.

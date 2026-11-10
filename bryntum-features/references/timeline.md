@@ -32,7 +32,7 @@ inline data configs are plural (`timeRanges`, `resourceTimeRanges`); `timeRanges
 Non-working time in Scheduler Enterprise and Gantt comes from the project calendar, which is also
 what makes the engine skip weekends when scheduling. Grey boxes drawn on top look the same but
 don't affect scheduling. Gantt Community runs the lighter engine: calendars don't affect
-scheduling there and `nonWorkingTime` (Core) is not available.
+scheduling there and `nonWorkingTime` (Core tier) is not available.
 
 ```javascript
 const project = new ProjectModel({
@@ -52,14 +52,14 @@ Use `calendars`, not the deprecated `calendarsData`.
 
 ## Highlighting and selecting time
 
-- `timeSpanHighlight` (Enterprise): `scheduler.features.timeSpanHighlight.highlightTimeSpan({ startDate, endDate })`,
+- `timeSpanHighlight` (Enterprise tier): `scheduler.features.timeSpanHighlight.highlightTimeSpan({ startDate, endDate })`,
   cleared with `unhighlightTimeSpans()`. Better than adding and removing a time range record.
-- `timeSelection` (Core): lets the user drag-select a span in the header.
+- `timeSelection` (Core tier): lets the user drag-select a span in the header.
 
 ## Dependencies
 
 `dependencies` is off by default in Scheduler Community and Core, on in Scheduler Enterprise
-and Gantt. Add `dependencyEdit` (Core, off by default) to let the user edit them.
+and Gantt. Add `dependencyEdit` (Core tier, off by default) to let the user edit them.
 
 ```javascript
 features : { dependencies : true },
@@ -73,7 +73,7 @@ Persist `from` / `to`; `fromEvent` / `toEvent` are resolved accessors. `type` is
 
 - `nestedEvents` (Scheduler Enterprise, off by default): nesting is a `children` array on the event,
   not a `parentId`.
-- `eventSegments` (Enterprise, on by default): split with `await eventRecord.splitToSegments(splitDate, 2, 'day')`;
+- `eventSegments` (Enterprise tier, on by default): split with `await eventRecord.splitToSegments(splitDate, 2, 'day')`;
   also `setSegments()`, `mergeSegments()`.
 - The `split` feature is unrelated — it splits the view into side-by-side panes.
 
