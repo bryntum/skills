@@ -252,7 +252,7 @@ Ext.define('Bryntum.wrapper.Scheduler', {
 - **Stores.** Prefer separate stores: the Bryntum project loads from the same endpoints the Ext stores use. A one-way copy
   from an Ext store (`store.getRange().map(r => r.getData())`) into the project is acceptable for read-only data; two-way
   sync is not worth it. Count records on both sides.
-- **License key.** Business/Enterprise need `bryntum.licenseKey` (or the trial runs). Set it before the wrapper creates the widget.
+- **License key.** Core/Enterprise need `bryntum.licenseKey` (or the trial runs). Set it before the wrapper creates the widget.
 
 ## 12. Custom view presets (Ext Scheduler / Gantt)
 

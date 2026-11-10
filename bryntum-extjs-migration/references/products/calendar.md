@@ -5,8 +5,8 @@ migration knowledge base and were name-checked against the 8.0.0 `@bryntum/calen
 exist in Bryntum but the Ext equivalence is unverified. Report anything else as unmapped.
 
 Tier: Community has the base data model and the `day`, `week`, `month`, `year`, `agenda` views. **Recurring events need
-Business.** Enterprise adds the `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner` and
-`multiweek` modes and `print`. Calendar keeps the Business data layer at Enterprise. See `../api-mapping.md` §0.
+Core.** Enterprise adds the `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner` and
+`multiweek` modes and `print`. Calendar keeps the Core data layer at Enterprise. See `../api-mapping.md` §0.
 
 Detect it by `Cal.*` classes, `xtype : 'calendarpanel'` or `Cal.data.EventStore`.
 
@@ -17,7 +17,7 @@ Detect it by `Cal.*` classes, `xtype : 'calendarpanel'` or `Cal.data.EventStore`
 | `eventStore`, `resourceStore`, CrudManager | `project : { eventStore, resourceStore, loadUrl, syncUrl, autoLoad }` (8.0: the project is the CrudManager) | SRC |
 | `eventEditor : {...}` | `features : { eventEdit : {...} }` | SRC |
 | `eventMenu`, `dayMenu` | `features : { eventMenu, scheduleMenu }` | SRC (names), UNV (`dayMenu` equivalence) |
-| `recurringEvents : true` | built in (Business tier and up) | UNV |
+| `recurringEvents : true` | built in (Core tier and up) | UNV |
 | `navigationToolbar`, `resourceFilter` | `tbar`, or the built-in `sidebar : { items : { resourceFilter : {...} } }` | SRC |
 | `modes : { day, week, month, year, agenda }` | `modes : { week : {...}, ... }`, set a mode to `null` to remove it | SRC |
 | `eventRenderer(event, resource, metaData)` | `eventRenderer({ eventRecord, resourceRecord, renderData })` | UNV |

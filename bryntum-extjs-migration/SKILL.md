@@ -20,7 +20,7 @@ Turns an Ext JS app (Classic or Modern) into a Bryntum app with no Ext left. For
 components are replaced first and the Ext shell is removed afterwards.
 
 **Version.** The target is Bryntum **8.0**: tiered packages (`@bryntum/<product>-<tier>`, tier = `community`,
-`business` or `enterprise`) on public npm. Pick the branch with the version check in the core `bryntum` skill. Every
+`core` or `enterprise`) on public npm. Pick the branch with the version check in the core `bryntum` skill. Every
 code block in this skill and its references is 8.0 code, except where a line says "7.x". For an app that stays on 7.x
 (or a Bryntum-in-Ext screen already on 7.x, see below) read `references/v7.md` too: it lists what differs.
 
@@ -65,17 +65,18 @@ Read only the references the app needs. If this skill isn't installed locally, f
 
 Ask the user about anything they haven't already told you, and record the answers in `MIGRATION_PLAN.md`:
 
-- **Tier and license.** Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
+- **Tier and license.** The tiers are Community, **Core** and Enterprise (Core was named Business until 2026-11-10; the published
+  8.0.0 packages still use `-business` and `tier : 'business'`, so confirm names with `npm view`). Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
   the user names or holds a license for ("free" / "open source" means Community). Otherwise use **Enterprise**, say you
   picked it, and say it runs as a 14-day trial until `bryntum.licenseKey` is set (Community has no key). Don't choose the
   lowest tier by feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md`
   §0): a feature above the tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
-  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs **Business** at least
-  (constraints, calendars, dependencies and `taskEdit` are Business; Community has a lighter engine) and **Enterprise**
+  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs **Core** at least
+  (constraints, calendars, dependencies and `taskEdit` are Core; Community has a lighter engine) and **Enterprise**
   for baselines, critical paths, `projectEdit`, Rollups, MS Project export, PDF export/print and the summary feature. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
-  former Scheduler Pro) needs **Enterprise**. Calendar and TaskBoard keep the Business data layer at Enterprise.
+  former Scheduler Pro) needs **Enterprise**. Calendar and TaskBoard keep the Core data layer at Enterprise.
   Per-feature tiers: the product's `feature-availability.md` guide, plus `static tier` in the installed package.
 - **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
   (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
@@ -170,5 +171,5 @@ features the Ext app didn't have.
   `references/idioms.md`.
 - When switching tier, version or registry, move `package-lock.json` and `node_modules/` aside first. The lockfile
   silently keeps the old package source (look for `npm.bryntum.com` in `resolved` URLs).
-- Verify the license state in the browser: no badge on Community or with a valid key; a Trial badge on Business /
-  Enterprise without a key. Report either, and a "requires the Business/Enterprise tier" dialog, in the report.
+- Verify the license state in the browser: no badge on Community or with a valid key; a Trial badge on Core /
+  Enterprise without a key. Report either, and a "requires the Core/Enterprise tier" dialog, in the report.

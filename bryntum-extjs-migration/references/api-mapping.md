@@ -16,12 +16,15 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 
 ## 0. Tiers: what each Ext feature needs on 8.0
 
+The tiers are **Community < Core < Enterprise** (the middle tier was called Business until 2026-11-10, when the suite renamed it; the public
+8.0.0 packages and older docs still say `-business` / `'business'`: run `npm view @bryntum/<product>-core version` and fall back to
+`-business` if it 404s, and read "core" as "business" for those packages).
+
 A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
 you promise it. Source: the `feature-availability.md` guide of each product (8.0.1 docs). Anything not named below is in
-Community. If an installed 8.0.0 package disagrees with the guide (a few `static tier` values in the 8.0.0 packages are
-lower than the guide, e.g. Summary and RowExpander), follow the guide, tell the user, and don't build on the difference.
+Community. Where the 8.0.0 packages disagree with the 8.0.1 docs (list below), follow the docs, tell the user, and don't build on the difference.
 
-| Product | Business and up | Enterprise only |
+| Product | Core and up | Enterprise only |
 |---|---|---|
 | Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `rowEdit`, `fillHandle`, `rowResize`, `pdfExport`, `print`, AI |
 | Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit` (the engine editor), `eventNonWorkingTime`, `resourceNonWorkingTime`, `eventBuffer`, `eventSegments`, `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `summary`, `treeSummary`, `groupSummary`, `lockRows`, `rowReorder`, `rowResize`, `split`, `versions`, `pdfExport`, `print`, AI |
@@ -32,17 +35,23 @@ lower than the guide, e.g. Summary and RowExpander), follow the guide, tell the 
 Engine and data layer:
 
 - **Gantt Community** runs a lighter engine (base task: dates, name, `percentDone`, WBS): no working time, constraints,
-  critical path, lag/lead, effort or scheduling direction. **Gantt Business** has the full engine (constraints,
+  critical path, lag/lead, effort or scheduling direction. **Gantt Core** has the full engine (constraints,
   dependencies, calendars). **Gantt Enterprise** adds baselines and project revisions.
-- **Calendar Community** has no recurring events (Business adds them, with lazy loading): an Ext Calendar with recurrence needs Business.
-- **Scheduler Business** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
+- **Calendar Community** has no recurring events (Core adds them, with lazy loading): an Ext Calendar with recurrence needs Core.
+- **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
-  (`eventEdit` stays the editor at Community/Business). It is the former Scheduler Pro.
+  (`eventEdit` stays the editor at Community/Core). It is the former Scheduler Pro.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
-  Enterprise package at a lower tier set `tier : 'business'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
+  Enterprise package at a lower tier set `tier : 'core'` on the widget (`'business'` on the 8.0.0 packages). Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
-- Re-check a list in the installed package: `grep -rl "static tier = 'business'" node_modules/@bryntum/<product>-<tier>/lib`.
+- **Docs vs packages (8.0.1 docs vs 8.0.0 `static tier`), found by comparing the `feature-availability.md` tables with the packed
+  packages.** The packages declare the middle tier, the docs say Enterprise. Grid: `charts`, `groupSummary`, `lockRows`, `mergeCells`,
+  `rowExpander`, `rowReorder`, `split`, `summary`. Scheduler: `eventNonWorkingTime`, `groupSummary`, `lockRows`, `rowReorder`, `split`,
+  `summary`, `taskEdit`, `treeSummary`. Gantt: `summary`. On the 8.0.0 middle-tier package these may load without the dialog; treat them as
+  Enterprise for planning, and re-check when a newer package ships. Only features whose class file matched the doc name were compared (not
+  `pdfExport`, `print`, Calendar or TaskBoard, which showed no differences).
+- Re-check a list in the installed package: `grep -rlE "static tier = '(core|business)'" node_modules/@bryntum/<product>-<tier>/lib`.
 
 ## 1. Classes and application structure
 

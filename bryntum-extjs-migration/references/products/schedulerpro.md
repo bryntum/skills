@@ -19,7 +19,7 @@ Events have `startDate` + `duration`. `endDate` is derived, and dependencies cas
 - Enterprise-engine behavior needs evidence: dependency editing/highlighting, resource time ranges, calendar-driven scheduling,
   and constraint/effort calculations. Claim one as migrated only with a verified mapping or a product example/doc page.
   Otherwise record the assumption in the report.
-- The editor feature is `taskEdit`, not `eventEdit` (Enterprise default; at the Community/Business tier it is `eventEdit`).
+- The editor feature is `taskEdit`, not `eventEdit` (Enterprise default; at the Community/Core tier it is `eventEdit`).
 - A Scheduler app at a lower tier has no engine: use the plain Scheduler mapping and report any dependency/calendar
   behavior the Ext app had as a gap.
 
