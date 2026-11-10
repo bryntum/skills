@@ -55,7 +55,9 @@ Core tier app installs `@bryntum/core-core` — that doubled name is correct, do
 moves to the Enterprise tier, so install the **Enterprise** packages. The exception is an app on Scheduler (not Scheduler Pro):
 it migrates to the **Core** packages (`@bryntum/scheduler-core`, `@bryntum/scheduler-<framework>-core`),
 even with an Enterprise licence. For a target of exactly 8.0.0 those names end `-business` instead; `-core` exists
-only from 8.0.1, so don't report a missing `-core@8.0.0` as a registry problem. A Scheduler Pro app migrates to the Enterprise tier. Use that tier whatever features the app
+only from 8.0.1. The two 404s this produces are both the rename, not a registry problem, so don't stop and report
+the registry for either: `-core@8.0.0` (the name is too new for that version) and `-business@<anything above 8.0.0>`
+(no `-business` version is published above 8.0.0, which is why an 8.0.0 app must rename to upgrade at all). A Scheduler Pro app migrates to the Enterprise tier. Use that tier whatever features the app
 uses: don't pick the lowest tier the app needs, since the tier is a licensing choice, not a feature fit. Check the
 registry has it (`npm view @bryntum/<product>-<tier> version`), and in the plan and your final message say which tier
 you picked, that the Core and Enterprise tiers run as a 14-day trial until the licence key is set, and that the user can
