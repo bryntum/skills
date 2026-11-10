@@ -6,9 +6,10 @@ Write it to `./bryntum-migration-<from>-to-<to>.md` in the project root. Group a
 # Bryntum migration: <Product> <from> → <to>
 
 Product: <Product> (+ siblings: …) · Framework: <framework> · Package manager: <pm>
-Package rename: none | `@bryntum/schedulerpro*` → `@bryntum/scheduler*` (Scheduler Pro is the Enterprise tier of Scheduler from 8.0)
+Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise Enterprise; Business for a Scheduler app, not Scheduler Pro, `v7-to-v8.md`)
 Releases crossed: <n> (<list>) · Upgrade guides read: <n>
-Docs host: <docs host> · Source: index.json | docs fallback (index 404)
+Docs host: <docs host> · Source: index.json | prerendered docs (index 404)
+Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop and ask before planning further)
 
 ## Reading list
 | Version | Product | Upgrade guide | What's new | Changelog sections (✱ = BREAKING) |
@@ -16,8 +17,12 @@ Docs host: <docs host> · Source: index.json | docs fallback (index 404)
 
 ## Actions (in version order)
 ### Packages
-- [ ] **Bump every `@bryntum/*` package to exactly `<to>`** (incl. `@bryntum/demo-resources`; not `*-lib` helpers)
+- [ ] **For 8.x, configure the selected target registry in the project and CI before installing** (`v7-to-v8.md`; preserve a supplied local registry)
+- [ ] **Rename and bump Bryntum product, wrapper and `@bryntum/demo-resources` packages to exactly `<to>`**
   Files: `package.json`, lockfile · first update any `postinstall` script that copies Bryntum files
+  For targets below 8.0, preserve trial aliases and use each target product's required `*-lib` / `*-lib-trial` versions for direct helper pins; for 8.x, remove obsolete direct helper dependencies.
+- [ ] **Imports and CSS paths** from the packed target package (owning package per class, FontAwesome, themes)
+- [ ] **For 8.x Business or Enterprise, register the license key** (`v7-to-v8.md`; ask for it, never invent one)
 
 ### <version> — <Product>
 - [ ] **<short title>** · risk: breaking | behaviour change | deprecation | cosmetic
@@ -39,18 +44,22 @@ Docs host: <docs host> · Source: index.json | docs fallback (index 404)
 - …
   **Answer:** <filled in after the user replies>
 
-<details><summary>## Not applicable (n items, zero hits in this codebase)</summary>
+## Not applicable (n items, zero hits in this codebase)
+<details><summary>Show</summary>
+
 - <version> · <Product> · <title> · <source>
 </details>
 
 ## Verification
+- [ ] Product, wrapper and `demo-resources` versions match `<to>`; 7.x helper versions match the target product's dependencies
 - [ ] Build / typecheck: `<command>`
 - [ ] Grep for removed identifiers returns zero hits: …
 - [ ] Tests: `<command>` (if present)
-- [ ] Manual: open the app, search the browser console for `Deprecation warning`
+- [ ] Manual: open the app, the console has no errors, no `Deprecation warning` and no `CSS issues detected`
+- [ ] 8.x Business or Enterprise: no Trial badge and no license message once the key is set (both show until then)
 
 ## Unknowns for the user
-- Theme: v7 replaces `<product>.<old>.css`. I propose `svalbard-light.css`, the v7 default. To keep today's look instead, use the same-named `<old>-light.css`. Other options: visby, material3, high-contrast, fluent2, each `-light` / `-dark`
-- Theme look: even `<old>-light` differs from v6 (sentence-case headers and buttons, blue row selection, round icon buttons, wider cell padding, thinner parent bars). Override any of these?
+- Licence tier (8.x): the tier picked and that another can be named (the licence key goes under *Unsure*), theme choice
+  (`v6-to-v7.md` for 6 → 7), anything the guides leave to the customer
 - …
 ````
