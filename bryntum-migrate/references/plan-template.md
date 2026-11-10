@@ -59,6 +59,7 @@ Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop 
 - [ ] Tests: `<command>` (if present)
 - [ ] Manual: open the app, the console has no errors, no `Deprecation warning` and no `CSS issues detected`
 - [ ] 8.x Core or Enterprise tier: no Trial badge and no license message once the key is set (both show until then)
+- [ ] From an 8.0.0 source: no `@bryntum/*-business` dependency and no `'business'` tier string left anywhere (`package.json`, lockfile, `src/`), and the install prints no deprecation warning naming `-core`
 
 ## Unknowns for the user
 - Licence tier (8.x): the tier picked and that another can be named (the licence key goes under *Unsure*), theme choice

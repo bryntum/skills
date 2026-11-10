@@ -1,6 +1,8 @@
 # 7.x → 8.x hop
 
-Applies when `installed < 8.0.0 <= target`. Read the product's v7 to v8 migration guide first
+Applies when `installed < 8.0.0 <= target`, and to `installed == 8.0.0 < target` for the **Every package is renamed**
+section alone, which carries the 8.0.1 Business → Core tier rename that no changelog or upgrade guide mentions; skip
+the rest of this file for that hop, since the app is already on 8.x. Read the product's v7 to v8 migration guide first
 (`docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md`, linked from the top of each 8.0.0 upgrade guide; the
 migration index does not list it). It covers the registry, the package names, the imports, the stylesheets and the
 license key; the upgrade guides hold the API and styling changes. Other docs (integration and quick-start guides, the

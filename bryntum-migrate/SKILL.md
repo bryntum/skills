@@ -28,7 +28,7 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 |------|------|
 | `sources.md` | Gathering material: the migration index, fallback docs URLs, sibling products, what to read closely |
 | `v6-to-v7.md` | Range crosses 7.0.0: kebab-case CSS, new themes, FontAwesome, Button colours, moved classes, `*Data` props, the CSS codemod |
-| `v7-to-v8.md` | Range crosses 8.0.0: tier package names, registry and license key, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
+| `v7-to-v8.md` | Range crosses 8.0.0, **or starts at 8.0.0** (for the 8.0.1 tier rename): tier package names, registry and license key, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
 | `plan-template.md` | Writing the plan file |
 | `worked-example.md` | A real Gantt 6.0.3 → 7.2.1 hop, to calibrate scope |
 
@@ -38,7 +38,8 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 - **Take the installed version from `node_modules/@bryntum/<pkg>/package.json`** (or the lockfile), not the semver range in `package.json`. For zip installs, read `build/package.json`.
 - **Breaking changes arrive through the products the app inherits from.** A Gantt app breaks on Grid and Scheduler changes too, and Core/Chart changes appear in their own changelogs (and, from 8.0.0, a Core upgrade guide). Read every sibling's material, not just the top-level product's.
 - **8.0 renames every package** (`@bryntum/<product>-<tier>`). The v7 to v8 migration guide says so, but other docs and READMEs can still show 7.x names. Take names and paths from `v7-to-v8.md`, the migration guide and the packed target.
-- **8.0.1 renames the Business tier to Core.** An app on 8.0.0 has `@bryntum/<product>-business` (and `-<framework>-business`); any upgrade past 8.0.0 renames those to `-core` — the same tier, no licence change. It is a package rename like the 8.0 one: every `@bryntum/*` package moves together, the `-business` names are deprecated on npm (install works, npm warns and names `-core`), and the app's own code may hold the old value in a `tier : 'business'` config. Put the rename in the plan even when nothing else changes in the hop.
+- **8.0.1 renames the Business tier to Core, and no published material says so.** An app on 8.0.0 has `@bryntum/<product>-business` (and `-<framework>-business`); any upgrade past 8.0.0 renames those to `-core` — the same tier, no licence change. It is a package rename like the 8.0 one: every `@bryntum/*` package moves together, the `-business` names are deprecated on npm (install works, npm warns and names `-core`), and the app's own code may hold the old value in a `tier : 'business'` config.
+  **The 8.0.1 changelog and upgrade guides do not mention this rename.** Gathering (step 2) will therefore turn up nothing about it, and that silence is not evidence it didn't happen — this skill is the source. Put the rename in the plan whenever the installed version is 8.0.0 and the target is higher, even when the gathered material is empty and nothing else changes in the hop.
 - **A green build doesn't mean the migration is done.** Bryntum deprecations only show at runtime, in the browser console, and some never log at all (Later.js schedule parsing, deprecated in 7.3.0, runs silently in 7.3.7; `TimeZoneHelper` and `smoothZoom`, deprecated in 8.0.0, don't log either). List the deprecations named in the guides and changelogs yourself.
 - **Custom CSS can stop matching without being renamed.** The rename tables only cover class renames, not classes that moved to another element. Check custom selectors against the running app (see `v6-to-v7.md`).
 
@@ -55,7 +56,7 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 
 ### 2. Gather
 
-Follow `sources.md`: try the migration index first. Add the hop-specific notes from `v6-to-v7.md` / `v7-to-v8.md`. Turn what you read into candidate items: `{ version, product, source URL + heading, kind, old, new, grep terms }`. The kind is one of breaking, behaviour change, deprecation or cosmetic. Grep terms are identifiers that would appear in customer code: config, method, event and class names, CSS selectors, import paths.
+Follow `sources.md`: try the migration index first. Add the hop-specific notes from `v6-to-v7.md` / `v7-to-v8.md`. Some changes are in this skill only, not in any guide or changelog — the 8.0.1 Business → Core tier rename is one (see Gotchas); add those from the skill, and don't drop one because the gathered material is silent on it. Turn what you read into candidate items: `{ version, product, source URL + heading, kind, old, new, grep terms }`. The kind is one of breaking, behaviour change, deprecation or cosmetic. Grep terms are identifiers that would appear in customer code: config, method, event and class names, CSS selectors, import paths.
 
 ### 3. Plan, then stop for approval
 
