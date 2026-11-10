@@ -74,7 +74,7 @@ Ask the user about anything they haven't already told you, and record the answer
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
   Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs **Core** at least
   (constraints, calendars, dependencies and `taskEdit` are Core; Community has a lighter engine) and **Enterprise**
-  for baselines, critical paths, `projectEdit`, Rollups, MS Project export, PDF export/print and the summary feature. An
+  for baselines, critical paths, `projectEdit`, Rollups, MS Project export, and print. (Gantt `summary` and `pdfExport` are Core.) An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs **Enterprise**. Calendar and TaskBoard keep the Core data layer at Enterprise.
   Per-feature tiers: the product's `feature-availability.md` guide, plus `static tier` in the installed package.

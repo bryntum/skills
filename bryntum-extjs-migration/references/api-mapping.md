@@ -21,14 +21,16 @@ The tiers are **Community < Core < Enterprise** (the middle tier was called Busi
 `-business` if it 404s, and read "core" as "business" for those packages).
 
 A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
-you promise it. Source: the `feature-availability.md` guide of each product (8.0.1 docs). Anything not named below is in
-Community. Where the 8.0.0 packages disagree with the 8.0.1 docs (list below), follow the docs, tell the user, and don't build on the difference.
+you promise it. **Source of truth: the tier the package declares** (`static tier` in the 8.0.0 packages, confirmed by the product
+owner). The `feature-availability.md` guides (8.0.1 docs) put some features in a higher tier (e.g. Scheduler `taskEdit`, Grid and
+Scheduler `summary`/`lockRows`/`split`/`rowReorder`); when the two disagree, follow the package and don't quote the guide's tier.
+Anything not named below is in Community.
 
 | Product | Core and up | Enterprise only |
 |---|---|---|
-| Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `rowEdit`, `fillHandle`, `rowResize`, `pdfExport`, `print`, AI |
-| Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit` (the engine editor), `eventNonWorkingTime`, `resourceNonWorkingTime`, `eventBuffer`, `eventSegments`, `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `summary`, `treeSummary`, `groupSummary`, `lockRows`, `rowReorder`, `rowResize`, `split`, `versions`, `pdfExport`, `print`, AI |
-| Gantt | `taskEdit` (Community uses Scheduler's simpler event editor), `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `summary`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project import/export, `versions`, `pdfExport`, `print`, AI |
+| Grid | `filter` (header-menu filter), `group`, `groupSummary`, `summary`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print` | `rowEdit`, `fillHandle`, `rowResize`, AI |
+| Scheduler | `taskEdit`, `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `eventClustering`, `resourceTimeRangeClustering`, `headerZoom`, `labels`, `nonWorkingTime`, `eventNonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `lockRows`, `rowReorder`, `split`, `pdfExport`, `print` | `resourceNonWorkingTime`, `eventBuffer`, `eventSegments` (+ drag/resize), `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `allocationCopyPaste`, `rowResize`, `versions`, AI |
+| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `summary`, `treeGroup`, `pdfExport` | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, `print`, AI |
 | Calendar | recurring events (data layer), `eventCopyPaste`, `externalEventSource`, `timeRanges`, `weekExpander` | `eventBuffer`, `loadOnDemand`, `print`, AI; views `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner`, `multiweek` |
 | TaskBoard | swimlanes, `columnFilter`, `columnRename`, `columnResize`, `filterBar`, `simpleTaskEdit`; card items `jsx`, `resourceAvatars`, `tags`, `todoList` | `columnDrag`, `columnLock`, `columnSort`, `swimlaneDrag`, card items `chart`, `collapse`, AI |
 
@@ -40,17 +42,11 @@ Engine and data layer:
 - **Calendar Community** has no recurring events (Core adds them, with lazy loading): an Ext Calendar with recurrence needs Core.
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
-  (`eventEdit` stays the editor at Community/Core). It is the former Scheduler Pro.
+  (`eventEdit` stays the default editor at Community/Core, although the `taskEdit` class ships from Core up). It is the former Scheduler Pro.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
   Enterprise package at a lower tier set `tier : 'core'` on the widget (`'business'` on the 8.0.0 packages). Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
-- **Docs vs packages (8.0.1 docs vs 8.0.0 `static tier`), found by comparing the `feature-availability.md` tables with the packed
-  packages.** The packages declare the middle tier, the docs say Enterprise. Grid: `charts`, `groupSummary`, `lockRows`, `mergeCells`,
-  `rowExpander`, `rowReorder`, `split`, `summary`. Scheduler: `eventNonWorkingTime`, `groupSummary`, `lockRows`, `rowReorder`, `split`,
-  `summary`, `taskEdit`, `treeSummary`. Gantt: `summary`. On the 8.0.0 middle-tier package these may load without the dialog; treat them as
-  Enterprise for planning, and re-check when a newer package ships. Only features whose class file matched the doc name were compared (not
-  `pdfExport`, `print`, Calendar or TaskBoard, which showed no differences).
 - Re-check a list in the installed package: `grep -rlE "static tier = '(core|business)'" node_modules/@bryntum/<product>-<tier>/lib`.
 
 ## 1. Classes and application structure
