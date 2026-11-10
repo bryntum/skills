@@ -41,7 +41,7 @@ Read only the references the app needs. If this skill isn't installed locally, f
 | `references/data-migration.md` | Models, stores, field mapping vs data conversion, CrudManager, Gantt data changes |
 | `references/patterns.md` | Idiom rewrites: app shell, classes, toolbars, dialogs, editors, renderers, locales, undo/redo, framework targets |
 | `references/styling.md` | Theme choice, dropping Ext chrome, selector renames, color tokens |
-| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro` (Scheduler at the Enterprise tier on 8.0), `gantt` |
+| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro` (Scheduler at the Enterprise tier on 8.0), `gantt`, `calendar`, `taskboard` |
 | `references/templates.md` | Inventory checklist, `MIGRATION_PLAN.md` / `MIGRATION_REPORT.md` formats, verification checklist |
 | `references/v7.md` | Only for 7.x targets: package names, trial/licensed install, imports, CSS, Scheduler Pro, known 7.3.7 bugs |
 
@@ -71,8 +71,12 @@ Ask the user about anything they haven't already told you, and record the answer
   lowest tier by feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md`
   §0): a feature above the tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
-  Plan on **Enterprise** for an Ext Gantt (constraints, calendars, baselines, critical path) and for an Ext Scheduler
-  that relied on dependencies, assignments or calendars (the former Scheduler Pro engine).
+  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs **Business** at least
+  (constraints, calendars, dependencies and `taskEdit` are Business; Community has a lighter engine) and **Enterprise**
+  for baselines, critical paths, `projectEdit`, Rollups, MS Project export, PDF export/print and the summary feature. An
+  Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
+  former Scheduler Pro) needs **Enterprise**. Calendar and TaskBoard keep the Business data layer at Enterprise.
+  Per-feature tiers: the product's `feature-availability.md` guide, plus `static tier` in the installed package.
 - **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
   (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
   gives the version. Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
@@ -82,7 +86,10 @@ Ask the user about anything they haven't already told you, and record the answer
   still need. If the package can't be installed, do the work that doesn't need it and mark verification as blocked.
 - **Target stack**: vanilla + Vite (closest to Ext's config-object style), React, Angular or Vue, in TS or JS.
 - **Big-bang or incremental.** Incremental means Bryntum widgets run inside the Ext shell for a while, with the
-  UMD/module build loaded next to Ext. Confirm the team accepts that interim state.
+  Bryntum build loaded next to Ext (`references/patterns.md` §11). 8.0 ships **no prebuilt UMD bundle**: load ES
+  modules (`<script type="module">`, as the suite's Ext demos do) or build your own UMD bundle with webpack
+  (`gettingstarted/build-umd.md`, which still publishes the `bryntum.<product>` global). Confirm the team accepts that
+  interim state.
 - **Backend**: keep the server's JSON shape and map the fields, or change the data to Bryntum's shape.
 - **Scope**: the whole app or named screens. For a large app, migrate one screen end to end as a pilot.
 
@@ -90,12 +97,12 @@ Ask the user about anything they haven't already told you, and record the answer
 
 | Type | How to tell | What changes |
 |---|---|---|
-| **A. Legacy Ext Scheduler / Gantt** | `Sch.*`, `Gnt.*`, `ptype` plugins, PascalCase data (`StartDate`) | Everything: shell, configs, plugins, columns, renderers, **data** |
+| **A. Legacy Ext Scheduler / Gantt / Calendar / TaskBoard** | `Sch.*`, `Gnt.*`, `Cal.*`, `Kanban.*`, `ptype` plugins, PascalCase data (`StartDate`) | Everything: shell, configs, plugins, columns, renderers, **data** |
 | **B. Bryntum embedded in Ext** | `bryntum.<product>.*` globals or wrappers, an Ext panel around a Bryntum widget, camelCase data | Only the Ext shell. Copy the Bryntum configs inside and re-check them against the target version's defaults. The data usually copies as is. If that Bryntum code is 7.x or older, the screen also needs the 7.x → 8.x hop (package renames, tiers, imports, Scheduler Pro → Scheduler): do it with `bryntum-migrate` |
 | **C. Plain Ext components** | `Ext.grid.Panel`, `Ext.tree.Panel`, no Bryntum | `Grid` / `TreeGrid` (`references/products/grid.md`). Other Ext UI maps to the framework or to Bryntum widgets |
 
-Flag these for a human instead of migrating them by guesswork: Ext Charts, Pivot, `Ext.calendar` (Bryntum Calendar is
-possible, but mark it limited), Ext Direct, routing, and overrides of private Ext/Sch/Gnt internals.
+Flag these for a human instead of migrating them by guesswork: Ext Charts, Pivot, `Ext.calendar` (the open-source Ext
+component; Bryntum Calendar is possible, but mark it limited — Bryntum's own commercial `Cal.*` is type A), Ext Direct, routing, and overrides of private Ext/Sch/Gnt internals.
 
 ## Converting
 
@@ -159,7 +166,7 @@ features the Ext app didn't have.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use
-  `widgetMap`), and setting an undeclared record field (never saved). Check ported code against
+  `widgetMap`), and, on 7.x, setting an undeclared record field (never saved; on 8.0 a column's `field` is added to the model automatically, others still are not). Check ported code against
   `references/idioms.md`.
 - When switching tier, version or registry, move `package-lock.json` and `node_modules/` aside first. The lockfile
   silently keeps the old package source (look for `npm.bryntum.com` in `resolved` URLs).

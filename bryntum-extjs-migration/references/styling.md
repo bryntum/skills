@@ -66,7 +66,10 @@ data-driven.
   `-light-green`, `-green`, `-teal`, `-cyan`, `-light-blue`, `-blue`, `-indigo`, `-violet`, `-purple`, `-deep-purple`,
   `-magenta`, `-pink`, `-brown`, `-light-gray`, `-lighter-gray`, `-gray`, `-black`. Check the file in the installed
   package for the current list.
-- Renderer-injected inline backgrounds → `eventColor` (event or resource field) + `eventStyle`.
+- Renderer-injected inline backgrounds → `eventColor` (event or resource field) + `eventStyle`. On 8.0 the color pickers and
+  editors write predefined names with the `b-` prefix (`b-red`, swatches via `b-color-<name>`) instead of hex; bare names
+  (`red`) and hex values you set from data keep working. Map Ext status colors to named colors when one fits, hex otherwise;
+  `DomHelper.resolveColorValue()` / `createColorStyle()` convert between the two.
 - Override variables on `:root` (or a wrapper class) rather than targeting internal selectors. Some are re-declared
   per widget, so an inherited value never arrives: Stockholm sets `--b-panel-header-background`/`-color` on
   `.b-bryntum:not(.b-nothing)`, and core CSS sets `--b-panel-header-padding` on `.b-grid-base`. Set those on the widget

@@ -47,8 +47,8 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `remoteSort` / `remoteFilter` / paging (`pageSize`) | AjaxStore `remoteSort` / `remoteFilter` / `remotePaging` + `pageSize` | DOC |
 | `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (7.3.7 bug, recheck on 8.x: a function `field` in the `groupers` config throws; `store.group(fn)` works) | SRC |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
-| Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `crudManager` (Scheduler Community/Business) or `project` (Scheduler Enterprise, Gantt) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
-| separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `crudManager` load for both | SRC |
+| Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `project` (every product and tier in 8.0: the project has the CrudManager built in; the standalone `CrudManager` class and the `crudManager` config are deprecated and go in 9.0) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
+| separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `project` load for both | SRC |
 | `Ext.data.proxy.LocalStorage`, `direct`, `jsonp` | unmapped — flag for a human (`api-mapping.md` §8) | — |
 
 The Ext Scheduler/Gantt CrudManager request/response envelope is close to Bryntum's but **not guaranteed identical**.
@@ -58,9 +58,21 @@ Set `validateResponse : true` during development to log format errors. (SRC)
 
 Response shape used by the Scheduler guide: `{ "resources" : { "rows" : [...] }, "events" : { "rows" : [...] } }` (G-S).
 
+## 8.0 data-layer changes that touch Ext ports
+
+- **Columns add missing fields.** `autoAddField` is now `true` (Grid, Scheduler, Gantt): a column whose `field` the model
+  doesn't declare gets the field added, so it displays, edits and **is sent in sync requests**. This replaces the
+  7.x trap "setting an undeclared record field is never saved" for column-backed fields. Fields that no column shows still
+  need a declared field. Turn it off with `columns : { autoAddField : false, data : [...] }`. In Gantt that object form
+  also drops the automatic `name` column, so list `{ type : 'name' }` yourself.
+- **Time zones.** Dates are kept as exact moments and only the presentation is converted. An Ext app that shifted
+  dates itself, or passes numeric UTC offsets (`-120`), must switch to IANA ids (`Etc/GMT+2`, `Europe/Stockholm`) and stop
+  mutating record dates. `TimeZoneHelper` is deprecated.
+- **Project transport on every tier**, as above. Don't configure transport on both the project and a `crudManager`: it throws.
+
 ## Scheduler
 
-- Needs a `resourceStore` and an `eventStore` (instances, configs, or a `crudManager` loading both). Default models:
+- Needs a `resourceStore` and an `eventStore` (instances, configs, or the `project` loading both; 7.x: `crudManager`). Default models:
   `ResourceModel`, `EventModel`. (G-S)
 - Events need `id`, `resourceId` (or `assignments` for multi-resource), `startDate`, and `endDate` or
   `duration` + `durationUnit`; plus `name`. (G-S)
@@ -68,7 +80,7 @@ Response shape used by the Scheduler guide: `{ "resources" : { "rows" : [...] },
 Inline mapping on the stores (G-S):
 
 ```js
-crudManager : {
+project : {                    // 7.x Scheduler / Community & Business: crudManager
     autoLoad      : true,
     resourceStore : {
         fields : [
@@ -126,7 +138,7 @@ exceptions:
 - **Baselines**: `BaselineStartDate` / `BaselineEndDate` → `"baselines" : [ { "startDate" : ..., "endDate" : ... } ]`.
 
 With a live backend, these structural changes mean either a server-side change or a load/sync adapter (a
-server-side mapping layer, or client-side request/response hooks on the CrudManager — verify the hook names in the
+server-side mapping layer, or client-side request/response hooks on the project (CrudManager API) — verify the hook names in the
 docs for the installed version). Record which one in the plan; don't hide it.
 
 ### Scheduling modes (G-G)

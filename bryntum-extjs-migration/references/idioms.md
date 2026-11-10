@@ -19,7 +19,7 @@ like `xtype`. These look right and fail quietly or with a confusing error:
 | `store.sort('name', 'DESC')` | `store.sort('name', false)` | 2nd argument is `ascending`; 3rd `add : true` multi-sorts |
 | `container.down('#save')` | `container.widgetMap.save` (with `ref : 'save'`) | No `down()`, though `up()` exists |
 | `node.insertChild(index, child)` | `node.insertChild(child, before)` | Arguments reversed; `before` is a sibling record, not an index |
-| `grid.getView().refresh()` | `grid.refreshRows()` | Grid has no `refresh()` (Scheduler, Gantt, Calendar, TaskBoard do) |
+| `grid.getView().refresh()` | `grid.refresh()` (8.0; full re-render) or `grid.refreshRows()` | 7.x Grid has no `refresh()`: use `refreshRows()`. On 8.0 `Scheduler#refresh()` also always re-renders rows and event bars; `refreshEvents()` re-renders only the bars |
 | `Toast.show({ type : 'success' })` | `Toast.show('Saved')` | `type` is the widget type: setting it throws `Can not mutate 'type' config` |
 | column `dataIndex` | column `field` | `dataIndex` exists nowhere in Bryntum |
 | `listeners : { …, scope : this }` | `listeners : { …, thisObj : this }` | Same idea, different key |

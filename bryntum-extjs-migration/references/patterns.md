@@ -213,3 +213,62 @@ the wrapper.
 
 Keep Bryntum configuration inside Bryntum configs even in a framework app: toolbars, editors, menus and renderers stay
 Bryntum widgets, not framework components.
+
+## 11. Incremental path: Bryntum inside the Ext shell
+
+Only when the team accepted an interim state (`SKILL.md`, "Before starting"). Replace the Ext/Sch/Gnt component with a thin
+`Ext.Component` that owns one Bryntum widget, and keep the Bryntum config modern (no legacy translation layer):
+
+```js
+Ext.define('Bryntum.wrapper.Scheduler', {
+    extend : 'Ext.Component',
+    alias  : 'widget.bryntum-scheduler',
+    config : { bryntumConfig : null },
+
+    afterRender() {
+        this.callParent(arguments);
+        this.bryntumWidget = new bryntum.scheduler.Scheduler(
+            Ext.apply({ appendTo : this.el.dom }, this.getBryntumConfig())
+        );
+    },
+    onDestroy() {
+        this.bryntumWidget?.destroy();
+        this.bryntumWidget = null;
+        this.callParent(arguments);
+    }
+});
+```
+
+- **Loading Bryntum next to Ext (8.0).** There is no prebuilt `*.umd.js`. Either load the package as an ES module and
+  publish what Ext code needs on `window` (the suite's `extjsmodern` demos do `window.bryntum.scheduler = scheduler`), or
+  build a UMD bundle yourself (the product's `gettingstarted/build-umd.md`: webpack, publishes the `bryntum.<product>`
+  global). Class access such as `bryntum.scheduler.Scheduler` only works with the second route or your own global.
+  7.x ships `build/<product>.umd.js` (`v7.md`).
+- **CSS coexistence.** Load the Bryntum sheets (structural + one theme + Font Awesome, core skill "CSS setup") next to the
+  Ext theme. Bryntum rules are scoped under `.b-widget`. If layout breaks, wrap the widget in `position : relative;
+  overflow : hidden`. Tooltip/popup stacking: adjust `z-index` rather than patching either library.
+- **Resizing.** Bryntum observes its own size; if the Ext layout doesn't give the wrapper a height, the widget falls back
+  to `minHeight`. Give the Ext item `flex` or `height`.
+- **Stores.** Prefer separate stores: the Bryntum project loads from the same endpoints the Ext stores use. A one-way copy
+  from an Ext store (`store.getRange().map(r => r.getData())`) into the project is acceptable for read-only data; two-way
+  sync is not worth it. Count records on both sides.
+- **License key.** Business/Enterprise need `bryntum.licenseKey` (or the trial runs). Set it before the wrapper creates the widget.
+
+## 12. Custom view presets (Ext Scheduler / Gantt)
+
+Built-in preset names (`weekAndDay`, `dayAndWeek`, ...) carry over. Custom presets registered with
+`Sch.preset.Manager.registerPreset` change shape; register with `PresetManager` from the Scheduler package
+(`@bryntum/scheduler-<tier>`; the Gantt package doesn't re-export it, so a Gantt app imports it from the Scheduler package too and declares that dependency). Names checked against the 8.0.0 `ViewPreset` source:
+
+| Ext preset config | Bryntum preset config |
+|---|---|
+| `timeColumnWidth` | `tickWidth` |
+| `headerConfig : { top, middle, bottom }` | `headers : [...]` ordered top to bottom |
+| `headerConfig.<row>.dateFormat : 'd M Y'` | `headers[n].dateFormat : 'DD MMM YYYY'` (convert tokens, `api-mapping.md` §7) |
+| `headerConfig.middle.headerCls` | `headers[n].headerCellCls` |
+| `displayDateFormat : 'G:i'` | `displayDateFormat : 'H:mm'` |
+| `shiftUnit : 'DAY'`, `timeResolution : { unit : 'MINUTE' }` | lowercase units: `'day'`, `'minute'` |
+| `renderer(start, end, cfg)` in a header row | `renderer(start, end, cfg)` in `headers[n]` (check the arguments in the docs) |
+
+Where several screens share one preset list, port it once into a module and import it.
+

@@ -16,22 +16,33 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 
 ## 0. Tiers: what each Ext feature needs on 8.0
 
-A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before you
-promise it (read from `static tier` in the 8.0.0 packages; Community = everything not listed):
+A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
+you promise it. Source: the `feature-availability.md` guide of each product (8.0.1 docs). Anything not named below is in
+Community. If an installed 8.0.0 package disagrees with the guide (a few `static tier` values in the 8.0.0 packages are
+lower than the guide, e.g. Summary and RowExpander), follow the guide, tell the user, and don't build on the difference.
 
-| Product | Business (and Enterprise) | Enterprise only |
+| Product | Business and up | Enterprise only |
 |---|---|---|
-| Grid | `group`, `groupSummary`, `summary`, `filter` (header-menu filter), `cellTooltip`, `cellCopyPaste`, `rowCopyPaste`, `rowReorder`, `rowExpander`, `treeGroup`, `mergeCells`, `lockRows`, `split`, `stickyCells`, `columnRename`, `pinColumns`, `charts`, exporters / `pdfExport` / `print` | `rowEdit`, `fillHandle`, `rowResize`, AI |
-| Scheduler | `taskEdit`, `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventFilter`, `nonWorkingTime`, `timeRanges`, `resourceTimeRanges`, `stickyEvents`, `eventDragSelect`, `percentBar`, `labels`, `pan`, `scrollButtons`, `summary`, `timelineSummary`, `rowReorder`, `split`, exporters | `eventSegments`, `eventBuffer`, `nestedEvents`, `groupRollups`, `resourceEdit`, `resourceNonWorkingTime`, `calendarHighlight`, `versions`, `allocationCellEdit`, AI |
-| Gantt | `taskEdit`, `taskCopyPaste`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `summary`, `treeGroup`, exporters | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, `mspExport`, `versions`, `print`, AI |
+| Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `rowEdit`, `fillHandle`, `rowResize`, `pdfExport`, `print`, AI |
+| Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit` (the engine editor), `eventNonWorkingTime`, `resourceNonWorkingTime`, `eventBuffer`, `eventSegments`, `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `summary`, `treeSummary`, `groupSummary`, `lockRows`, `rowReorder`, `rowResize`, `split`, `versions`, `pdfExport`, `print`, AI |
+| Gantt | `taskEdit` (Community uses Scheduler's simpler event editor), `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `summary`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project import/export, `versions`, `pdfExport`, `print`, AI |
+| Calendar | recurring events (data layer), `eventCopyPaste`, `externalEventSource`, `timeRanges`, `weekExpander` | `eventBuffer`, `loadOnDemand`, `print`, AI; views `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner`, `multiweek` |
+| TaskBoard | swimlanes, `columnFilter`, `columnRename`, `columnResize`, `filterBar`, `simpleTaskEdit`; card items `jsx`, `resourceAvatars`, `tags`, `todoList` | `columnDrag`, `columnLock`, `columnSort`, `swimlaneDrag`, card items `chart`, `collapse`, AI |
 
-- Scheduler's `eventEdit` is Community; the engine-based `taskEdit` (default editor at Enterprise, `eventEdit` is off
-  there) is Business. Business and Enterprise differ in the scheduling engine (Enterprise is the former Scheduler Pro: `project`
-  data, dependency-driven rescheduling, calendars). Confirm what Business covers in the product's `tiers.md` guide
-  before choosing it for an app that had dependencies or calendars.
-- Gantt Community runs a lighter engine: no working time, constraints, critical path, lag/lead, effort or scheduling
-  direction. Ext Gantt apps that use them need Enterprise.
-- Re-check the list in the installed package: `grep -rl "static tier = 'business'" node_modules/@bryntum/<product>-<tier>/lib`.
+Engine and data layer:
+
+- **Gantt Community** runs a lighter engine (base task: dates, name, `percentDone`, WBS): no working time, constraints,
+  critical path, lag/lead, effort or scheduling direction. **Gantt Business** has the full engine (constraints,
+  dependencies, calendars). **Gantt Enterprise** adds baselines and project revisions.
+- **Calendar Community** has no recurring events (Business adds them, with lazy loading): an Ext Calendar with recurrence needs Business.
+- **Scheduler Business** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
+  the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
+  (`eventEdit` stays the editor at Community/Business). It is the former Scheduler Pro.
+- Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
+  Enterprise package at a lower tier set `tier : 'business'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
+- A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
+  `ConstraintType` and `Baselines` against the tier.
+- Re-check a list in the installed package: `grep -rl "static tier = 'business'" node_modules/@bryntum/<product>-<tier>/lib`.
 
 ## 1. Classes and application structure
 
