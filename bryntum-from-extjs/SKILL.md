@@ -61,7 +61,7 @@ Also watch:
   cells; use `grid.selectedRecords.includes(record)`.
 - In a grouped store, `find(fn)` skips group headers and does find records inside collapsed
   groups. Those records aren't in `store.records` and have no row until the group is expanded
-  (`grid.features.group.toggleCollapse(record, false)`; on 8.x `group` is Business+). Pass `true` as the second argument to
+  (`grid.features.group.toggleCollapse(record, false)`; on 8.x `group` is Core+). Pass `true` as the second argument to
   include rows hidden by a filter.
 - Assigning `store.data = arr` replaces records but keeps sorters, filters, groupers and collapsed
   groups, unlike a fresh Ext `loadData`. Call `clearSorters()`, `clearFilters()` and

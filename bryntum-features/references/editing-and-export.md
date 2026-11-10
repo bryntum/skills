@@ -4,11 +4,11 @@ Tier marks are 8.x; an unmarked feature is in every tier.
 
 ## Editors and tooltips
 
-- Editor popup: `eventEdit` (Scheduler Community and Business, Calendar; on) / `taskEdit`
-  (Scheduler Enterprise, on there; Gantt Business and Enterprise, on; TaskBoard, on). Gantt
+- Editor popup: `eventEdit` (Scheduler Community and Core, Calendar; on) / `taskEdit`
+  (Scheduler Enterprise, on there; Gantt Core and Enterprise, on; TaskBoard, on). Gantt
   Community has the simpler `basicTaskEdit` as its default (it exists in every tier). For adding,
   removing or replacing fields and tabs, load the `bryntum-editor` skill.
-- Lighter inline editor (name field only): `simpleEventEdit` (Scheduler, Business, off).
+- Lighter inline editor (name field only): `simpleEventEdit` (Scheduler, Core, off).
 - Bar tooltip: the feature name differs by product.
   - Scheduler: `eventTooltip : { template : ({ eventRecord }) => … }`.
   - Gantt: `taskTooltip : { template : ({ taskRecord, startClockHtml, endClockHtml }) => … }`. Gantt
@@ -17,13 +17,13 @@ Tier marks are 8.x; an unmarked feature is in every tier.
 - End dates are exclusive: with 24-hour working days, a task that finishes Friday has `endDate`
   at Saturday 00:00. With an 08:00–17:00 calendar it ends Friday 17:00, so subtracting a day would
   show Thursday. Use `new Date(endDate - 1)` (1 ms) for an inclusive end date in a custom template.
-- Grid cell tooltip: `cellTooltip` (Business, off),
+- Grid cell tooltip: `cellTooltip` (Core, off),
   `cellTooltip : { tooltipRenderer : ({ record }) => record.name }`.
 
 ## Undo / redo
 
-Undo is Business and up: the `StateTrackingManager` and the `UndoRedo` widget are Business,
-TaskBoard's undo widget is Enterprise. It needs two independent settings on the project's
+Undo needs the Core tier or Enterprise: the `StateTrackingManager` and the `UndoRedo` widget are
+Core-tier, TaskBoard's undo widget is Enterprise. It needs two independent settings on the project's
 `StateTrackingManager`:
 
 - **Recording:** `project : { stm : { autoRecord : true } }`. Without it, edits aren't captured
@@ -53,7 +53,7 @@ the Redo button's accessible name contains "undone" and matches `/undo/i`.
 A plain Grid has no project and no `UndoRedo` widget, so wire the manager yourself:
 
 ```javascript
-import { StateTrackingManager } from '@bryntum/core-<tier>';   // Business or Enterprise
+import { StateTrackingManager } from '@bryntum/core-<tier>';   // the Core package, at the Core or Enterprise tier
 
 const stm = new StateTrackingManager({ autoRecord : true });
 stm.addStore(grid.store);

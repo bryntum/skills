@@ -32,7 +32,7 @@ have snippets, tiers and per-product differences.
 - The key is the class name with a lowercase first letter: `GroupSummary` → `groupSummary`,
   `CriticalPaths` → `criticalPaths`. `true` enables with defaults, an object configures, `false`
   turns off one that is on by default.
-- On 8.x every feature belongs to a tier — Community, Business or Enterprise, cumulative. The
+- On 8.x every feature belongs to a tier — Community, Core or Enterprise, cumulative. The
   tier in the Index and the reference files is the lowest tier that has it; unmarked entries are
   in every tier. A feature above the app's tier is skipped and a dialog names the tier it needs,
   so say the tier when you suggest one.
@@ -54,30 +54,30 @@ Raw: `https://raw.githubusercontent.com/bryntum/skills/refs/heads/main/bryntum-f
 
 | The user asks for | Use | Tier | Reference |
 |---|---|---|---|
-| A shaded band across the timeline (lunch, maintenance window) | `timeRanges` + `project.timeRanges` | Business | [timeline](references/timeline.md) |
-| A band for one resource only (PTO) | `resourceTimeRanges` | Business | [timeline](references/timeline.md) |
-| A "now" line | `timeRanges : { showCurrentTimeLine : true }` | Business | [timeline](references/timeline.md) |
-| Grey out weekends / off-hours | `nonWorkingTime`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `taskNonWorkingTime` — pick by where the grey goes | Business; `eventNonWorkingTime` and `resourceNonWorkingTime` Enterprise | [timeline](references/timeline.md) |
-| Working hours that affect scheduling | Project `calendars` | Scheduler Enterprise; Gantt Business | [timeline](references/timeline.md) |
+| A shaded band across the timeline (lunch, maintenance window) | `timeRanges` + `project.timeRanges` | Core | [timeline](references/timeline.md) |
+| A band for one resource only (PTO) | `resourceTimeRanges` | Core | [timeline](references/timeline.md) |
+| A "now" line | `timeRanges : { showCurrentTimeLine : true }` | Core | [timeline](references/timeline.md) |
+| Grey out weekends / off-hours | `nonWorkingTime`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `taskNonWorkingTime` — pick by where the grey goes | Core; `eventNonWorkingTime` and `resourceNonWorkingTime` Enterprise | [timeline](references/timeline.md) |
+| Working hours that affect scheduling | Project `calendars` | Scheduler Enterprise; Gantt Core | [timeline](references/timeline.md) |
 | Temporarily highlight a span from code | `timeSpanHighlight` | Enterprise | [timeline](references/timeline.md) |
-| Arrows between events / tasks | `dependencies` (+ `dependencyEdit`) | Community (`dependencyEdit` Business) | [timeline](references/timeline.md) |
+| Arrows between events / tasks | `dependencies` (+ `dependencyEdit`) | Community (`dependencyEdit` Core) | [timeline](references/timeline.md) |
 | Events inside a parent bar; splitting an event | `nestedEvents`; `eventSegments` | Enterprise | [timeline](references/timeline.md) |
 | Highlight a row, a column, stripes | record `cls`, column `cellCls`, `stripe` | Community | [grid](references/grid.md) |
-| Show the event / task name beside or below the bar | `labels` | Business | [timeline](references/timeline.md) |
-| Copy / paste rows, cells or events | `rowCopyPaste`, `cellCopyPaste`, `eventCopyPaste`; Gantt: `taskCopyPaste` (on by default) replaces `rowCopyPaste` | Business | [grid](references/grid.md) |
-| Drag rows to reorder | `rowReorder` | Enterprise (Gantt: Business, on by default) | [grid](references/grid.md) |
-| Freeze / pin a column | `pinColumns` | Business | [grid](references/grid.md) |
-| Expand a row to show details | `rowExpander` | Enterprise (Gantt: Business) | [grid](references/grid.md) |
-| Tree, or a tree built from flat rows | `TreeGrid` / `tree`; `treeGroup` | Community; `treeGroup` Business | [grid](references/grid.md) |
-| Group rows, totals row, per-group totals | `group`, `summary`, `groupSummary` | Business; `summary` and `groupSummary` Enterprise | [grid](references/grid.md) |
-| Filter UI, search box, type-to-find, multi-sort | `filter` / `filterBar`, `search`, `quickFind`, `store.sort(…, true)` | Community; `filter` Business | [grid](references/grid.md) |
-| Event/task editor, tooltips | `eventEdit` / `taskEdit`, `eventTooltip` / `taskTooltip` (Gantt), `cellTooltip` | Community; `taskEdit` Enterprise in Scheduler, Business in Gantt; `cellTooltip` Business | [editing & export](references/editing-and-export.md) |
-| Undo / redo | Project `stm : { autoRecord : true }` plus an `UndoRedo` widget or `stm.enable()` — both halves are needed; on 8.x Gantt imports the widget from the Scheduler package | Business (TaskBoard widget Enterprise) | [editing & export](references/editing-and-export.md) |
+| Show the event / task name beside or below the bar | `labels` | Core | [timeline](references/timeline.md) |
+| Copy / paste rows, cells or events | `rowCopyPaste`, `cellCopyPaste`, `eventCopyPaste`; Gantt: `taskCopyPaste` (on by default) replaces `rowCopyPaste` | Core | [grid](references/grid.md) |
+| Drag rows to reorder | `rowReorder` | Enterprise (Gantt: Core, on by default) | [grid](references/grid.md) |
+| Freeze / pin a column | `pinColumns` | Core | [grid](references/grid.md) |
+| Expand a row to show details | `rowExpander` | Enterprise (Gantt: Core) | [grid](references/grid.md) |
+| Tree, or a tree built from flat rows | `TreeGrid` / `tree`; `treeGroup` | Community; `treeGroup` Core | [grid](references/grid.md) |
+| Group rows, totals row, per-group totals | `group`, `summary`, `groupSummary` | Core; `summary` and `groupSummary` Enterprise | [grid](references/grid.md) |
+| Filter UI, search box, type-to-find, multi-sort | `filter` / `filterBar`, `search`, `quickFind`, `store.sort(…, true)` | Community; `filter` Core | [grid](references/grid.md) |
+| Event/task editor, tooltips | `eventEdit` / `taskEdit`, `eventTooltip` / `taskTooltip` (Gantt), `cellTooltip` | Community; `taskEdit` Enterprise in Scheduler, Core in Gantt; `cellTooltip` Core | [editing & export](references/editing-and-export.md) |
+| Undo / redo | Project `stm : { autoRecord : true }` plus an `UndoRedo` widget or `stm.enable()` — both halves are needed; on 8.x Gantt imports the widget from the Scheduler package | Core (TaskBoard widget Enterprise) | [editing & export](references/editing-and-export.md) |
 | Excel, PDF, print, MS Project | `excelExporter`, `pdfExport`, `print`, `mspExport` | Enterprise | [editing & export](references/editing-and-export.md) |
-| Critical path, baselines, progress line, rollups, deadlines | Gantt features | Business to Enterprise, per feature | [gantt](references/gantt.md) |
+| Critical path, baselines, progress line, rollups, deadlines | Gantt features | Core to Enterprise, per feature | [gantt](references/gantt.md) |
 | Resource load / utilisation | `ResourceHistogram` / `ResourceUtilization` views | Enterprise | [gantt](references/gantt.md) |
-| Calendar views, recurring events, hiding weekends | `modes`, `recurrenceRule`, `hideNonWorkingDays` | Community; recurrence Business; advanced modes Enterprise | [calendar & taskboard](references/calendar-taskboard.md) |
-| Swimlanes, card content, WIP limits | `swimlaneField`, `bodyItems`, (no WIP config) | Swimlanes Business; items per type | [calendar & taskboard](references/calendar-taskboard.md) |
+| Calendar views, recurring events, hiding weekends | `modes`, `recurrenceRule`, `hideNonWorkingDays` | Community; recurrence Core; advanced modes Enterprise | [calendar & taskboard](references/calendar-taskboard.md) |
+| Swimlanes, card content, WIP limits | `swimlaneField`, `bodyItems`, (no WIP config) | Swimlanes Core; items per type | [calendar & taskboard](references/calendar-taskboard.md) |
 | Drag from a grid or sidebar onto the timeline | `bryntum-drag-and-drop` skill | — | — |
 
 ## Things that do not exist

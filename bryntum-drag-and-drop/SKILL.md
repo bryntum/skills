@@ -18,7 +18,7 @@ Detect the version as the `bryntum` skill's Version check says (raw: https://raw
 
 ## Dragging from another Bryntum Grid/store
 
-On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what its `Drag.js` is built for: https://bryntum.com/products/scheduler/examples/drag-from-grid/app.module.js, https://bryntum.com/products/scheduler/examples/drag-from-grid/lib/Drag.js The demo runs at the Enterprise tier (`taskEdit`, `stickyEvents`); on Community/Business drop those feature blocks — the `Drag.js` class itself needs nothing above Community.
+On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what its `Drag.js` is built for: https://bryntum.com/products/scheduler/examples/drag-from-grid/app.module.js, https://bryntum.com/products/scheduler/examples/drag-from-grid/lib/Drag.js The demo runs at the Enterprise tier (`taskEdit`, `stickyEvents`); on Community/Core drop those feature blocks — the `Drag.js` class itself needs nothing above Community.
 
 ## Dragging from an external (non-Bryntum) source
 

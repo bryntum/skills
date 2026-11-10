@@ -6,7 +6,7 @@ Write it to `./bryntum-migration-<from>-to-<to>.md` in the project root. Group a
 # Bryntum migration: <Product> <from> → <to>
 
 Product: <Product> (+ siblings: …) · Framework: <framework> · Package manager: <pm>
-Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise Enterprise; Business for a Scheduler app, not Scheduler Pro, `v7-to-v8.md`)
+Packages: <old> → <new> (from 8.0 every name carries the tier, `v7-to-v8.md`) · Tier: <tier> (the one the user named, otherwise Enterprise; Core for a Scheduler app, not Scheduler Pro, `v7-to-v8.md`)
 Releases crossed: <n> (<list>) · Upgrade guides read: <n>
 Docs host: <docs host> · Source: index.json | prerendered docs (index 404)
 Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop and ask before planning further)
@@ -21,8 +21,10 @@ Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop 
 - [ ] **Rename and bump Bryntum product, wrapper and `@bryntum/demo-resources` packages to exactly `<to>`**
   Files: `package.json`, lockfile · first update any `postinstall` script that copies Bryntum files
   For targets below 8.0, preserve trial aliases and use each target product's required `*-lib` / `*-lib-trial` versions for direct helper pins; for 8.x, remove obsolete direct helper dependencies.
+- [ ] **Leaving 8.0.0: rename the `-business` packages to `-core`** (same tier, renamed in 8.0.1 — `v7-to-v8.md`)
+  Files: `package.json`, lockfile · also any `tier : 'business'` config in `src/`
 - [ ] **Imports and CSS paths** from the packed target package (owning package per class, FontAwesome, themes)
-- [ ] **For 8.x Business or Enterprise, register the license key** (`v7-to-v8.md`; ask for it, never invent one)
+- [ ] **For 8.x Core or Enterprise, register the license key** (`v7-to-v8.md`; ask for it, never invent one)
 
 ### <version> — <Product>
 - [ ] **<short title>** · risk: breaking | behaviour change | deprecation | cosmetic
@@ -56,7 +58,7 @@ Blockers: none | <Vue 2 wrapper, Angular < 15, UMD, target not published> (stop 
 - [ ] Grep for removed identifiers returns zero hits: …
 - [ ] Tests: `<command>` (if present)
 - [ ] Manual: open the app, the console has no errors, no `Deprecation warning` and no `CSS issues detected`
-- [ ] 8.x Business or Enterprise: no Trial badge and no license message once the key is set (both show until then)
+- [ ] 8.x Core or Enterprise: no Trial badge and no license message once the key is set (both show until then)
 
 ## Unknowns for the user
 - Licence tier (8.x): the tier picked and that another can be named (the licence key goes under *Unsure*), theme choice
