@@ -66,7 +66,7 @@ tbar : {
   - API methods that take arguments (`shiftNext(amount)`, `zoomIn(levels)`, `hide(animate)`) receive the click event
     as their argument. Wrap them: `onNextClick() { this.shiftNext(); }`.
 - Access items by key: `this.widgetMap.addButton`. Ext `reference` / `itemId` → the key in `items`.
-- Ext `header : { items }` → Panel `tools` (Grid, Scheduler, Gantt are Panels in 7.x).
+- Ext `header : { items }` → Panel `tools` (Grid, Scheduler and Gantt are Panels).
 
 ## 4. ViewModel bindings → explicit state
 

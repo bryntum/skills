@@ -3,9 +3,10 @@
 Support level: **strong** (an official Ext → Bryntum Gantt guide exists; its mappings are corrected and folded into
 `../api-mapping.md` §4–§6, `../data-migration.md`, `../patterns.md`).
 
-**Tier:** an Ext Gantt maps to Gantt at the **Enterprise** tier when it used constraints, calendars/working time, effort,
-lag/lead, baselines or critical path. Gantt Community runs a lighter engine without them (`../api-mapping.md` §0); report
-any of these as a gap if the user keeps the Community tier.
+**Tier:** an Ext Gantt maps to Gantt at the **Core** tier or above when it used constraints, calendars/working time, effort,
+lag/lead or dependencies (Gantt Community runs a lighter engine without them: report them as a gap if the user keeps the
+Community tier), and to the **Enterprise** tier when it used baselines, critical path, `projectEdit`, rollups, summary,
+PDF export or print (`../api-mapping.md` §0).
 
 `project` is mandatory and is the data + scheduling hub. Gantt `startDate`/`endDate` set the visible time axis, and
 `project.startDate` is the project start.
@@ -33,7 +34,7 @@ dependency radius), model it on the official `advanced` demo's `GanttToolbar`
 ### Per-calendar duration conversion (rare)
 
 Ext Gantt calendars had their own `hoursPerDay`/`daysPerWeek`/`daysPerMonth`; Bryntum moved these to the project. Only
-if the app really depends on per-calendar values, follow "Restoring calendar level duration converting" in the Gantt
+if the app really depends on per-calendar values (8.0.0 caveat: `DurationConverterMixin` is not found in the 8.0.0 packages' sources or typings, so confirm it exists in the installed version first; otherwise report it as unmapped), follow "Restoring calendar level duration converting" in the Gantt
 calendars guide (`https://bryntum.com/products/gantt/docs/guide/Gantt/basics/calendars`). It takes three pieces, and
 all are required:
 

@@ -80,7 +80,7 @@ Response shape used by the Scheduler guide: `{ "resources" : { "rows" : [...] },
 Inline mapping on the stores (G-S):
 
 ```js
-project : {                    // 7.x Scheduler / Community and Core tiers: crudManager
+project : {                    // 8.0, every tier (7.x Scheduler: crudManager)
     autoLoad      : true,
     resourceStore : {
         fields : [

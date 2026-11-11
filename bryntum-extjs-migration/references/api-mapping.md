@@ -25,8 +25,8 @@ not a typo.
 A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
 you promise it. **Source of truth: what the package ships.** A feature belongs to the lowest tier whose published package
 contains its class file (checked against the 8.0.0 `-community`, `-business` and `-enterprise` tarballs; this also matches the
-`feature-availability.md` guides, 164 of 164 features). Do not use `static tier` in the source: for ~25 features it says
-Business (`'core'` in the suite) although only the Enterprise package contains them. Anything not named below is in Community.
+`feature-availability.md` guides, 164 of 164 features). Don't read `static tier` in the source as the package tier: it is the lowest tier a feature runs at once installed, and for ~25 features it says
+Business (`'core'` in the suite) although only the Enterprise package contains them (intended, per the source comments). Anything not named below is in Community.
 
 | Product | Core tier and up | Enterprise tier only |
 |---|---|---|
@@ -111,7 +111,7 @@ Engine and data layer:
 
 | Ext Scheduler | Bryntum Scheduler | Tag |
 |---|---|---|
-| `title` | keep — Scheduler is a Panel in 7.x (`title`, `tools`, `tbar` work). The guide's "remove" is outdated | SRC |
+| `title` | keep — Scheduler is a Panel (`title`, `tools`, `tbar` work). The guide's "remove" is outdated | SRC |
 | `border`, `colorResources` | remove | G-S |
 | `rowHeight`, `forceFit`, `viewPreset` | keep | G-S |
 | `snapToIncrement` | `snap` | G-S, SRC |
@@ -126,7 +126,7 @@ Engine and data layer:
 | `allowOverlap`, `eventBarTextField`, `readOnly`, `zoomOnMouseWheel` | same names | UNV |
 | `mode : 'vertical'` / `orientation` | `mode : 'vertical'` | UNV |
 | `dndValidatorFn` | `features.eventDrag.validatorFn` | UNV |
-| `beforeeventdrop` listener returning `false` | `beforeEventDropFinalize` (there is no `beforeEventDrop` in 7.x): set `context.valid = false`, or `context.async = true` + `context.finalize(bool)` | SRC |
+| `beforeeventdrop` listener returning `false` | `beforeEventDropFinalize` (there is no `beforeEventDrop`, checked in 8.0.0): set `context.valid = false`, or `context.async = true` + `context.finalize(bool)` | SRC |
 | `resizeValidatorFn` | `features.eventResize.validatorFn` | UNV |
 | `createValidatorFn` | `features.eventDragCreate.validatorFn` | UNV |
 | `multiSelect` (events) | `multiEventSelect` | UNV |
@@ -158,7 +158,7 @@ Engine and data layer:
 | Ext | Bryntum feature | Tag |
 |---|---|---|
 | `cellediting` / `scheduler_treecellediting` (`clicksToEdit`) | `cellEdit` (default on in Grid-based widgets) | G-G, SRC |
-| `rowediting` | `rowEdit` (7.3.7 has it; compare its UX with the Ext row editor) | DOC |
+| `rowediting` | `rowEdit` (Enterprise tier; compare its UX with the Ext row editor) | DOC |
 | `gridfilters` | `filter` (header menu) or `filterBar` (filter row) | G-G, SRC |
 | `ftype : 'grouping'` | `group` feature (`features : { group : 'field' }`). `hideGroupedHeader` has no Group config: set `hidden : true` on the grouped column (`hideGroupedColumns` exists only on `treeGroup`) | SRC |
 | `ftype : 'summary'` | `summary` feature + column `sum` (Enterprise tier, §0) | DOC |
@@ -172,7 +172,7 @@ Engine and data layer:
 | `scheduler_pan` | `pan` | G-G, SRC |
 | Scheduler event editor plugin | `eventEdit`, customize with keyed `items` + `weight` | SRC |
 | `gantt_taskeditor` (`taskFormClass`) | `taskEdit`, customize `items : { generalTab : { items : {...} } }` | G-G |
-| `gantt_projecteditor` | `projectEdit` (exists in 7.3; the guide says obsolete) | SRC |
+| `gantt_projecteditor` | `projectEdit` (Enterprise tier; the guide says obsolete) | SRC |
 | `gantt_dependencyeditor` | `dependencyEdit` | G-G, SRC |
 | `gantt_progressline` | `progressLine : { statusDate, disabled }` | G-G |
 | drag-drop / resize / drag-create | `eventDrag`, `eventResize`, `eventDragCreate` (default on) | SRC |
@@ -247,7 +247,7 @@ reason. If you use one of the listed alternatives, say so in the report.
 | `gantt_selectionreplicator` | Not available | `fillHandle` (differs) | G-G |
 | `taskBodyTemplate`, `projectLinesConfig.linesFor`, `allowDeselect`, `TaskType` nodes | Removed | see §4 | G-G |
 | `DynamicAssignment` scheduling mode | Removed | `FixedDuration` + `effortDriven : true` | G-G |
-| Per-calendar `hoursPerDay`/`daysPerWeek`/`daysPerMonth` | Moved to project | `DurationConverterMixin` (see `products/gantt.md`) | G-G |
+| Per-calendar `hoursPerDay`/`daysPerWeek`/`daysPerMonth` | Moved to project | `DurationConverterMixin` (see `products/gantt.md`: not found in the 8.0.0 packages) | G-G |
 | `Ext.app.Application`, controllers, Sencha Cmd, `Ext.Loader` | No concept | ES modules + Vite or the framework's build | G-G |
 
 Outside Bryntum's scope — flag for a human; may need the host framework, a third-party library or custom code:
@@ -272,7 +272,6 @@ Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read old
   Examples: `ResourceGrid`, `UndoRedo` from `scheduler-<tier>`; `ButtonGroup`, `CSSHelper`, `DataGenerator` from `core-<tier>`. Plain-script
   `class X extends bryntum.gantt.Column` becomes an ES module `import { Column } from '@bryntum/grid-<tier>'`, then `class X extends Column`.
 - Selector strings in a type B app's configs go stale (`rowResize.cellSelector` `.b-sequence-cell` → `.b-row-number-cell`): grep them all against the installed CSS.
-
 - Scheduler `eventRenderer` argument `tplData` → **`renderData`**.
 - `eventEdit.editorConfig.showResourceField`, `startTimeConfig`, `endTimeConfig` → don't exist. Use
   `items : { startTimeField : {...}, resourceField : {...} }`, or `null` to remove.

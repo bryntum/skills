@@ -3,7 +3,7 @@
 Support level: **strong** (an official Ext → Bryntum Scheduler guide exists; its mappings are corrected and folded into
 `../api-mapping.md` §3, `../data-migration.md`, `../patterns.md`).
 
-Scheduler is a Panel in 7.x, so `title`, `tools` and `tbar` work. The official guide's "Scheduler is not a Panel" is
+Scheduler is a Panel, so `title`, `tools` and `tbar` work. The official guide's "Scheduler is not a Panel" is
 outdated. Colors come from `eventColor` (an event or resource field) and `eventStyle`, not inline styles injected by
 renderers.
 
@@ -25,11 +25,11 @@ renderers.
 - Ext validators (`dndValidatorFn`, `resizeValidatorFn`, `createValidatorFn`) → the `validatorFn` of `eventDrag`,
   `eventResize`, `eventDragCreate` (UNV — verify the argument shape and test the rejection paths).
 - An Ext `beforeeventdrop` veto → `beforeEventDropFinalize` with `context.valid = false`. There is no
-  `beforeEventDrop` event in 7.x.
+  `beforeEventDrop` event (checked in 8.0.0).
 - Drag from an external list/grid onto the timeline: the `bryntum-drag-and-drop` skill.
 
 ## Both types supported
 
 - **Type A** (`Sch.*`, PascalCase data): full config/column/data mapping from the references.
 - **Type B** (Bryntum Scheduler in an Ext wrapper): remove the Ext shell, copy the Scheduler config and re-check it
-  against 7.x defaults. Custom Ext dialogs usually become the built-in `eventEdit` plus a `Popup` subclass.
+  against 8.0 defaults. Custom Ext dialogs usually become the built-in `eventEdit` plus a `Popup` subclass.
