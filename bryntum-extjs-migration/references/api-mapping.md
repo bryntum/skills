@@ -23,27 +23,22 @@ docs say `-business` / `'business'`; 8.0.1 renamed them to `-core` / `'core'`. A
 not a typo.
 
 A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
-you promise it. **Source of truth: the tier the package declares** (`static tier` in the 8.0.0 packages, confirmed by the product
-owner). The `feature-availability.md` guides (8.0.1 docs) put some features in a higher tier (e.g. Scheduler `taskEdit`, Grid and
-Scheduler `summary`/`lockRows`/`split`/`rowReorder`); when the two disagree, follow the package and don't quote the guide's tier.
-Anything not named below is in Community.
+you promise it. **Source of truth: what the package ships.** A feature belongs to the lowest tier whose published package
+contains its class file (checked against the 8.0.0 `-community`, `-business` and `-enterprise` tarballs; this also matches the
+`feature-availability.md` guides, 164 of 164 features). Do not use `static tier` in the source: for ~25 features it says
+Business (`'core'` in the suite) although only the Enterprise package contains them. Anything not named below is in Community.
 
-**Shipped-package caveat (8.0.0 packages, checked against the `-community`, `-business` and `-enterprise` tarballs).** For these
-features the Enterprise package declares `static tier = 'business'`, but the `-business` package does not contain them at all
-(only `-enterprise` does), so a Core tier app on 8.0.0 cannot use them: Grid `summary`, `groupSummary`, `lockRows`, `split`,
-`rowReorder`, `rowExpander`, `mergeCells`, `charts`, `pdfExport`, `print`; Scheduler `taskEdit`, `eventClustering`,
-`resourceTimeRangeClustering`, `eventNonWorkingTime`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `lockRows`,
-`rowReorder`, `split`, `pdfExport`, `print`, `tickCells`; Gantt `summary`, `pdfExport`. This matches the `feature-availability.md` guides, which put them in
-Enterprise. (Gantt `taskEdit`, `rowExpander` and `rowReorder` do ship in `gantt-business`.) Until the 8.0.1 `-core` package can be
-checked, treat the Core column below as "declared Core", and confirm any of these features in the package you install before promising it.
-
-| Product | Core and up | Enterprise only |
+| Product | Core tier and up | Enterprise tier only |
 |---|---|---|
-| Grid | `filter` (header-menu filter), `group`, `groupSummary`, `summary`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print` | `rowEdit`, `fillHandle`, `rowResize`, AI |
-| Scheduler | `taskEdit`, `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `eventClustering`, `resourceTimeRangeClustering`, `headerZoom`, `labels`, `nonWorkingTime`, `eventNonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `lockRows`, `rowReorder`, `split`, `pdfExport`, `print` | `resourceNonWorkingTime`, `eventBuffer`, `eventSegments` (+ drag/resize), `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `allocationCopyPaste`, `rowResize`, `versions`, AI |
-| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `summary`, `treeGroup`, `pdfExport` | `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, `print`, AI |
+| Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print`, `rowEdit`, `fillHandle`, `rowResize`, AI |
+| Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit`, `eventClustering`, `resourceTimeRangeClustering`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `tickCells`, `lockRows`, `rowReorder`, `split`, `pdfExport`, `print`, `eventBuffer`, `eventSegments` (+ drag/resize), `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `allocationCopyPaste`, `rowResize`, `versions`, AI |
+| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `summary`, `pdfExport`, `print`, `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, AI |
 | Calendar | recurring events (data layer), `eventCopyPaste`, `externalEventSource`, `timeRanges`, `weekExpander` | `eventBuffer`, `loadOnDemand`, `print`, AI; views `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner`, `multiweek` |
 | TaskBoard | swimlanes, `columnFilter`, `columnRename`, `columnResize`, `filterBar`, `simpleTaskEdit`; card items `jsx`, `resourceAvatars`, `tags`, `todoList` | `columnDrag`, `columnLock`, `columnSort`, `swimlaneDrag`, card items `chart`, `collapse`, AI |
+
+Open question for the Bryntum devs (not yet answered): `gantt-business` also contains Grid's `rowExpander` and `rowReorder`, which the
+Grid docs call Enterprise and the Grid Business package does not ship. Don't promise them at the Core tier until confirmed. These
+tier results are for 8.0.0; re-check against the `-core` packages once 8.0.1 is published.
 
 Engine and data layer:
 
@@ -53,12 +48,12 @@ Engine and data layer:
 - **Calendar Community** has no recurring events (the Core tier adds them, with lazy loading): an Ext Calendar with recurrence needs the Core tier.
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
-  (`eventEdit` stays the default editor at Community/Core, although the `taskEdit` class ships from Core up). It is the former Scheduler Pro.
+  (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
   Enterprise package at a lower tier set `tier : 'core'` on the widget (`'business'` on the 8.0.0 packages). Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
-- Re-check a list in the installed package: `grep -rlE "static tier = '(core|business)'" node_modules/@bryntum/<product>-<tier>/lib`.
+- Re-check a feature in the installed package: it is there if `node_modules/@bryntum/<product>-<tier>/lib/<Product>/feature/<Name>.js` exists (also look under `lib/Grid` and `lib/Scheduler` for Gantt), not by its `static tier`.
 
 ## 1. Classes and application structure
 
@@ -163,12 +158,12 @@ Engine and data layer:
 | `rowediting` | `rowEdit` (7.3.7 has it; compare its UX with the Ext row editor) | DOC |
 | `gridfilters` | `filter` (header menu) or `filterBar` (filter row) | G-G, SRC |
 | `ftype : 'grouping'` | `group` feature (`features : { group : 'field' }`). `hideGroupedHeader` has no Group config: set `hidden : true` on the grouped column (`hideGroupedColumns` exists only on `treeGroup`) | SRC |
-| `ftype : 'summary'` | `summary` feature + column `sum` | DOC |
-| `ftype : 'groupingsummary'` | `groupSummary` | DOC |
-| `rowexpander` / `ftype : 'rowbody'` | `rowExpander` | DOC |
+| `ftype : 'summary'` | `summary` feature + column `sum` (Enterprise tier, §0) | DOC |
+| `ftype : 'groupingsummary'` | `groupSummary` (Enterprise tier) | DOC |
+| `rowexpander` / `ftype : 'rowbody'` | `rowExpander` (Grid: Enterprise tier, §0) | DOC |
 | `bufferedrenderer` | remove — virtual rendering is built in | DOC |
 | `clipboard` / `gantt_clipboard` | `cellCopyPaste` (+ `taskCopyPaste : { useNativeClipboard : true }` in Gantt) | G-G, SRC |
-| `gridviewdragdrop` (reorder rows) | `rowReorder` (default on in Gantt) | G-G |
+| `gridviewdragdrop` (reorder rows) | `rowReorder` (Enterprise tier in Grid and Scheduler; default on in Gantt) | G-G |
 | drag between grids / onto a timeline | `DragHelper` — see the `bryntum-drag-and-drop` skill | SRC |
 | context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default | G-G, SRC |
 | `scheduler_pan` | `pan` | G-G, SRC |

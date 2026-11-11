@@ -80,10 +80,10 @@ Ask the user about anything they haven't already told you, and record the answer
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
   Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs the Core tier at least
   (constraints, calendars, dependencies and `taskEdit` are Core tier; the Community tier has a lighter engine) and the Enterprise tier
-  for baselines, critical paths, `projectEdit`, Rollups, MS Project export and print. (Gantt `summary` and `pdfExport` are Core tier.) An
+  for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
-  Per-feature tiers: `static tier` in the installed package is authoritative; the `feature-availability.md` guides can list a higher tier.
+  Per-feature tiers follow what the published package ships (the `feature-availability.md` guides agree); `static tier` in the source is not reliable for about 25 features.
 - **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
   (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
   gives the version. Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
