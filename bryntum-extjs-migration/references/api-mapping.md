@@ -28,6 +28,15 @@ owner). The `feature-availability.md` guides (8.0.1 docs) put some features in a
 Scheduler `summary`/`lockRows`/`split`/`rowReorder`); when the two disagree, follow the package and don't quote the guide's tier.
 Anything not named below is in Community.
 
+**Shipped-package caveat (8.0.0 packages, checked against the `-community`, `-business` and `-enterprise` tarballs).** For these
+features the Enterprise package declares `static tier = 'business'`, but the `-business` package does not contain them at all
+(only `-enterprise` does), so a Core tier app on 8.0.0 cannot use them: Grid `summary`, `groupSummary`, `lockRows`, `split`,
+`rowReorder`, `rowExpander`, `mergeCells`, `charts`, `pdfExport`, `print`; Scheduler `taskEdit`, `eventClustering`,
+`resourceTimeRangeClustering`, `eventNonWorkingTime`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `lockRows`,
+`rowReorder`, `split`, `pdfExport`, `print`, `tickCells`; Gantt `summary`, `pdfExport`. This matches the `feature-availability.md` guides, which put them in
+Enterprise. (Gantt `taskEdit`, `rowExpander` and `rowReorder` do ship in `gantt-business`.) Until the 8.0.1 `-core` package can be
+checked, treat the Core column below as "declared Core", and confirm any of these features in the package you install before promising it.
+
 | Product | Core and up | Enterprise only |
 |---|---|---|
 | Grid | `filter` (header-menu filter), `group`, `groupSummary`, `summary`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print` | `rowEdit`, `fillHandle`, `rowResize`, AI |
