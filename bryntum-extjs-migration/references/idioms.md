@@ -51,6 +51,24 @@ Also watch:
 | `applyFoo` / `updateFoo` | `changeFoo(value, old)` / `updateFoo(value, old)` | `change` normalizes, `update` reacts |
 | `beforerender` / `afterrender` | `paint` event | Fires with `{ firstPaint }` |
 
+| `Ext.define('My.Grid', { extend : 'Ext.grid.Panel' })` / `Ext.create(...)` | `class MyGrid extends Grid { static $name = 'MyGrid'; }` / `new Grid(cfg)` | Plain ES classes. `$name` feeds the feature/type registry, not a namespace. There is no string factory for top-level construction |
+| `xtype : 'button'` | `type : 'button'` | A custom widget needs `static type = '…'` and one `MyWidget.initClass()`; without it `type` lookup throws `Invalid type name "…" passed to Widget factory` |
+| `initComponent()` for one-off setup | `construct(config) { super.construct(config); … }` | Call `super.construct` first |
+
+## Config names and events
+
+| Ext JS | Bryntum | Note |
+|---|---|---|
+| button `handler`, ViewController method name (`handler : 'onSave'`) | `onClick`, `onClick : 'up.onSave'` | Any `onXxx` config becomes a listener for `xxx`; the string form resolves on an owning widget |
+| `cmp.on('click', fn, scope)` | `widget.on({ click : fn, thisObj : this })` | `on`, `un`, `once`, `trigger`; `on()` returns a detacher. `buffer` and `throttle` listener options work as in Ext |
+| toolbar `'->'` / `'|'` | same | Filler / separator in `tbar` / `bbar` |
+| `layout : 'hbox'` | `layout : 'box'` (alias `'hbox'`), `'vbox'` | Available: `default`, `box`/`hbox`, `vbox`, `card`, `fit` |
+| `Ext.window.Window` / `Ext.form.Panel` | `Popup` / `Panel` or `Container` with field items | No `window` or `form` type. Values via `container.values` / `getValues()`, validity via `isValid` |
+| ComboBox `store` + `displayField` + `valueField` | `Combo` with `items` (or `store`), `displayField` (default `'text'`), `valueField` | |
+| — | `dataset`, `weight`, `tooltip`, `ref`, `masked` | Extra common widget configs |
+
+A column or widget `renderer` returns a string, a `DomConfig` object or (React wrapper) JSX; returning `undefined` skips rendering.
+
 ## Finding components
 
 | Ext JS | Bryntum | Note |
@@ -70,6 +88,8 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 |---|---|---|
 | `grid.getStore()` | `grid.store` | |
 | `store.getCount()` | `store.count` | `getCount(options)` also exists |
+| `store.indexOf(rec)` | `store.indexOf(recordOrId)` | Also accepts an id |
+| `store.insert(index, records)` | same (`silent` as a 3rd argument) | |
 | `store.getRange()` | `store.getRange(start, end)` or `store.records` | |
 | `store.find('name', x)` | `store.findRecord('name', x)` or `findByField('name', x)` | `find(fn, true)` includes filtered-out rows |
 | `store.query('name', /bob/)` | `store.query(fn)` | |
@@ -77,6 +97,8 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 | `store.group('city')` | same | Also `addGrouper`, `removeGrouper`, `clearGroupers` |
 | `store.sync()` | `store.commit()` (AjaxStore) | `acceptChanges()` marks clean without a request; `revertChanges()` rolls back |
 | `store.getModifiedRecords()` | `store.changes` (`{ added, modified, removed }`) / `store.hasChanges` | |
+
+Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a function (`Widget.query`, `queryAll`).
 
 ## Record and tree node
 
@@ -88,6 +110,8 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 | `record.reject()` / `commit()` | `record.revertChanges()` / `clearChanges()` | |
 | `record.copy()` | `record.copy(newIdOrData, deep)` | |
 | `store.remove(record)` | same, or `record.remove()` | |
+| `node.appendChild(child)` | `node.appendChild(child, silent, options)` | |
+| `node.removeChild(child)` | `node.removeChild(childRecords, isMove, silent)` | Accepts an array |
 | `node.isLeaf()` | `node.isLeaf` | Getter |
 | `node.getDepth()` | `node.childLevel` | |
 | `node.cascadeBy(fn)` | `node.traverse(fn, skipSelf)` | |

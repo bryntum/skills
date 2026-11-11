@@ -8,7 +8,7 @@ description: >
   Sencha", "Ext JS end of life", "Sch.panel", "Gnt.panel", "Ext.grid.Panel to Bryntum", or any
   Ext JS codebase being moved to Bryntum. Also use it whenever Ext JS habits appear in Bryntum code
   (`store.first()`, `component.down()`, `store.get(id)`, `Ext.getCmp`, `Ext.create`, `xtype`,
-  `dataIndex`, `renderTo`, `Ext.Msg`, `grid.getStore()`, `getSelectionModel()`, `store.sync()`) or the
+  `dataIndex`, `renderTo`, `Ext.Msg`, `Ext.Ajax`, `Ext.define`, `grid.getStore()`, `getSelectionModel()`, `store.sync()`) or the
   user mentions an Ext JS / Sencha background.
 metadata:
   tags: bryntum, extjs, sencha, migration, scheduler, gantt, grid, schedulerpro
@@ -23,6 +23,8 @@ components are replaced first and the Ext shell is removed afterwards.
 `core` or `enterprise`) on public npm. Pick the branch with the version check in the base `bryntum` skill. Every
 code block in this skill and its references is 8.0 code, except where a line says "7.x". For an app that stays on 7.x
 (or a Bryntum-in-Ext screen already on 7.x, see below) read `references/v7.md` too: it lists what differs.
+
+Bryntum's Ext Scheduler (`Sch.*`) and Ext Gantt (`Gnt.*`) add-ons are discontinued: today's products are standalone ES modules with no Ext dependency and no shared code, so forum threads and answers under `Sch.*`/`Gnt.*` don't apply.
 
 Not migrating, just writing Bryntum code with Ext JS habits? Read `references/idioms.md`: Bryntum shares Ext's
 vocabulary (`Store`, `items`, `renderer`, `type`) but several look-alike calls fail silently.
