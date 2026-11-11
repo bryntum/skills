@@ -63,4 +63,4 @@ me.widgetMap.localeCombo.value      = me.localeManager.locale.localeName;
 - **Type A** (`Gnt.*`, PascalCase data, `TaskType`, old calendars): the full mapping in `../api-mapping.md` and the
   structural data changes in `../data-migration.md`.
 - **Type B** (Bryntum Gantt in an Ext wrapper): remove the Ext shell (an Ext hbox + resizable panel becomes a
-  `Container` + `splitter`), move the wrapper's defaults onto the Gantt, and re-check the config against 7.x defaults.
+  `Container` + `splitter`), move the wrapper's defaults onto the Gantt, and re-check the config against 8.0 defaults.

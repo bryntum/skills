@@ -179,4 +179,5 @@ features the Ext app didn't have.
 - When switching tier, version or registry, move `package-lock.json` and `node_modules/` aside first. The lockfile
   silently keeps the old package source (look for `npm.bryntum.com` in `resolved` URLs).
 - Verify the license state in the browser: no badge at the Community tier or with a valid key; a Trial badge at the Core or
-  Enterprise tier without a key. Report either, and a "requires the Core/Enterprise tier" dialog, in the report.
+  Enterprise tier without a key. Report either, and a "requires the Core/Enterprise tier" dialog, in the report. A second product component (e.g. the Gantt's `ResourceGrid`)
+  can log its own trial message; with a key, check that it covers every product used.

@@ -32,9 +32,12 @@ Business (`'core'` in the suite) although only the Enterprise package contains t
 |---|---|---|
 | Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print`, `rowEdit`, `fillHandle`, `rowResize`, AI |
 | Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit`, `eventClustering`, `resourceTimeRangeClustering`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `tickCells`, `lockRows`, `rowReorder`, `split`, `pdfExport`, `print`, `eventBuffer`, `eventSegments` (+ drag/resize), `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `allocationCopyPaste`, `rowResize`, `versions`, AI |
-| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `summary`, `pdfExport`, `print`, `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, AI |
+| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `summary`, `pdfExport`, `print`, `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, AI; `cost` column (`CostColumn`) |
 | Calendar | recurring events (data layer), `eventCopyPaste`, `externalEventSource`, `timeRanges`, `weekExpander` | `eventBuffer`, `loadOnDemand`, `print`, AI; views `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner`, `multiweek` |
 | TaskBoard | swimlanes, `columnFilter`, `columnRename`, `columnResize`, `filterBar`, `simpleTaskEdit`; card items `jsx`, `resourceAvatars`, `tags`, `todoList` | `columnDrag`, `columnLock`, `columnSort`, `swimlaneDrag`, card items `chart`, `collapse`, AI |
+
+A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`, `rowResize`, `resourceEdit` are listed there, not under Gantt).
+`ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
 
 Open question for the Bryntum devs (not yet answered): `gantt-business` also contains Grid's `rowExpander` and `rowReorder`, which the
 Grid docs call Enterprise and the Grid Business package does not ship. Don't promise them at the Core tier until confirmed. These
@@ -264,6 +267,11 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 ## 9. Outdated advice (official guides, old blog posts)
 
 Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read older material:
+
+- Every `bryntum.<product>.X` UMD global becomes an import from the package that owns `X`: find it in `node_modules/@bryntum/*/entry.js`.
+  Examples: `ResourceGrid`, `UndoRedo` from `scheduler-<tier>`; `ButtonGroup`, `CSSHelper`, `DataGenerator` from `core-<tier>`. Plain-script
+  `class X extends bryntum.gantt.Column` becomes an ES module `import { Column } from '@bryntum/grid-<tier>'`, then `class X extends Column`.
+- Selector strings in a type B app's configs go stale (`rowResize.cellSelector` `.b-sequence-cell` → `.b-row-number-cell`): grep them all against the installed CSS.
 
 - Scheduler `eventRenderer` argument `tplData` → **`renderData`**.
 - `eventEdit.editorConfig.showResourceField`, `startTimeConfig`, `endTimeConfig` → don't exist. Use

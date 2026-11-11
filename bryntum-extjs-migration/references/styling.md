@@ -78,6 +78,9 @@ data-driven.
 
 ## Sizes from Ext
 
+Replacing an Ext `Panel` + `layout: 'fit'`: give the Bryntum widget `height : '100%'` (or a sized parent), or it collapses to a one-row strip.
+Material3 gives `.b-panel-content` 24px padding: reset it. Ext's body font is smaller than Bryntum's default (about 14px), so compare against the original.
+
 Ext pixel widths fit Ext's padding and font, not Bryntum's (SRC):
 
 - Cells have `--b-grid-cell-padding-inline` on each side, default `var(--b-widget-padding)` = 1em (Visby .75em,
