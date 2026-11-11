@@ -158,7 +158,7 @@ RangeEditor.initClass();
 
 Checked against 7.3.7 (recheck on 8.x): Cancel closes the dialog, and Enter saves only when the fields are valid.
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
-for app-level dialogs instead (core skill, widget-first rule).
+for app-level dialogs instead (base skill, widget-first rule).
 
 ## 7. Rendering
 
@@ -244,7 +244,7 @@ Ext.define('Bryntum.wrapper.Scheduler', {
   build a UMD bundle yourself (the product's `gettingstarted/build-umd.md`: webpack, publishes the `bryntum.<product>`
   global). Class access such as `bryntum.scheduler.Scheduler` only works with the second route or your own global.
   7.x ships `build/<product>.umd.js` (`v7.md`).
-- **CSS coexistence.** Load the Bryntum sheets (structural + one theme + Font Awesome, core skill "CSS setup") next to the
+- **CSS coexistence.** Load the Bryntum sheets (structural + one theme + Font Awesome, base skill "CSS setup") next to the
   Ext theme. Bryntum rules are scoped under `.b-widget`. If layout breaks, wrap the widget in `position : relative;
   overflow : hidden`. Tooltip/popup stacking: adjust `z-index` rather than patching either library.
 - **Resizing.** Bryntum observes its own size; if the Ext layout doesn't give the wrapper a height, the widget falls back
@@ -252,7 +252,7 @@ Ext.define('Bryntum.wrapper.Scheduler', {
 - **Stores.** Prefer separate stores: the Bryntum project loads from the same endpoints the Ext stores use. A one-way copy
   from an Ext store (`store.getRange().map(r => r.getData())`) into the project is acceptable for read-only data; two-way
   sync is not worth it. Count records on both sides.
-- **License key.** Core/Enterprise need `bryntum.licenseKey` (or the trial runs). Set it before the wrapper creates the widget.
+- **License key.** The Core and Enterprise tiers need `bryntum.licenseKey` (or the trial runs). Set it before the wrapper creates the widget.
 
 ## 12. Custom view presets (Ext Scheduler / Gantt)
 

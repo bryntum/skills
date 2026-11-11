@@ -5,7 +5,7 @@ old app's domain meaning (status colors, holidays, custom renderer markup) — n
 
 ## CSS setup
 
-Use plain CSS `@import`s as in the core `bryntum` skill ("CSS setup"). On 8.0: Font Awesome from
+Use plain CSS `@import`s as in the base `bryntum` skill ("CSS setup"). On 8.0: Font Awesome from
 `@bryntum/core-<tier>/fontawesome/css/`, the structural `<product>.css` and one theme from `@bryntum/<product>-<tier>/`;
 several products on one page use the `*.thin.css` sheets. Ext Sass variables and theme packages don't carry over.
 The suffix-less family sheets (`svalbard.css`) use `light-dark()`: set `color-scheme` (`:root { color-scheme : light dark }`)
@@ -133,4 +133,4 @@ To make dialogs compact too, give the Popup a `cls` and add:
 ## Verification
 
 Beyond the checklist in `templates.md`: the app font is a deliberate choice (the app's own font, or Poppins per the
-core skill), and no hex/rgb colors remain apart from intentional brand/domain colors.
+base skill), and no hex/rgb colors remain apart from intentional brand/domain colors.

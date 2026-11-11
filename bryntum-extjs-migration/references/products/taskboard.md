@@ -5,9 +5,9 @@ name-checked against the 8.0.0 `@bryntum/taskboard-enterprise` package; unverifi
 
 Detect it by `Kanban.*` classes (the namespace predates the product name), `xtype : 'kanban'` or `Kanban.data.TaskStore`.
 
-Tier: Community covers the board, columns, `taskEdit`, `taskMenu`, `taskDrag`, `taskTooltip`. Swimlanes, `filterBar`,
-`columnFilter`, `columnRename`, `columnResize`, `simpleTaskEdit` need Core; `columnDrag`, `columnLock`, `columnSort`,
-`swimlaneDrag` need Enterprise. See `../api-mapping.md` §0.
+Tier: the Community tier covers the board, columns, `taskEdit`, `taskMenu`, `taskDrag`, `taskTooltip`. Swimlanes, `filterBar`,
+`columnFilter`, `columnRename`, `columnResize`, `simpleTaskEdit` need the Core tier; `columnDrag`, `columnLock`, `columnSort`,
+`swimlaneDrag` need the Enterprise tier. See `../api-mapping.md` §0.
 
 | Ext (`Kanban.*`) | Bryntum TaskBoard | Tag |
 |---|---|---|

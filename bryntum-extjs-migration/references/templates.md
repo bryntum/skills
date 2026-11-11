@@ -27,7 +27,7 @@ models → app logic → extras → styling.
 # Migration plan: <app or screen> → Bryntum <Product> <version> (<target stack>)
 
 - **Bryntum:** 8.x | 7.x (`<exact version>`), tier community | core | enterprise (chosen by: user | license | default), packages `@bryntum/<product>-<tier>`
-- **License:** key registered | trial (Core/Enterprise, 14 days) | none needed (Community) | install blocked — verification blocked
+- **License:** key registered | trial (Core or Enterprise tier, 14 days) | none needed (Community tier) | install blocked — verification blocked
 - **Target:** <vanilla + Vite | React | Angular | Vue 3>, <TypeScript | JavaScript>
 - **Approach:** big-bang | incremental (phase 1: Bryntum inside Ext shell; phase 2: shell removed)
 - **Source:** <path>, Ext JS <version> <Classic|Modern>, type <A|B|C> per screen
@@ -93,7 +93,7 @@ Load and data:
 - [ ] 0 console errors and 0 warnings on load (including no "sized by its predefined minHeight" warning)
 - [ ] store/project record counts equal the counts recorded in the report
 - [ ] the component renders data — rows/bars visible, not an empty timeline
-- [ ] license state as planned: no badge (Community or valid key), or a Trial badge and console message (no key; report it); no "requires the Core/Enterprise tier" dialog — if one shows, drop the feature or report the tier it needs
+- [ ] license state as planned: no badge (Community tier or valid key), or a Trial badge and console message (no key; report it); no "requires the Core/Enterprise tier" dialog — if one shows, drop the feature or report the tier it needs
 
 Structure:
 

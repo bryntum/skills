@@ -5,7 +5,7 @@ Support level: **strong** (an official Ext → Bryntum Gantt guide exists; its m
 
 **Tier:** an Ext Gantt maps to Gantt at the **Enterprise** tier when it used constraints, calendars/working time, effort,
 lag/lead, baselines or critical path. Gantt Community runs a lighter engine without them (`../api-mapping.md` §0); report
-any of these as a gap if the user keeps Community.
+any of these as a gap if the user keeps the Community tier.
 
 `project` is mandatory and is the data + scheduling hub. Gantt `startDate`/`endDate` set the visible time axis, and
 `project.startDate` is the project start.

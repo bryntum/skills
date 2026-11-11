@@ -16,9 +16,11 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 
 ## 0. Tiers: what each Ext feature needs on 8.0
 
-The tiers are **Community < Core < Enterprise** (the middle tier was called Business until 2026-11-10, when the suite renamed it; the public
-8.0.0 packages and older docs still say `-business` / `'business'`: run `npm view @bryntum/<product>-core version` and fall back to
-`-business` if it 404s, and read "core" as "business" for those packages).
+The tiers are the **Community < Core < Enterprise** tiers. The Core tier was called Business in 8.0.0: those packages and the older
+docs say `-business` / `'business'`; 8.0.1 renamed them to `-core` / `'core'`. A `-business` app is already on the Core tier, and
+`-business` and `-core` must not be mixed. Run `npm view @bryntum/<product>-core version` and fall back to `-business` if it 404s
+(8.0.1 not out yet), and read "core" as "business" for those packages. `@bryntum/core-core` is the Core package at the Core tier,
+not a typo.
 
 A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
 you promise it. **Source of truth: the tier the package declares** (`static tier` in the 8.0.0 packages, confirmed by the product
@@ -39,7 +41,7 @@ Engine and data layer:
 - **Gantt Community** runs a lighter engine (base task: dates, name, `percentDone`, WBS): no working time, constraints,
   critical path, lag/lead, effort or scheduling direction. **Gantt Core** has the full engine (constraints,
   dependencies, calendars). **Gantt Enterprise** adds baselines and project revisions.
-- **Calendar Community** has no recurring events (Core adds them, with lazy loading): an Ext Calendar with recurrence needs Core.
+- **Calendar Community** has no recurring events (the Core tier adds them, with lazy loading): an Ext Calendar with recurrence needs the Core tier.
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`eventEdit` stays the default editor at Community/Core, although the `taskEdit` class ships from Core up). It is the former Scheduler Pro.

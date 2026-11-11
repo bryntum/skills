@@ -4,9 +4,9 @@ Support level: **limited**. No official Ext → Bryntum Calendar guide exists. T
 migration knowledge base and were name-checked against the 8.0.0 `@bryntum/calendar-enterprise` package; "UNV" rows
 exist in Bryntum but the Ext equivalence is unverified. Report anything else as unmapped.
 
-Tier: Community has the base data model and the `day`, `week`, `month`, `year`, `agenda` views. **Recurring events need
-Core.** Enterprise adds the `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner` and
-`multiweek` modes and `print`. Calendar keeps the Core data layer at Enterprise. See `../api-mapping.md` §0.
+Tier: the Community tier has the base data model and the `day`, `week`, `month`, `year`, `agenda` views. **Recurring events need
+the Core tier.** The Enterprise tier adds the `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner` and
+`multiweek` modes and `print`. Calendar keeps the Core tier data layer at the Enterprise tier. See `../api-mapping.md` §0.
 
 Detect it by `Cal.*` classes, `xtype : 'calendarpanel'` or `Cal.data.EventStore`.
 

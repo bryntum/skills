@@ -20,14 +20,14 @@ Turns an Ext JS app (Classic or Modern) into a Bryntum app with no Ext left. For
 components are replaced first and the Ext shell is removed afterwards.
 
 **Version.** The target is Bryntum **8.0**: tiered packages (`@bryntum/<product>-<tier>`, tier = `community`,
-`core` or `enterprise`) on public npm. Pick the branch with the version check in the core `bryntum` skill. Every
+`core` or `enterprise`) on public npm. Pick the branch with the version check in the base `bryntum` skill. Every
 code block in this skill and its references is 8.0 code, except where a line says "7.x". For an app that stays on 7.x
 (or a Bryntum-in-Ext screen already on 7.x, see below) read `references/v7.md` too: it lists what differs.
 
 Not migrating, just writing Bryntum code with Ext JS habits? Read `references/idioms.md`: Bryntum shares Ext's
 vocabulary (`Store`, `items`, `renderer`, `type`) but several look-alike calls fail silently.
 
-Load the core `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend,
+Load the base `bryntum` skill and the target's framework skill as well. Add `bryntum-crud` for a real backend,
 `bryntum-editor` when the app customizes the event/task editor, and `bryntum-features` to find the built-in feature
 for an Ext plugin or hand-written behavior.
 
@@ -65,18 +65,24 @@ Read only the references the app needs. If this skill isn't installed locally, f
 
 Ask the user about anything they haven't already told you, and record the answers in `MIGRATION_PLAN.md`:
 
-- **Tier and license.** The tiers are Community, **Core** and Enterprise (Core was named Business until 2026-11-10; the published
-  8.0.0 packages still use `-business` and `tier : 'business'`, so confirm names with `npm view`). Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
-  the user names or holds a license for ("free" / "open source" means Community). Otherwise use **Enterprise**, say you
-  picked it, and say it runs as a 14-day trial until `bryntum.licenseKey` is set (Community has no key). Don't choose the
+- **Tier and license.** The tiers are the Community, Core and Enterprise tiers, each including the ones below it. The Core
+  tier was called Business in 8.0.0: those packages are `@bryntum/<product>-business` (and `-<framework>-business`) with
+  `static tier = 'business'` and `tier : 'business'`; 8.0.1 renamed all of them to `core`. A `-business` app is already on
+  the Core tier (no tier switch), npm's deprecation warning for it is expected, `-business` and `-core` must not be mixed,
+  and no `-business` version exists above 8.0.0, so upgrading means renaming (`bryntum-migrate`). If `npm view
+  @bryntum/<product>-core version` 404s (8.0.1 not out yet), install `-business` and read "core" as "business" below.
+  "Core" also names the package `@bryntum/core-<tier>`, so a Core tier app installs `@bryntum/core-core`: correct, not a
+  typo for `@bryntum/core`. Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
+  the user names or holds a license for ("free" / "open source" means the Community tier). Otherwise use the **Enterprise** tier, say you
+  picked it, and say it runs as a 14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the
   lowest tier by feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md`
   §0): a feature above the tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
-  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs **Core** at least
-  (constraints, calendars, dependencies and `taskEdit` are Core; Community has a lighter engine) and **Enterprise**
-  for baselines, critical paths, `projectEdit`, Rollups, MS Project export and print. (Gantt `summary` and `pdfExport` are Core.) An
+  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs the Core tier at least
+  (constraints, calendars, dependencies and `taskEdit` are Core tier; the Community tier has a lighter engine) and the Enterprise tier
+  for baselines, critical paths, `projectEdit`, Rollups, MS Project export and print. (Gantt `summary` and `pdfExport` are Core tier.) An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
-  former Scheduler Pro) needs **Enterprise**. Calendar and TaskBoard keep the Core data layer at Enterprise.
+  former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
   Per-feature tiers: `static tier` in the installed package is authoritative; the `feature-availability.md` guides can list a higher tier.
 - **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
   (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
@@ -108,7 +114,7 @@ component; Bryntum Calendar is possible, but mark it limited — Bryntum's own c
 ## Converting
 
 Build the inventory and plan from the checklist in `references/templates.md`. For scaffolding (install, CSS, sizing,
-Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
+Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
 
 - Remove every Ext script, stylesheet and build file. Rebuild the styling for Bryntum 8 instead of porting the Ext
   chrome (`references/styling.md`).
@@ -131,7 +137,7 @@ Vite `optimizeDeps`), follow the core skill. Points specific to migrations:
   `DateHelper`, `Popup`, `Toolbar`, `LocaleHelper` from `@bryntum/core-<tier>`, `Column` from `@bryntum/grid-<tier>`).
   Features of another product register only when that package is imported (`import '@bryntum/grid-<tier>'` for
   `cellTooltip` in a Scheduler).
-- In a Vite target set `build.cssTarget` (core skill, "Using with Vite"), or the built app loses its theme colors while
+- In a Vite target set `build.cssTarget` (base skill, "Using with Vite"), or the built app loses its theme colors while
   `npm run dev` looks right. Leave `optimizeDeps` alone.
 - Ext apps often replaced the event editor with a custom dialog. Customize the built-in `eventEdit`/`taskEdit`
   instead. Other dialogs become a `Popup` subclass, or the host framework's dialog when the app has its own component
@@ -151,7 +157,7 @@ Use the checklist in `references/templates.md`. Three lessons from past migratio
 - Check every claim before writing it. "Fits", "no longer clipped" or "matches Ext" needs a screenshot or the same
   input sequence run on the original. Proving that a feature works doesn't prove it behaves like Ext.
 
-Then write `MIGRATION_REPORT.md` (`references/templates.md`). Follow the core skill's hand-off, and suggest Bryntum
+Then write `MIGRATION_REPORT.md` (`references/templates.md`). Follow the base skill's hand-off, and suggest Bryntum
 features the Ext app didn't have.
 
 ## Traps
@@ -171,5 +177,5 @@ features the Ext app didn't have.
   `references/idioms.md`.
 - When switching tier, version or registry, move `package-lock.json` and `node_modules/` aside first. The lockfile
   silently keeps the old package source (look for `npm.bryntum.com` in `resolved` URLs).
-- Verify the license state in the browser: no badge on Community or with a valid key; a Trial badge on Core /
-  Enterprise without a key. Report either, and a "requires the Core/Enterprise tier" dialog, in the report.
+- Verify the license state in the browser: no badge at the Community tier or with a valid key; a Trial badge at the Core or
+  Enterprise tier without a key. Report either, and a "requires the Core/Enterprise tier" dialog, in the report.
