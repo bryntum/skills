@@ -11,6 +11,7 @@ Tags:
 - **DOC** — added for general Ext app migrations; the name is confirmed in the 7.3.7/8.0 typings (`*.d.ts`), but the
   mapping hasn't been verified end to end — check config details in the docs before relying on them
 - **TEST** — also run in a browser on 8.0.0 with real mouse input (Calendar and TaskBoard rows)
+- **KB** — taken from the suite's Ext migration knowledge base only; the Ext side could not be checked
 - **UNV** — the Bryntum name exists, but equivalence to the Ext behavior is not verified
 
 Product-specific rows only apply to that product. Don't generalize a Gantt row to Scheduler or vice versa.
