@@ -26,7 +26,7 @@ models → app logic → extras → styling.
 ```markdown
 # Migration plan: <app or screen> → Bryntum <Product> <version> (<target stack>)
 
-- **Bryntum:** 8.x | 7.x (`<exact version>`), tier community | core | enterprise (chosen by: user | license | default), packages `@bryntum/<product>-<tier>`
+- **Bryntum:** 8.x | 7.x (`<exact version>`), tier community | core | enterprise (chosen by: user | license | default), exact package names (`@bryntum/<product>-community`, `-business` on 8.0.0 for the Core tier, `-enterprise`)
 - **License:** key registered | trial (Core or Enterprise tier, 14 days) | none needed (Community tier) | install blocked — verification blocked
 - **Target:** <vanilla + Vite | React | Angular | Vue 3>, <TypeScript | JavaScript>
 - **Approach:** big-bang | incremental (phase 1: Bryntum inside Ext shell; phase 2: shell removed)

@@ -3,7 +3,7 @@
 Support level: **moderate** (type B is mostly structural; type C — plain `Ext.grid.Panel` — follows the
 mappings in `../api-mapping.md`, many tagged DOC: confirm them in the docs for the installed version).
 
-Grid is a Panel in 7.x (`title`, `tools`, `tbar`, `bbar` work), so Ext header actions move to `tools`.
+Grid is a Panel (`title`, `tools`, `tbar`, `bbar` work), so Ext header actions move to `tools`.
 
 ## Type C: `Ext.grid.Panel` → `Grid`
 
@@ -55,7 +55,11 @@ Rules:
 ## Type B: Bryntum Grid inside an Ext shell
 
 Mostly structural: remove `Ext.application`, `Viewport`, `Loader`, wrapper panels and controllers; copy the Bryntum
-Grid config and normalize it for 7.x (`dataIndex` → `field`, header `items` → `tools`, `bind` → handlers).
+Grid config and normalize it for 8.0 (`dataIndex` → `field`, header `items` → `tools`, `bind` → handlers).
+
+**UMD globals.** A type B app that reads `bryntum.<product>.X` (e.g. `bryntum.grid.DataGenerator`, `bryntum.grid.Column`)
+becomes an import from the package that owns `X`: `DataGenerator`, `Store`, `DateHelper` come from `@bryntum/core-<tier>`,
+`Grid`, `Column` from `@bryntum/grid-<tier>`. Check `node_modules/@bryntum/*/entry.js`.
 
 ## Limits
 

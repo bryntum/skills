@@ -86,7 +86,7 @@ Ask the user about anything they haven't already told you, and record the answer
   Per-feature tiers follow what the published package ships (the `feature-availability.md` guides agree); `static tier` in the source is not reliable for about 25 features.
 - **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
   (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
-  gives the version. Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
+  gives the version, but only after the project `.npmrc` below exists (a global `npm.bryntum.com` mapping makes it 404). Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
   `@bryntum:registry=https://npm.bryntum.com` line in `~/.npmrc` or the project makes every tiered package 404: add a
   project `.npmrc` with `@bryntum:registry=https://registry.npmjs.org/` (Yarn v2+ `npmScopes.bryntum.npmRegistryServer`,
   Yarn v1 `"@bryntum:registry"` in `.yarnrc`) instead of deleting the user-level mapping, which other 7.x projects
@@ -138,7 +138,8 @@ Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
   Features of another product register only when that package is imported (`import '@bryntum/grid-<tier>'` for
   `cellTooltip` in a Scheduler).
 - In a Vite target set `build.cssTarget` (base skill, "Using with Vite"), or the built app loses its theme colors while
-  `npm run dev` looks right. Leave `optimizeDeps` alone.
+  `npm run dev` looks right. It matters for the suffix-less family sheets (`light-dark()`); a fixed `-light`/`-dark`
+  sheet is unaffected (tested), but setting it anyway is harmless. Leave `optimizeDeps` alone.
 - Ext apps often replaced the event editor with a custom dialog. Customize the built-in `eventEdit`/`taskEdit`
   instead. Other dialogs become a `Popup` subclass, or the host framework's dialog when the app has its own component
   system.

@@ -133,4 +133,4 @@ To make dialogs compact too, give the Popup a `cls` and add:
 ## Verification
 
 Beyond the checklist in `templates.md`: the app font is a deliberate choice (the app's own font, or Poppins per the
-base skill), and no hex/rgb colors remain apart from intentional brand/domain colors.
+base skill; a font that only came from the Ext theme is not "the app's own", so use Poppins), and no hex/rgb colors remain apart from intentional brand/domain colors.
