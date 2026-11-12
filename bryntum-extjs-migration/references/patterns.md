@@ -156,7 +156,7 @@ export default class RangeEditor extends Popup {
 RangeEditor.initClass();
 ```
 
-Checked against 7.3.7 (recheck on 8.x): Cancel closes the dialog, and Enter saves only when the fields are valid.
+Checked on 8.0.0 (browser): Cancel closes the dialog, and Enter saves only when the fields are valid.
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (base skill, widget-first rule).
 
@@ -240,7 +240,7 @@ Ext.define('Bryntum.wrapper.Scheduler', {
 ```
 
 - **Loading Bryntum next to Ext (8.0).** There is no prebuilt `*.umd.js`. Either load the package as an ES module and
-  publish what Ext code needs on `window` (the suite's `extjsmodern` demos do `window.bryntum.scheduler = scheduler`), or
+  publish what Ext code needs on `window` (for example `window.bryntum.scheduler = scheduler`), or
   build a UMD bundle yourself (the product's `gettingstarted/build-umd.md`: webpack, publishes the `bryntum.<product>`
   global). Class access such as `bryntum.scheduler.Scheduler` only works with the second route or your own global.
   7.x ships `build/<product>.umd.js` (`v7.md`).

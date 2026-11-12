@@ -11,7 +11,6 @@ Tags:
 - **DOC** — added for general Ext app migrations; the name is confirmed in the 7.3.7/8.0 typings (`*.d.ts`), but the
   mapping hasn't been verified end to end — check config details in the docs before relying on them
 - **TEST** — also run in a browser on 8.0.0 with real mouse input (Calendar and TaskBoard rows)
-- **KB** — taken from the suite's Ext migration knowledge base only; the Ext side could not be checked
 - **UNV** — the Bryntum name exists, but equivalence to the Ext behavior is not verified
 
 Product-specific rows only apply to that product. Don't generalize a Gantt row to Scheduler or vice versa.
@@ -28,7 +27,7 @@ A feature above the installed tier is skipped, and a dialog names the tier it ne
 you promise it. **Source of truth: what the package ships.** A feature belongs to the lowest tier whose published package
 contains its class file (checked against the 8.0.0 `-community`, `-business` and `-enterprise` tarballs; this also matches the
 `feature-availability.md` guides, 164 of 164 features). Don't read `static tier` in the source as the package tier: it is the lowest tier a feature runs at once installed, and for ~25 features it says
-Business (`'core'` in the suite) although only the Enterprise package contains them (intended, per the source comments). Anything not named below is in Community.
+Core although only the Enterprise package contains them (intended, per the source comments). Anything not named below is in Community.
 
 | Product | Core tier and up | Enterprise tier only |
 |---|---|---|
@@ -41,8 +40,7 @@ Business (`'core'` in the suite) although only the Enterprise package contains t
 A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`, `rowResize`, `resourceEdit` are listed there, not under Gantt).
 `ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
 
-Open question for the Bryntum devs (not yet answered): `gantt-business` also contains Grid's `rowExpander` and `rowReorder`, which the
-Grid docs call Enterprise and the Grid Business package does not ship. Don't promise them at the Core tier until confirmed. These
+`gantt-business` also contains Grid's `rowExpander` and `rowReorder`, but the Grid docs call them Enterprise: don't promise them at the Core tier. These
 tier results are for 8.0.0; re-check against the `-core` packages once 8.0.1 is published.
 
 Engine and data layer:
@@ -296,7 +294,7 @@ Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read old
   in the installed `entry.js` or `*.d.ts`.
 - Guides that name Scheduler Pro (`Sch.panel.SchedulerPro`, `@bryntum/schedulerpro`) → Scheduler at the Enterprise tier.
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
-- Setting an editor title in `eventEditBeforeSetRecord` is overwritten in 7.3.7; set it in `beforeEventEditShow`.
+- Set an editor title in `beforeEventEditShow` (works on 8.0.0; earlier hooks overwrite it on 7.3.7).
 - `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources`.
 - `idField : 'Id'` as a store config (Scheduler guide) → silently ignored. Use `static idField = 'Id'` on the model,
   or a `{ name : 'id', dataSource : 'Id' }` field.

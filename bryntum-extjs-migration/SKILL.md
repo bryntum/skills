@@ -50,8 +50,8 @@ Read only the references the app needs. If this skill isn't installed locally, f
 ## Principles
 
 - **Only use names you can confirm.** Old Ext → Bryntum material is full of plausible names that don't exist in 7.x or 8.x.
-  Look names up in this order: `references/` (checked against the 8.0.0 packages; items tagged 7.3.7 were not
-  rechecked on 8.x), then `mcp__bryntum__search_bryntum_docs` (pass `product` and the installed `version`), then the package source in `node_modules/@bryntum/` (its `*.d.ts` typings are the quickest check when the docs
+  Look names up in this order: `references/` (checked against the 8.0.0 packages; 7.x-only behavior is in
+  `references/v7.md`), then `mcp__bryntum__search_bryntum_docs` (pass `product` and the installed `version`), then the package source in `node_modules/@bryntum/` (its `*.d.ts` typings are the quickest check when the docs
   search tool isn't available). If none of these confirms a name, treat
   the item as **unmapped**: leave a `// MIGRATION:` comment where it was and list it in the report.
 - **Report every loss.** Anything removed, changed or unmapped goes in the report with a reason. Count the key records
@@ -96,7 +96,7 @@ Ask the user about anything they haven't already told you, and record the answer
 - **Target stack**: vanilla + Vite (closest to Ext's config-object style), React, Angular or Vue, in TS or JS.
 - **Big-bang or incremental.** Incremental means Bryntum widgets run inside the Ext shell for a while, with the
   Bryntum build loaded next to Ext (`references/patterns.md` §11). 8.0 ships **no prebuilt UMD bundle**: load ES
-  modules (`<script type="module">`, as the suite's Ext demos do) or build your own UMD bundle with webpack
+  modules (`<script type="module">`) or build your own UMD bundle with webpack
   (`gettingstarted/build-umd.md`, which still publishes the `bryntum.<product>` global). Confirm the team accepts that
   interim state.
 - **Backend**: keep the server's JSON shape and map the fields, or change the data to Bryntum's shape.
@@ -167,11 +167,13 @@ features the Ext app didn't have.
 
 - The official Ext → Bryntum guides and old blog posts predate 7.x in places. `references/api-mapping.md` §9 lists the
   corrections.
-- 7.3.7 bug (recheck on 8.x): `items : { someBuiltIn : true }` on a menu or editor blanks the built-in item. Leave kept
-  built-ins out of `items`, or override only the properties you change.
+- `items : { someBuiltIn : true }` on a menu can blank the built-in item. Tested on 8.0.0: `eventMenu` with
+  `items : { deleteEvent : true }` shows an empty item moved to the end, while `editEvent : true` and `copyEvent : true`
+  keep their text. Leave kept built-ins out of `items`, or override only the properties you change.
 - Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
   feature enabled and return `false` from the hook (`bryntum-editor`).
-- 7.3.7 bug (recheck on 8.x): a function `field` in the store's `groupers` config throws (`store.group(fn)` works). Group on a
+- A function `field` in the store's `groupers` config, or in `addGrouper()`, throws `field.indexOf is not a function` on
+  7.3.7 and 8.0.0 (`StoreGroup.createGrouper` calls `field.indexOf('.')` unguarded). `store.group(fn)` works. Group on a
   calculated field instead.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
