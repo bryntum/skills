@@ -50,7 +50,6 @@ Also watch:
 | `config` + generated `getFoo()` / `setFoo()` | `static configurable` + property access (`widget.foo = 1`) | No generated getters/setters |
 | `applyFoo` / `updateFoo` | `changeFoo(value, old)` / `updateFoo(value, old)` | `change` normalizes, `update` reacts |
 | `beforerender` / `afterrender` | `paint` event | Fires with `{ firstPaint }` |
-
 | `Ext.define('My.Grid', { extend : 'Ext.grid.Panel' })` / `Ext.create(...)` | `class MyGrid extends Grid { static $name = 'MyGrid'; }` / `new Grid(cfg)` | Plain ES classes. `$name` feeds the feature/type registry, not a namespace. There is no string factory for top-level construction |
 | `xtype : 'button'` | `type : 'button'` | A custom widget needs `static type = '…'` and one `MyWidget.initClass()`; without it `type` lookup throws `Invalid type name "…" passed to Widget factory` |
 | `initComponent()` for one-off setup | `construct(config) { super.construct(config); … }` | Call `super.construct` first |

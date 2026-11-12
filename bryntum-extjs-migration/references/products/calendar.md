@@ -1,7 +1,6 @@
 # Calendar (Ext `Cal.*`)
 
-Support level: **limited**. No official Ext → Bryntum Calendar guide exists. The rows below come from the suite's Ext
-migration knowledge base and were name-checked against the 8.0.0 `@bryntum/calendar-enterprise` package; rows tagged TEST were also run in a browser on 8.0.0
+Support level: **limited**. No official Ext → Bryntum Calendar guide exists. The rows below were name-checked against the 8.0.0 `@bryntum/calendar-enterprise` package; rows tagged TEST were also run in a browser on 8.0.0
 (real mouse input); "UNV" rows exist in Bryntum but the Ext equivalence is unverified. Report anything else as unmapped.
 
 Tier: the Community tier has the base data model and the `day`, `week`, `month`, `year`, `agenda` views. **Recurring events need
