@@ -2,11 +2,11 @@
 name: bryntum
 description: >
   Build and integrate Bryntum components — Scheduler, Scheduler Pro, Gantt, Calendar, Grid,
-  TaskBoard — even when "Bryntum" isn't mentioned by name. Trigger on phrases like "add a
-  scheduler", "gantt chart", "grid component", "calendar view", "task board", "resource
-  scheduling", any mention of @bryntum/* npm packages, questions about Bryntum CSS imports,
-  themes, or framework wrappers (Angular, React, Vue), or migrating from Ext JS / Sencha.
-  When in doubt, use this skill.
+  TaskBoard — even when "Bryntum" isn't mentioned by name. Covers the 8.0 tier packages
+  (`@bryntum/<product>-<tier>`), license keys and trials, and 7.x apps. Trigger on phrases like
+  "add a scheduler", "gantt chart", "grid component", "calendar view", "task board", "resource
+  scheduling", any mention of @bryntum/* npm packages, or questions about Bryntum tiers, license
+  keys, CSS imports, themes, or framework wrappers (Angular, React, Vue), or migrating from Ext JS / Sencha. When in doubt, use this skill.
 metadata:
   tags: bryntum, scheduler, gantt, calendar, grid, taskboard, schedulerpro, tier, license
 ---

@@ -48,7 +48,7 @@ Customizing the built-in event/task editor — which editor each tier uses (`eve
 
 ### `bryntum-extjs-migration`
 
-Migrating Ext JS apps to Bryntum 7 (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification, plus the Ext idioms that fail silently in Bryntum code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`).
+Migrating Ext JS apps to Bryntum 8 or 7.x (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification, plus the Ext idioms that fail silently in Bryntum code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`).
 
 ### `bryntum-features`
 
