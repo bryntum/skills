@@ -167,15 +167,12 @@ features the Ext app didn't have.
 
 - The official Ext → Bryntum guides and old blog posts predate 7.x in places. `references/api-mapping.md` §9 lists the
   corrections.
-- `items : { someBuiltIn : true }` on a menu can blank the built-in item. Tested on 8.0.0: `eventMenu` with
-  `items : { deleteEvent : true }` shows an empty item moved to the end, while `editEvent : true` and `copyEvent : true`
-  keep their text. Leave kept built-ins out of `items`, or override only the properties you change.
+- 8.0.0, until bryntum/bryntum#14231 is fixed: `items : { deleteEvent : true }` on a menu renders the Delete item with
+  empty text. Leave kept built-ins out of `items`, or override only the properties you change.
 - Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
   feature enabled and return `false` from the hook (`bryntum-editor`).
-- A function `field` in the store's `groupers` config, in `addGrouper()` or in `group({ field : fn })` throws
-  `field.indexOf is not a function` on 8.0.0 (`StoreGroup.createGrouper` calls `field.indexOf('.')` unguarded, although
-  `prepareGroupRecords` has a function-field path). `store.group(fn)` does not throw but silently groups nothing: every
-  record lands in one group with an undefined field. Group on a calculated field instead.
+- 8.0.0, until bryntum/bryntum#14230 is fixed: a function `field` in `groupers`, `addGrouper()` or `group({ field : fn })`
+  throws `field.indexOf is not a function`, and `store.group(fn)` silently groups nothing. Group on a calculated field.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use

@@ -31,7 +31,7 @@ both counts in the report.
 | Sch/Gnt model subclasses (`Sch.model.Event`, `Gnt.model.Task`) | `EventModel`, `ResourceModel`, `TaskModel`, `DependencyModel`, `AssignmentModel`, `CalendarModel` | G-S, G-G |
 
 Leave the `id` field untyped, even when Ext declared `{ name : 'Id', type : 'int' }`; JSON numeric ids stay numbers
-anyway (tested on 7.3.7 and 8.0.0: a typed `id` in a grouped store gives wrong record counts; 12 records in 3 groups should give 15 rows, `type : 'int'` gave 2 and `'number'` 24).
+anyway (8.0.0, until bryntum/bryntum#14232 is fixed: a typed `id` makes a grouped store return wrong record counts).
 
 Extra fields that keep their name can be declared as strings: `fields : ['location', { name : 'eventType', defaultValue : 'appointment' }]`
 (SRC). Declare only fields the app actually uses.
@@ -45,7 +45,7 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `proxy : { type : 'rest', url }` | AjaxStore with per-operation URLs + `httpMethods` — verify request shape against the server | DOC |
 | `reader : { rootProperty : 'data' }` | AjaxStore `responseDataProperty` | DOC |
 | `remoteSort` / `remoteFilter` / paging (`pageSize`) | AjaxStore `remoteSort` / `remoteFilter` / `remotePaging` + `pageSize` | DOC |
-| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (a function `field` in the `groupers` config, `addGrouper()` or `group({ field : fn })` throws `field.indexOf is not a function` on 8.0.0, and `store.group(fn)` silently groups nothing) | SRC |
+| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (a function `field` in `groupers` throws on 8.0.0, until bryntum/bryntum#14230 is fixed) | SRC |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
 | Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `project` (every product and tier in 8.0: the project has the CrudManager built in; the standalone `CrudManager` class and the `crudManager` config are deprecated and go in 9.0) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
 | separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `project` load for both | SRC |
