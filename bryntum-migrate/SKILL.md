@@ -3,8 +3,9 @@ name: bryntum-migrate
 description: >
   Upgrade an existing Bryntum app (Gantt, Scheduler Pro, Scheduler, Calendar, Grid, TaskBoard)
   to a newer Bryntum version — 6.x → 7.x, 7.x → 7.y, 7.x → 8.x, 8.x → 8.y (including the 8.0
-  tier package rename, such as `@bryntum/grid` → `@bryntum/grid-enterprise`, and Scheduler Pro →
-  `@bryntum/scheduler-enterprise`). Gathers the upgrade guides and changelogs for every release
+  tier package rename, such as `@bryntum/grid` → `@bryntum/grid-enterprise`, Scheduler Pro →
+  `@bryntum/scheduler-enterprise`, and the 8.0.1 Business → Core tier rename,
+  `@bryntum/grid-business` → `@bryntum/grid-core`). Gathers the upgrade guides and changelogs for every release
   crossed, across the product and the products it inherits from, checks them against the app's
   code, writes a migration plan for approval, then applies and verifies it. Use for "upgrade /
   update / migrate Bryntum to a newer version", "bump @bryntum/*", "what changed between 6.x and 7.x",
@@ -27,7 +28,7 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 |------|------|
 | `sources.md` | Gathering material: the migration index, fallback docs URLs, sibling products, what to read closely |
 | `v6-to-v7.md` | Range crosses 7.0.0: kebab-case CSS, new themes, FontAwesome, Button colours, moved classes, `*Data` props, the CSS codemod |
-| `v7-to-v8.md` | Range crosses 8.0.0: tier package names, registry and license key, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
+| `v7-to-v8.md` | Range crosses 8.0.0, **or starts at 8.0.0** (for the 8.0.1 tier rename): tier package names, registry and license key, imports from owning packages, CSS paths, Scheduler Pro, Vue 2/Angular/UMD blockers, checklist |
 | `plan-template.md` | Writing the plan file |
 | `worked-example.md` | A real Gantt 6.0.3 → 7.2.1 hop, to calibrate scope |
 
@@ -37,6 +38,9 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 - **Take the installed version from `node_modules/@bryntum/<pkg>/package.json`** (or the lockfile), not the semver range in `package.json`. For zip installs, read `build/package.json`.
 - **Breaking changes arrive through the products the app inherits from.** A Gantt app breaks on Grid and Scheduler changes too, and Core/Chart changes appear in their own changelogs (and, from 8.0.0, a Core upgrade guide). Read every sibling's material, not just the top-level product's.
 - **8.0 renames every package** (`@bryntum/<product>-<tier>`). The v7 to v8 migration guide says so, but other docs and READMEs can still show 7.x names. Take names and paths from `v7-to-v8.md`, the migration guide and the packed target.
+- **8.0.1 renames the Business tier to Core, and no published material says so.** An app on 8.0.0 has `@bryntum/<product>-business` (and `-<framework>-business`); any upgrade past 8.0.0 renames those to `-core` — the same tier, no licence change. It is a package rename like the 8.0 one: every `@bryntum/*` package moves together, and the app's own code may hold the old value in a `tier : 'business'` config.
+  **The rename is mandatory, not cleanup.** No `-business` version is published above 8.0.0, so bumping the version while keeping the name cannot work: `npm view @bryntum/<product>-business@<newer>` returns a 404. Read that 404 as the rename, not as a registry misconfiguration, and don't stop to report the registry — switch to the `-core` name and carry on. `-business@8.0.0` itself still installs, with a deprecation warning naming `-core`.
+  **The 8.0.1 changelog and upgrade guides do not mention this rename.** Gathering (step 2) will therefore turn up nothing about it, and that silence is not evidence it didn't happen — this skill is the source. Put the rename in the plan whenever the installed version is 8.0.0 and the target is higher, even when the gathered material is empty and nothing else changes in the hop.
 - **A green build doesn't mean the migration is done.** Bryntum deprecations only show at runtime, in the browser console, and some never log at all (Later.js schedule parsing, deprecated in 7.3.0, runs silently in 7.3.7; `TimeZoneHelper` and `smoothZoom`, deprecated in 8.0.0, don't log either). List the deprecations named in the guides and changelogs yourself.
 - **Custom CSS can stop matching without being renamed.** The rename tables only cover class renames, not classes that moved to another element. Check custom selectors against the running app (see `v6-to-v7.md`).
 
@@ -44,16 +48,16 @@ Load these when you reach the step that needs them. They sit in `references/` ne
 
 ### 1. Detect
 
-- **Product and framework** from `@bryntum/*` dependencies. Strip `-trial`, `-thin`, the 8.x tier suffix (`-community`, `-business`, `-enterprise`) and the wrapper suffix (`-react`, `-angular`, `-vue-3`, and `-vue` on 8.x). On 7.x, `-vue` without `-3` is the Vue 2 wrapper and `-angular-view` the View Engine wrapper. If several products are installed (for example Gantt + Grid), run the workflow for the most specific one, because its sibling list covers the rest.
+- **Product and framework** from `@bryntum/*` dependencies. Strip `-trial`, `-thin`, the 8.x tier suffix (`-community`, `-core`, `-enterprise`, and `-business` for an 8.0.0 app) — strip it once only: `@bryntum/core-core` strips to the product `core`, so it is the Core package at the Core tier, a real dependency and not a typo for `@bryntum/core` — and the wrapper suffix (`-react`, `-angular`, `-vue-3`, and `-vue` on 8.x). On 7.x, `-vue` without `-3` is the Vue 2 wrapper and `-angular-view` the View Engine wrapper. If several products are installed (for example Gantt + Grid), run the workflow for the most specific one, because its sibling list covers the rest.
 - **Zip install**: there's no `@bryntum/*` dependency, but a local `build/package.json` exists. The zip ships `docs/`, `changelog.md` and a `migrate.js` codemod.
 - **Registry for an 8.x target**: before querying tier packages, read the registry prerequisite in `v7-to-v8.md`. Use public npm unless the user supplied another target registry. An existing `@bryntum:registry` mapping overrides `--registry`, so pass `--@bryntum:registry=<target-registry>` to the read-only `npm view` / `npm pack` commands. Put project and CI registry changes in the plan; don't edit registry configuration before approval.
-- **Target version**: use the one the user gave, otherwise the `latest` tag (`npm view <package> dist-tags`; the `versions` list ends with `-nightly` builds, so don't take its last entry). From 8.0 use `@bryntum/<product>-<tier>`; untiered names on public npm can be placeholders without product code. **Check the target exists** with `npm view <target package>@<version> version` before planning, using the scoped registry override above for 8.x. If it doesn't, stop and tell the user which registry was checked. This skill doesn't downgrade; a target equal to the installed version means nothing to do; for a prerelease target, check what guides exist and confirm first.
-- **Framework wrapper compatibility**: the wrapper's README is the real constraint (`peerDependencies` is empty). For a target ≥ 8.0.0, check the blockers in `v7-to-v8.md` (Vue 2, Angular < 15, UMD) and pick the tier as it says: the one the user names, otherwise Enterprise (every 7.x licence moves to Enterprise), except the Business packages for an app on Scheduler, not Scheduler Pro, even with an Enterprise licence.
+- **Target version**: use the one the user gave, otherwise the `latest` tag (`npm view <package> dist-tags`; the `versions` list ends with `-nightly` builds, so don't take its last entry). From 8.0 use `@bryntum/<product>-<tier>`; untiered names on public npm can be placeholders without product code. **Check the target exists** with `npm view <target package>@<version> version` before planning, using the scoped registry override above for 8.x. If it doesn't, stop and tell the user which registry was checked — except for the two 404s the 8.0.1 tier rename causes (`-business` above 8.0.0, `-core` at 8.0.0), which are a name-to-version mismatch rather than a registry problem: re-query under the right name for that version (see Gotchas) instead of stopping. This skill doesn't downgrade; a target equal to the installed version means nothing to do; for a prerelease target, check what guides exist and confirm first.
+- **Framework wrapper compatibility**: the wrapper's README is the real constraint (`peerDependencies` is empty). For a target ≥ 8.0.0, check the blockers in `v7-to-v8.md` (Vue 2, Angular < 15, UMD) and pick the tier as it says: the one the user names, otherwise the Enterprise tier (every 7.x licence moves to Enterprise), except the Core packages for an app on Scheduler, not Scheduler Pro, even with an Enterprise licence.
 - Tell the user what you found in one block: product, package rename, framework, installed → target, sibling products, package manager, blockers. Then continue.
 
 ### 2. Gather
 
-Follow `sources.md`: try the migration index first. Add the hop-specific notes from `v6-to-v7.md` / `v7-to-v8.md`. Turn what you read into candidate items: `{ version, product, source URL + heading, kind, old, new, grep terms }`. The kind is one of breaking, behaviour change, deprecation or cosmetic. Grep terms are identifiers that would appear in customer code: config, method, event and class names, CSS selectors, import paths.
+Follow `sources.md`: try the migration index first. Add the hop-specific notes from `v6-to-v7.md` / `v7-to-v8.md`. Some changes are in this skill only, not in any guide or changelog — the 8.0.1 Business → Core tier rename is one (see Gotchas); add those from the skill, and don't drop one because the gathered material is silent on it. Turn what you read into candidate items: `{ version, product, source URL + heading, kind, old, new, grep terms }`. The kind is one of breaking, behaviour change, deprecation or cosmetic. Grep terms are identifiers that would appear in customer code: config, method, event and class names, CSS selectors, import paths.
 
 ### 3. Plan, then stop for approval
 

@@ -1,6 +1,8 @@
 # 7.x → 8.x hop
 
-Applies when `installed < 8.0.0 <= target`. Read the product's v7 to v8 migration guide first
+Applies when `installed < 8.0.0 <= target`, and to `installed == 8.0.0 < target` for the **Every package is renamed**
+section alone, which carries the 8.0.1 Business → Core tier rename that no changelog or upgrade guide mentions; skip
+the rest of this file for that hop, since the app is already on 8.x. Read the product's v7 to v8 migration guide first
 (`docs-llm/guide/<Product>/migration/migrate-from-v7-to-v8.md`, linked from the top of each 8.0.0 upgrade guide; the
 migration index does not list it). It covers the registry, the package names, the imports, the stylesheets and the
 license key; the upgrade guides hold the API and styling changes. Other docs (integration and quick-start guides, the
@@ -27,8 +29,10 @@ not be judged by npm's output. Apply approved project and CI changes before inst
 
 ## Every package is renamed: `@bryntum/<product>-<tier>`
 
-8.0 ships each product in three cumulative tiers, `community < business < enterprise`, and the tier is part of every
-package name. Query the tiered name for 8.x: untiered names on the private registry stay on 7.x, while public npm can
+8.0 ships each product in three cumulative tiers, `community < core < enterprise`, and the tier is part of every
+package name. 8.0.0 named the middle tier `business` and 8.0.1 renamed it to `core`, so target 8.0.1 or later and
+install the `-core` names; the `-business` packages are deprecated (they install, with an npm warning naming
+`-core`). Query the tiered name for 8.x: untiered names on the private registry stay on 7.x, while public npm can
 have untiered placeholder packages without product code.
 
 | 7.x package | 8.0 package |
@@ -41,44 +45,50 @@ have untiered placeholder packages without product code.
 | `@bryntum/<product>-trial` (and its wrappers) | the tier package, which runs as a trial without a license key |
 | `-angular-view`, `-vue` (Vue 2) | not published for 8.0, see the blockers below |
 | `@bryntum/demo-resources` | unchanged name, version follows the product |
+| (8.0.0 only) `@bryntum/<product>-business`, `-<framework>-business` | `@bryntum/<product>-core`, `-<framework>-core` from 8.0.1 — same tier, renamed |
 
 `<product>` is `grid`, `scheduler`, `gantt`, `calendar`, `taskboard`, `core`, `chart` or `engine`. Chart has an
-`-enterprise` package only.
+`-enterprise` package only. `core` is a product here (the helpers and widgets package) as well as a tier, so a
+Core tier app installs `@bryntum/core-core` — that doubled name is correct, don't "fix" it to `@bryntum/core`.
 
-**The tier: the one the user names, otherwise Enterprise, except Business for a Scheduler app.** Every 7.x licence
-moves to Enterprise, so install the **Enterprise** packages. The exception is an app on Scheduler (not Scheduler Pro):
-it migrates to the **Business** packages (`@bryntum/scheduler-business`, `@bryntum/scheduler-<framework>-business`),
-even with an Enterprise licence. A Scheduler Pro app migrates to Enterprise. Use that tier whatever features the app
+**The tier: the one the user names, otherwise the Enterprise tier, except the Core tier for a Scheduler app.** Every 7.x licence
+moves to the Enterprise tier, so install the **Enterprise** packages. The exception is an app on Scheduler (not Scheduler Pro):
+it migrates to the **Core** packages (`@bryntum/scheduler-core`, `@bryntum/scheduler-<framework>-core`),
+even with an Enterprise licence. For a target of exactly 8.0.0 those names end `-business` instead; `-core` exists
+only from 8.0.1. The two 404s this produces are both the rename, not a registry problem, so don't stop and report
+the registry for either: `-core@8.0.0` (the name is too new for that version) and `-business@<anything above 8.0.0>`
+(no `-business` version is published above 8.0.0, which is why an 8.0.0 app must rename to upgrade at all). A Scheduler Pro app migrates to the Enterprise tier. Use that tier whatever features the app
 uses: don't pick the lowest tier the app needs, since the tier is a licensing choice, not a feature fit. Check the
 registry has it (`npm view @bryntum/<product>-<tier> version`), and in the plan and your final message say which tier
-you picked, that Business and Enterprise run as a 14-day trial until the licence key is set, and that the user can
+you picked, that the Core and Enterprise tiers run as a 14-day trial until the licence key is set, and that the user can
 name another tier.
 
 - If the user names a lower tier, check what the app uses against it in the packed target:
-  `grep -rlE "static tier = '(business|enterprise)'" lib/` lists the classes that need more than Community (for
-  example Grid's `Group` feature is Business). A lower-tier package doesn't contain higher-tier classes: an imported
+  `grep -rlE "static tier = '(business|core|enterprise)'" lib/` lists the classes that need more than the Community tier
+  (for example Grid's `Group` feature is Core tier; `business` is the 8.0.0 spelling of `core`, so a packed 8.0.1 or
+  later target matches only `core`). A lower-tier package doesn't contain higher-tier classes: an imported
   class fails the build, a feature enabled by config is skipped and a "Features unavailable on this tier" dialog
-  names the tier it needs, and a higher-tier feature that is on by default (Grid's `RowCopyPaste` is Business) is
+  names the tier it needs, and a higher-tier feature that is on by default (Grid's `RowCopyPaste` is Core tier) is
   silently off. Compare the baseline's `b-<feature>` classes. Keep their tier and tell them which features need a
   higher one, so they can decide.
 - Read the product's `guides/data/tiers.md` (docs-llm) for what each tier adds. Feature tiers are in `static tier`
   (Calendar also has `CalendarFeature.featureTiers`), widget and config tiers only in `@tier` source comments.
 - **Calendar and TaskBoard keep the basic data layer at every tier**, as in 7.x: their models and project resolve to
-  the Business classes even in the Enterprise package. Calendar's Enterprise tier adds the DayAgendaView, ResourceView,
+  the Core tier classes even in the Enterprise package. Calendar's Enterprise tier adds the DayAgendaView, ResourceView,
   DayResourceView, MonthAgendaView, MonthGrid, YearPlanner and MultiWeekView modes; the scheduling engine is opt-in,
   through an explicit `ProjectModelEnterprise` project. Base custom models on the plain names Calendar and TaskBoard
   export themselves (`EventModel`, `ResourceModel`, ...), not on Scheduler's.
 
 ## License key
 
-Business and Enterprise run as a 14-day trial without a key (migration guide step 5): a Trial badge, and a console
+The Core and Enterprise tiers run as a 14-day trial without a key (migration guide step 5): a Trial badge, and a console
 message `No license key registered, the trial ends ...`. The app registers its key with `bryntum.licenseKey = '...'`
 in its entry file, before it creates the first component. That needs Core already loaded, since Core defines the
 `bryntum` global: in an app whose entry file doesn't import Bryntum (lazy routes, `lazy()` pages) it throws. The 8.0
 typings don't declare the global either (`Cannot find name 'bryntum'`). So in TypeScript, or with lazy loading,
 write `((globalThis as any).bryntum ??= {}).licenseKey = '...'` (drop `as any` in JavaScript); Core picks up a key
 set before it loads. Never invent a key: ask for it, or leave a marked placeholder. Paid keys are in the Bryntum
-Customer Zone, trial keys come from bryntum.com/download. Community needs no key. A former `-trial` app moves to its
+Customer Zone, trial keys come from bryntum.com/download. The Community tier needs no key. A former `-trial` app moves to its
 tier package and stays a trial until a key is set.
 
 ## Imports: the product package no longer re-exports what it is built on

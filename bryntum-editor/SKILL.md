@@ -30,14 +30,14 @@ To match a design-system host app (e.g. Material UI), switch the Bryntum **theme
 
 | Product | Editor feature |
 |---|---|
-| Scheduler Community, Business | `eventEdit` |
+| Scheduler Community, Core | `eventEdit` |
 | Scheduler Enterprise (the former Scheduler Pro) | `taskEdit` — on by default, `eventEdit` off |
-| Gantt Business, Enterprise | `taskEdit` |
+| Gantt Core, Enterprise | `taskEdit` |
 | Gantt Community | `basicTaskEdit` — ships at every Gantt tier, on by default only on Community; flat `items` like `eventEdit`, no tabs |
 | Task Board | `taskEdit` |
 | Calendar | `eventEdit` |
 
-On 8.x the tier picks the feature: configuring an editor the tier lacks (e.g. `taskEdit` on Gantt Community) is skipped and a dialog names the tier it requires — see Tiers in the `bryntum` skill. The opposite direction works at any tier: Scheduler Enterprise can use the simple popup with `features : { taskEdit : false, eventEdit : true }`, and Gantt Business/Enterprise the lightweight editor with `basicTaskEdit : true, taskEdit : false` (`eventEdit` ships on every Scheduler tier, `basicTaskEdit` on every Gantt tier).
+On 8.x the tier picks the feature: configuring an editor the tier lacks (e.g. `taskEdit` on Gantt Community) is skipped and a dialog names the tier it requires — see Tiers in the `bryntum` skill. The opposite direction works at any tier: Scheduler Enterprise can use the simple popup with `features : { taskEdit : false, eventEdit : true }`, and Gantt Core/Enterprise the lightweight editor with `basicTaskEdit : true, taskEdit : false` (`eventEdit` ships on every Scheduler tier, `basicTaskEdit` on every Gantt tier).
 
 ---
 
@@ -49,10 +49,10 @@ Remove fields you don't want or add your own through the feature's `items`. Use 
 
 | Product | Feature | Built-in field refs (General tab / editor) |
 |---|---|---|
-| Gantt (Business, Enterprise) | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
+| Gantt (Core, Enterprise) | `taskEdit` | `name`, `percentDone`, `effort`, `divider`, `startDate`, `endDate`, `duration` — **no `Field` suffix** |
 | Gantt Community (available at every Gantt tier) | `basicTaskEdit` | `nameField`, `startDateField`, `endDateField`, `durationField` |
 | Scheduler Enterprise | `taskEdit` | `nameField`, `resourcesField`, `startDateField`, `endDateField`, `durationField`, `percentDoneField` |
-| Scheduler (Community, Business), Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
+| Scheduler (Community, Core), Calendar | `eventEdit` | `nameField`, `resourceField`, `startDateField`, `startTimeField`, `endDateField`, `endTimeField` |
 | Task Board | `taskEdit` | `name`, `description`, `resources`, `color`, `column`, `swimlane` — **no `Field` suffix**; `resources` and `swimlane` show only when the board uses them. Community has only `name`, `description`, `column` |
 
 Custom items can use any key (it becomes the new item's `ref`; `name` binds it to the data field). Only keys that change or remove a built-in item must match its ref exactly.
@@ -82,7 +82,7 @@ features: {
 }
 ```
 
-Scheduler Enterprise uses the same structure with `Field`-suffixed refs (`percentDoneField : false`, `durationField : false`). Scheduler Community/Business and Calendar (`eventEdit`), and Gantt Community (`basicTaskEdit`), use flat `items` (no tabs), e.g. `eventEdit: { items: { resourceField: false } }`.
+Scheduler Enterprise uses the same structure with `Field`-suffixed refs (`percentDoneField : false`, `durationField : false`). Scheduler Community/Core and Calendar (`eventEdit`), and Gantt Community (`basicTaskEdit`), use flat `items` (no tabs), e.g. `eventEdit: { items: { resourceField: false } }`.
 
 Run-time tweaks: listen to `beforeTaskEditShow` (or `beforeEventEditShow`) and adjust `editor.widgetMap.<ref>`.
 

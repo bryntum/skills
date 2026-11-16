@@ -12,17 +12,17 @@ only after `import '@bryntum/grid-<tier>';` — without it the component fails w
 - One column's cells: column `cellCls` (static), or a `renderer` that sets `cellElement.classList`.
 - Alternating rows: `stripe` feature. `:nth-child(even)` CSS breaks under row virtualization.
 - Reading the selection: `grid.selectedRecords` / `selectedRecord` / `selectedCells`.
-- Copy / paste: `rowCopyPaste`, `cellCopyPaste` (Business; Scheduler and Calendar events:
-  `eventCopyPaste`, Business; Gantt: `taskCopyPaste`, Business, on by default, replaces
-  `rowCopyPaste`). Freeze a column: `pinColumns` (Business). A details row under a record:
-  `rowExpander` (Enterprise; Business in Gantt). Drag rows to reorder: `rowReorder` (Enterprise;
-  Business and on by default in Gantt).
+- Copy / paste: `rowCopyPaste`, `cellCopyPaste` (Core tier; Scheduler and Calendar events:
+  `eventCopyPaste`, Core tier; Gantt: `taskCopyPaste`, Core tier, on by default, replaces
+  `rowCopyPaste`). Freeze a column: `pinColumns` (Core tier). A details row under a record:
+  `rowExpander` (Enterprise tier; Core tier in Gantt). Drag rows to reorder: `rowReorder` (Enterprise tier;
+  Core tier and on by default in Gantt).
 
 ## Trees
 
 - `TreeGrid`, or `Grid` + `tree` feature, with exactly one `{ type : 'tree' }` column and
   `children` arrays in the data.
-- `treeGroup` (Business) turns flat rows into a tree, one level per field:
+- `treeGroup` (Core tier) turns flat rows into a tree, one level per field:
   `features : { treeGroup : { levels : ['country', 'city'] } }`.
 - Expand / collapse from code through the feature, not the record:
   `await grid.features.tree.expandAll()`, `.collapseAll()`, `.expandTo(record)`.
@@ -31,7 +31,7 @@ only after `import '@bryntum/grid-<tier>';` — without it the component fails w
 
 | The user asks for | Use | Tier | Snippet |
 |---|---|---|---|
-| Group rows | `group` (on by default; off in TreeGrid, where `tree` replaces it) | Business | `features : { group : 'city' }` or `{ group : { field : 'city', ascending : false } }` |
+| Group rows | `group` (on by default; off in TreeGrid, where `tree` replaces it) | Core | `features : { group : 'city' }` or `{ group : { field : 'city', ascending : false } }` |
 | A totals row | `summary` (off) + column `sum` | Enterprise | `features : { summary : true }`, `{ field : 'score', sum : 'sum' }` |
 | Per-group totals | `groupSummary` (off) + column `sum` | Enterprise | `features : { group : 'city', groupSummary : true }` |
 | Several totals in one column | column `summaries` (replaces `sum` + `summaryRenderer`) | Enterprise | `summaries : [{ sum : 'sum' }, { sum : 'average' }]` |
@@ -42,7 +42,7 @@ internal). Use `treeGroup` for a multi-level breakdown.
 
 ## Filtering, searching, sorting
 
-- Header filter UI: `filter` (Business; menu + popup) or `filterBar` (inline row of fields), both off by default.
+- Header filter UI: `filter` (Core tier; menu + popup) or `filterBar` (inline row of fields), both off by default.
 - From code: `store.filter({ property : 'city', value : 'Paris', operator : '=' })`, undone with
   `store.clearFilters()`. Replacing `store.data` with a filtered array loses the original rows.
 - A search box: `search` has the logic but no UI — supply the field and call

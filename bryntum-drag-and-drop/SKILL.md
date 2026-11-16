@@ -18,11 +18,11 @@ Detect the version as the `bryntum` skill's Version check says (raw: https://raw
 
 ## Dragging from another Bryntum Grid/store
 
-On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what its `Drag.js` is built for: https://bryntum.com/products/scheduler/examples/drag-from-grid/app.module.js, https://bryntum.com/products/scheduler/examples/drag-from-grid/lib/Drag.js The demo runs at the Enterprise tier (`taskEdit`, `stickyEvents`); on Community/Business drop those feature blocks — the `Drag.js` class itself needs nothing above Community.
+On 8.x, if the drag source IS a Bryntum Grid/store, use the official store→store demo — that's what its `Drag.js` is built for: https://bryntum.com/products/scheduler/examples/drag-from-grid/app.module.js, https://bryntum.com/products/scheduler/examples/drag-from-grid/lib/Drag.js The demo runs at the Enterprise tier (`taskEdit`, `stickyEvents`); at the Core tier drop the `taskEdit` block only, since `stickyEvents` is a Core tier feature, and at the Community tier drop both — the `Drag.js` class itself needs nothing above the Community tier.
 
 ## Dragging from an external (non-Bryntum) source
 
-Core use case: a sidebar/pool of unscheduled jobs that the user drags onto a resource row in the Scheduler.
+Main use case: a sidebar/pool of unscheduled jobs that the user drags onto a resource row in the Scheduler.
 
 Use Bryntum's [`DragHelper`](https://bryntum.com/products/scheduler/docs/api/Core/helper/DragHelper) and point it at your OWN DOM elements, reading data from your OWN source. `DragHelper` works with any draggable HTML element — it is not limited to Bryntum stores.
 

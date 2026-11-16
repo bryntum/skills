@@ -42,6 +42,7 @@ Things that aren't obvious from the schema:
 - **Digests** (`digests`) hold every release's API CHANGES and STYLING CHANGES plus the `[BREAKING]` / `[DEPRECATED]` entries of the other sections, back to 1.x. Cut them to `(installed, target]` on their `## <x.y.z> - <date>` headings. They pay off for multi-release ranges; for a one-release hop read that release's changelogs instead.
 - `"breaking": true` / `"deprecated": true` (omitted when false) mark changelogs with `[BREAKING]` / `[DEPRECATED]` entries, the tightest filter available. Some changes are only there, not in a guide (8.0.0 `smoothZoom`, `zoomFactor`).
 - `guideCoverage.<Product>.upgrades === false` means changelog-only. A missing `upgrade` key doesn't mean "no changes this version".
+- **Known gap: the 8.0.1 Business → Core tier rename is in no changelog and no upgrade guide.** An 8.0.0 → later hop can gather nothing at all and still need the package rename. Take it from the `bryntum-migrate` skill's Gotchas and `v7-to-v8.md`, and treat the gathered material's silence as a gap in the material, not as "no change". If anything else turns out to be missing the same way, it belongs here too.
 - `upgrade` / `whatsNew` are already sliced per version from the pre-7.0 rollups. A slice can hold several `## <Product> v<x.y.z>` sections (`anchors`, `sources`): read the whole slice.
 - `sections` ids: `features-enhancements`, `api-changes`, `styling-changes`, `locale-updates`, `demos`, `bug-fixes`.
 - `tools.migrate6to7` and `tools.selectors` are present only when the files exist.
