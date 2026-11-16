@@ -172,9 +172,10 @@ features the Ext app didn't have.
   keep their text. Leave kept built-ins out of `items`, or override only the properties you change.
 - Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
   feature enabled and return `false` from the hook (`bryntum-editor`).
-- A function `field` in the store's `groupers` config, or in `addGrouper()`, throws `field.indexOf is not a function` on
-  7.3.7 and 8.0.0 (`StoreGroup.createGrouper` calls `field.indexOf('.')` unguarded). `store.group(fn)` works. Group on a
-  calculated field instead.
+- A function `field` in the store's `groupers` config, in `addGrouper()` or in `group({ field : fn })` throws
+  `field.indexOf is not a function` on 8.0.0 (`StoreGroup.createGrouper` calls `field.indexOf('.')` unguarded, although
+  `prepareGroupRecords` has a function-field path). `store.group(fn)` does not throw but silently groups nothing: every
+  record lands in one group with an undefined field. Group on a calculated field instead.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use
