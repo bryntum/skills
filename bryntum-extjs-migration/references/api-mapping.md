@@ -17,31 +17,26 @@ Product-specific rows only apply to that product. Don't generalize a Gantt row t
 
 ## 0. Tiers: what each Ext feature needs on 8.0
 
-The tiers are the **Community < Core < Enterprise** tiers. The Core tier was called Business in 8.0.0: those packages and the older
-docs say `-business` / `'business'`; 8.0.1 renamed them to `-core` / `'core'`. A `-business` app is already on the Core tier, and
-`-business` and `-core` must not be mixed. Run `npm view @bryntum/<product>-core version` and fall back to `-business` if it 404s
-(8.0.1 not out yet), and read "core" as "business" for those packages. `@bryntum/core-core` is the Core package at the Core tier,
-not a typo.
+The tiers are the **Community < Core < Enterprise** tiers; install `-core`, never the deprecated `-business` (see the base
+skill's "Tiers"). `@bryntum/core-core` is the Core package at the Core tier, not a typo.
 
-A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before
-you promise it. **Source of truth: what the package ships.** A feature belongs to the lowest tier whose published package
-contains its class file (checked against the 8.0.0 `-community`, `-business` and `-enterprise` tarballs; this also matches the
-`feature-availability.md` guides, 164 of 164 features). Don't read `static tier` in the source as the package tier: it is the lowest tier a feature runs at once installed, and for ~25 features it says
-Core although only the Enterprise package contains them (intended, per the source comments). Anything not named below is in Community.
+A feature above the installed tier is skipped, and a dialog names the tier it needs. Check each ported plugin before you
+promise it. **Rule:** a feature is available at a tier if that tier's packages contain it. Use the table below, or check
+the installed packages.
 
 | Product | Core tier and up | Enterprise tier only |
 |---|---|---|
 | Grid | `filter` (header-menu filter), `group`, `cellCopyPaste`, `rowCopyPaste`, `cellTooltip`, `columnDragToolbar`, `columnRename`, `pinColumns`, `stickyCells`, `treeGroup` | `summary`, `groupSummary`, `rowExpander`, `rowReorder`, `lockRows`, `split`, `mergeCells`, `charts`, `pdfExport`, `print`, `rowEdit`, `fillHandle`, `rowResize`, AI |
 | Scheduler | `dependencyEdit`, `dependencyMenu`, `eventCopyPaste`, `eventDragSelect`, `eventFilter`, `headerZoom`, `labels`, `nonWorkingTime`, `pan`, `percentBar`, `resourceColumnReorder`, `resourceTimeRanges`, `scheduleContext`, `scrollButtons`, `simpleEventEdit`, `stickyEvents`, `timeRanges`, `timeSelection` | `taskEdit`, `eventClustering`, `resourceTimeRangeClustering`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `summary`, `timelineSummary`, `treeSummary`, `groupSummary`, `tickCells`, `lockRows`, `rowReorder`, `split`, `pdfExport`, `print`, `eventBuffer`, `eventSegments` (+ drag/resize), `nestedEvents`, `groupRollups`, `resourceEdit`, `calendarHighlight`, `timeSpanHighlight`, `allocationCellEdit`, `allocationCopyPaste`, `rowResize`, `versions`, AI |
-| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup` | `summary`, `pdfExport`, `print`, `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, AI; `cost` column (`CostColumn`) |
+| Gantt | `taskEdit`, `taskCopyPaste`, `taskNonWorkingTime`, `progressLine`, `projectLines`, `indicators`, `labels`, `parentArea`, `scrollButtons`, `treeGroup`, `rowExpander`, `rowReorder` (on by default) | `summary`, `pdfExport`, `print`, `baselines`, `criticalPaths`, `projectEdit`, `rollups`, `timelineChart`, `taskSegmentDrag`/`taskSegmentResize`, MS Project export, `versions`, AI; `cost` column (`CostColumn`) |
 | Calendar | recurring events (data layer), `eventCopyPaste`, `externalEventSource`, `timeRanges`, `weekExpander` | `eventBuffer`, `loadOnDemand`, `print`, AI; views `dayagenda`, `monthagenda`, `resource`, `dayresource`, `monthgrid`, `yearplanner`, `multiweek` |
 | TaskBoard | swimlanes, `columnFilter`, `columnRename`, `columnResize`, `filterBar`, `simpleTaskEdit`; card items `jsx`, `resourceAvatars`, `tags`, `todoList` | `columnDrag`, `columnLock`, `columnSort`, `swimlaneDrag`, card items `chart`, `collapse`, AI |
 
 A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`, `rowResize`, `resourceEdit` are listed there, not under Gantt).
 `ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
 
-`gantt-business` also contains Grid's `rowExpander` and `rowReorder`, but the Grid docs call them Enterprise: don't promise them at the Core tier. These
-tier results are for 8.0.0; re-check against the `-core` packages once 8.0.1 is published.
+In Gantt, `rowExpander` and `rowReorder` are Core tier on purpose (the Enterprise label on them applies to Grid and Scheduler only),
+and `rowReorder` is on by default, so don't report an Ext `gridviewdragdrop` or `rowexpander` on a Core tier Gantt as a gap or turn it off.
 
 Engine and data layer:
 
@@ -53,10 +48,10 @@ Engine and data layer:
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
-  Enterprise package at a lower tier set `tier : 'core'` on the widget (`'business'` on the 8.0.0 packages). Don't `instanceof` across tiers: use the `is<Name>` flags.
+  Enterprise package at a lower tier set `tier : 'core'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
-- Re-check a feature in the installed package: it is there if `node_modules/@bryntum/<product>-<tier>/lib/<Product>/feature/<Name>.js` exists (also look under `lib/Grid` and `lib/Scheduler` for Gantt), not by its `static tier`.
+- Re-check a feature in the installed packages: it is there if `node_modules/@bryntum/*-<tier>/lib/*/feature/<Name>.js` exists in any package of the tier. A Gantt app's Grid and Scheduler features ship in `grid-<tier>` and `scheduler-<tier>`, and a Scheduler app's Grid features in `grid-<tier>`, not under the product's own `lib/`. Don't go by `static tier`.
 
 ## 1. Classes and application structure
 
@@ -166,7 +161,7 @@ Engine and data layer:
 | `rowexpander` / `ftype : 'rowbody'` | `rowExpander` (Grid: Enterprise tier, §0) | DOC |
 | `bufferedrenderer` | remove — virtual rendering is built in | DOC |
 | `clipboard` / `gantt_clipboard` | `cellCopyPaste` (+ `taskCopyPaste : { useNativeClipboard : true }` in Gantt) | G-G, SRC |
-| `gridviewdragdrop` (reorder rows) | `rowReorder` (Enterprise tier in Grid and Scheduler; default on in Gantt) | G-G |
+| `gridviewdragdrop` (reorder rows) | `rowReorder` (Enterprise tier in Grid and Scheduler; Core tier and on by default in Gantt) | G-G |
 | drag between grids / onto a timeline | `DragHelper` — see the `bryntum-drag-and-drop` skill | SRC |
 | context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default | G-G, SRC |
 | `scheduler_pan` | `pan` | G-G, SRC |
@@ -247,7 +242,7 @@ reason. If you use one of the listed alternatives, say so in the report.
 | `gantt_selectionreplicator` | Not available | `fillHandle` (differs) | G-G |
 | `taskBodyTemplate`, `projectLinesConfig.linesFor`, `allowDeselect`, `TaskType` nodes | Removed | see §4 | G-G |
 | `DynamicAssignment` scheduling mode | Removed | `FixedDuration` + `effortDriven : true` | G-G |
-| Per-calendar `hoursPerDay`/`daysPerWeek`/`daysPerMonth` | Moved to project | `DurationConverterMixin` (see `products/gantt.md`: not found in the 8.0.0 packages) | G-G |
+| Per-calendar `hoursPerDay`/`daysPerWeek`/`daysPerMonth` | Moved to project | `DurationConverterMixin` (see `products/gantt.md`) | G-G |
 | `Ext.app.Application`, controllers, Sencha Cmd, `Ext.Loader` | No concept | ES modules + Vite or the framework's build | G-G |
 
 Outside Bryntum's scope — flag for a human; may need the host framework, a third-party library or custom code:

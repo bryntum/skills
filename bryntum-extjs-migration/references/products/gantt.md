@@ -34,7 +34,7 @@ dependency radius), model it on the official `advanced` demo's `GanttToolbar`
 ### Per-calendar duration conversion (rare)
 
 Ext Gantt calendars had their own `hoursPerDay`/`daysPerWeek`/`daysPerMonth`; Bryntum moved these to the project. Only
-if the app really depends on per-calendar values (8.0.0 caveat: `DurationConverterMixin` is not found in the 8.0.0 packages' sources or typings, so confirm it exists in the installed version first; otherwise report it as unmapped), follow "Restoring calendar level duration converting" in the Gantt
+if the app really depends on per-calendar values (`DurationConverterMixin` ships in the engine package: `import { DurationConverterMixin } from '@bryntum/engine-<tier>/lib/Engine/scheduling/DurationConverterMixin.js'`; it is not in `gantt.d.ts`), follow "Restoring calendar level duration converting" in the Gantt
 calendars guide (`https://bryntum.com/products/gantt/docs/guide/Gantt/basics/calendars`). It takes three pieces, and
 all are required:
 

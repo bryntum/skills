@@ -67,32 +67,27 @@ Read only the references the app needs. If this skill isn't installed locally, f
 
 Ask the user about anything they haven't already told you, and record the answers in `MIGRATION_PLAN.md`:
 
-- **Tier and license.** The tiers are the Community, Core and Enterprise tiers, each including the ones below it. The Core
-  tier was called Business in 8.0.0: those packages are `@bryntum/<product>-business` (and `-<framework>-business`) with
-  `static tier = 'business'` and `tier : 'business'`; 8.0.1 renamed all of them to `core`. A `-business` app is already on
-  the Core tier (no tier switch), npm's deprecation warning for it is expected, `-business` and `-core` must not be mixed,
-  and no `-business` version exists above 8.0.0, so upgrading means renaming (`bryntum-migrate`). If `npm view
-  @bryntum/<product>-core version` 404s (8.0.1 not out yet), install `-business` and read "core" as "business" below.
-  "Core" also names the package `@bryntum/core-<tier>`, so a Core tier app installs `@bryntum/core-core`: correct, not a
-  typo for `@bryntum/core`. Every `@bryntum/*` package in the app is the same tier at the same exact version. Use the tier
-  the user names or holds a license for ("free" / "open source" means the Community tier). Otherwise use the **Enterprise** tier, say you
-  picked it, and say it runs as a 14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the
-  lowest tier by feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md`
-  §0): a feature above the tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
+- **Tier and license.** Follow the base `bryntum` skill's "Tiers", "License key" and "Installing packages" sections for the
+  tier names (Community, Core, Enterprise; install `@bryntum/<product>-core`, never the deprecated `-business`), the
+  `@bryntum/core-core` package name, the exact-version rule, the trial and the `.npmrc` registry trap. A `-business` app is
+  pinned to 8.0.0 and renames through `bryntum-migrate`. Use the tier the user names or holds a license for ("free" /
+  "open source" means the Community tier). Otherwise use the **Enterprise** tier, say you picked it, and say it runs as a
+  14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the lowest tier by feature
+  fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md` §0): a feature above the
+  tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
   Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs the Core tier at least
   (constraints, calendars, dependencies and `taskEdit` are Core tier; the Community tier has a lighter engine) and the Enterprise tier
   for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
-  Per-feature tiers follow what the published package ships (the `feature-availability.md` guides agree); `static tier` in the source is the lowest tier a feature runs at once its package is installed, not the package it ships in (about 25 features differ on purpose).
-- **Install.** Public npm, no login, no `-trial` package: `npm install --save-exact @bryntum/<product>-<tier>@8.x.y`
-  (or the framework wrapper, e.g. `@bryntum/gantt-react-enterprise`). `npm view @bryntum/<product>-<tier> version`
-  gives the version, but only after the project `.npmrc` below exists (a global `npm.bryntum.com` mapping makes it 404). Untiered `@bryntum/<product>` on public npm is an empty placeholder: never install it. A
-  `@bryntum:registry=https://npm.bryntum.com` line in `~/.npmrc` or the project makes every tiered package 404: add a
-  project `.npmrc` with `@bryntum:registry=https://registry.npmjs.org/` (Yarn v2+ `npmScopes.bryntum.npmRegistryServer`,
-  Yarn v1 `"@bryntum:registry"` in `.yarnrc`) instead of deleting the user-level mapping, which other 7.x projects
-  still need. If the package can't be installed, do the work that doesn't need it and mark verification as blocked.
+- **Install.** Follow the base skill's "Installing packages": public npm, no login, no `-trial` package,
+  `npm install --save-exact @bryntum/<product>-<tier>@8.x.y` (or the framework wrapper, e.g.
+  `@bryntum/gantt-react-enterprise`). A 404 from `npm view @bryntum/<product>-<tier> version` means an
+  `npm.bryntum.com` mapping is active: add a project `.npmrc` with `@bryntum:registry=https://registry.npmjs.org/` (Yarn
+  v2+ `npmScopes.bryntum.npmRegistryServer`, Yarn v1 `"@bryntum:registry"` in `.yarnrc`) instead of falling back to
+  `-business` or deleting the user-level mapping, which other 7.x projects still need. If the package can't be
+  installed, do the work that doesn't need it and mark verification as blocked.
 - **Target stack**: vanilla + Vite (closest to Ext's config-object style), React, Angular or Vue, in TS or JS.
 - **Big-bang or incremental.** Incremental means Bryntum widgets run inside the Ext shell for a while, with the
   Bryntum build loaded next to Ext (`references/patterns.md` §11). 8.0 ships **no prebuilt UMD bundle**: load ES
