@@ -262,7 +262,7 @@ Scheduler resource column with avatar: `type : 'resourceInfo'` (SRC).
 | `Ext.Date.format(d, 'Y-m-d H:i')` | `DateHelper.format(d, 'YYYY-MM-DD HH:mm')` — **tokens differ** (PHP-style → moment-style: `Y`→`YYYY`, `m`→`MM`, `d`→`DD`, `H`→`HH`, `i`→`mm`, `s`→`ss`, `g:i A`→`h:mm A`, `D`→`ddd`, `l`→`dddd`, `M`→`MMM`, `F`→`MMMM`, `j`→`D`, `n`→`M`) | SRC |
 | `Ext.Date.add(d, Ext.Date.DAY, 1)` | `DateHelper.add(d, 1, 'day')` | SRC |
 | `Ext.Date.clearTime(d)` | `DateHelper.clearTime(d)` | SRC |
-| `grid.setDisabled(true)` | `grid.disabled = 'inert'`. 8.0.1, until bryntum/bryntum#TBD is fixed: `true` only adds a `b-disabled` class (no greying) and a mouse click still selects a row | TEST |
+| `grid.setDisabled(true)` | `grid.disabled = 'inert'`. 8.0.1, until bryntum/bryntum#14249 is fixed: `true` only adds a `b-disabled` class (no greying) and a mouse click still selects a row | TEST |
 | `suspendLayouts` / `resumeLayouts` | `suspendRefresh()` / `resumeRefresh()` | UNV |
 | `expandAll`, `collapseAll`, `zoomIn`, `zoomOut`, `zoomToFit`, `shiftPrevious`, `shiftNext` | same names. Wrap them in a handler rather than using `'up.shiftNext'` (the event object would become `amount`) | G-G, SRC |
 
