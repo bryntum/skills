@@ -112,9 +112,7 @@ Show/hide fields per value: tag fields with `dataset`, toggle `widget.hidden` in
 it also covers the first show: key the fields (`imageField`, `locationField`) and toggle them through `editor.widgetMap`
 in `beforeEventEditShow` (TEST). An image in the editor is a `type : 'widget', html` item.
 
-Calendar's editor is flat (no tabs): its keys and weights are in `products/calendar.md`. Custom items need a `weight` above
-the built-ins (they use 100–800), or they land between "End date" and "End time". `eventEdit : { triggerEvent :
-'eventclick' }` reproduces an Ext single-click edit window (default: double-click).
+Calendar's editor is flat (no tabs): its keys, item weights and `triggerEvent` are in `products/calendar.md`.
 
 Only build a custom dialog when the user explicitly asks — then keep the feature enabled and return `false` from
 `beforeEventEdit`/`beforeTaskEdit` (see `bryntum-editor`).
@@ -251,7 +249,7 @@ Wrapper details that cost time:
   renderers become plain module functions.
 - **React**: `BryntumGrid` isn't exported by the Scheduler wrapper: add `@bryntum/grid-react-<tier>` (and its package) at the
   same exact version.
-- A feature's class comes from the package that owns it: `pan` in a Gantt needs `import '@bryntum/scheduler-<tier>'`.
+- A feature's class comes from the package that owns it: `pan` in a Gantt needs `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'`.
 
 ## 11. Incremental path: Bryntum inside the Ext shell
 

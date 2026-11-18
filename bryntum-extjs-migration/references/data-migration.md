@@ -52,9 +52,9 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (a function `field` in `groupers` throws on 8.0.0, until bryntum/bryntum#14230 is fixed). Ext **re-sorts on add**, Bryntum appends: set `reapplySortersOnAdd : true` on the store. Ext `remoteSort : true` against a server that ignores `sort`/`dir` left the list unsorted; Bryntum sorts locally (a behavior fix to report) | SRC, TEST |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
 | Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `project` (every product and tier in 8.0: the project has the CrudManager built in; the standalone `CrudManager` class and the `crudManager` config are deprecated and go in 9.0) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
-| separate event/resource stores loaded by separate proxies (Scheduler) | one `project` load for both (`loadUrl` with `{ resources : { rows }, events : { rows } }`), or call `await project.resourceStore.load()` yourself. **Scheduler stores don't load by themselves** from a `readUrl` (the config is accepted, nothing loads), and a plain `resourceStore : { sorters }` object on a React project component crashes: sort in code (`store.sort('name')`) | TEST |
+| separate event/resource stores loaded by separate proxies (Scheduler) | one `project` load for both (`loadUrl` with `{ resources : { rows }, events : { rows } }`), or one store each: `project : { resourceStore : { readUrl, autoLoad : true }, eventStore : { readUrl, autoLoad : true } }` (the Grid mapping above; tested at the Core tier 8.0.1: both stores request and load). The response is an `AjaxStore` one, `{ data : [...] }`: with `{ rows : [...] }` the request succeeds and the store stays empty, so set `responseDataProperty : 'rows'` or reshape the server reply. A plain `resourceStore : { sorters }` object on a React project component crashes: sort in code (`store.sort('name')`) | TEST |
 | a backend with its own envelope (several collections, nested objects such as `state : { id, name }`) | keep `loadUrl` and reshape in `project.listeners.beforeLoadApply({ response })`: mutate `response` in place (`response.tasks = { rows }`, `response.resources = { rows }`, `response.assignments = { rows }`). A TaskBoard column id and the task's `status` must be the same type (stringify both) | TEST |
-| writes to the app's own PHP/Java endpoints (flat bodies `{ customer_name : 'x' }`, a `contatos` form field) | `AjaxStore` writes `{ data : [...] }` (delete: `{ ids }`) and expects `{ data : [...] }` back. A backend that must stay unchanged can't use `createUrl`/`updateUrl`/`deleteUrl`: send the flat body yourself (`AjaxHelper.post(url, body, { parseJson : true })`), `store.add(serverRecord)` and `store.acceptChanges()`. For a custom wire protocol subclass `AjaxStore` and override `commit()` (map `store.changes` to the calls, write server ids back). Otherwise change the server and say so in the plan | TEST |
+| writes to the app's own PHP/Java endpoints (flat bodies `{ customer_name : 'x' }`, a `contatos` form field) | `AjaxStore` writes `{ data : [...] }` (delete: `{ ids }`) and expects `{ data : [...] }` back. A backend that must stay unchanged can't use `createUrl`/`updateUrl`/`deleteUrl`: send the flat body yourself (`AjaxHelper.post(url, body, { parseJson : true })`), `store.add(serverRecord)` and then `record.clearChanges()` on that record (public API; it takes the record out of `store.added`: tested). For a custom wire protocol subclass `AjaxStore` and override `commit()` (map `store.changes` to the calls, write server ids back). Otherwise change the server and say so in the plan | TEST |
 | failed write (`Ext.Ajax` `failure`, proxy `exception`) | `AjaxHelper` with `parseJson` **rejects with the `Response` itself** for a non-JSON error body (`e.statusText`), but **resolves with `ok === false`** for a JSON error body: `if (!res.ok) throw res;` after every call | TEST |
 | Ext reject-on-failure (`store.rejectChanges`) | reload (`project.load()`); `revertChanges()` doesn't undo a recurring "this and following" edit and `eventStore.revertChanges()` throws `view.getTime is not a function` on 8.0.1. Bryntum already shows a "Data synchronization failed" dialog on `syncFail` | TEST |
 | data file that is a JS object literal (comments, unquoted keys), not JSON | a checked-in `scripts/convert-data.mjs` that `vm.runInNewContext`s it and writes JSON (`fetch().json()` and `loadUrl` fail on it) | TEST |
@@ -110,7 +110,7 @@ To map fields in a model subclass instead, use the same `{ name, dataSource }` e
 ## Scheduler Enterprise (the former Scheduler Pro)
 
 Put `resources`/`events`/`assignments`/`dependencies`/`calendars` on a `project` (the data + scheduling engine hub),
-not ad hoc stores, whenever the app has dependencies, assignments or calendars. See `products/schedulerpro.md`.
+not ad hoc stores, whenever the app has dependencies, assignments or calendars. See `products/scheduler-enterprise.md`.
 
 ## Gantt
 
@@ -133,8 +133,9 @@ exceptions:
 
 - **`StartDate` semantics.** Ext kept `StartDate` as authored (only pushed by dependencies, and only when something
   was edited). Bryntum schedules ASAP from `project.startDate`, so a plain rename piles every task without a constraint
-  at the project start (9 of 27 matched without it, 19 with it). Set `project : { autoSetConstraints : true }` (every
-  `startDate` becomes a `startnoearlierthan` constraint, which is the Ext behavior), or write `constraintType` /
+  at the project start. Set `project : { autoSetConstraints : true }` (every
+  `startDate` becomes a `startnoearlierthan` constraint: dates stay as authored and only dependencies push them, as in Ext; verified on a Gantt with
+  baselines, whose bars matched the Ext positions afterwards), or write `constraintType` /
   `constraintDate` into the data. Side effect: dragging a task then writes a constraint.
 - **Dependency-violating source data changes on load.** Ext trusts stored dates, the Bryntum engine always recalculates
   (13 of 26 tasks moved in one app: chained finish-to-start tasks that were all the same day in the data). Dump

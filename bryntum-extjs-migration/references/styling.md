@@ -76,8 +76,7 @@ data-driven.
   `.b-bryntum:not(.b-nothing)`, and core CSS sets `--b-panel-header-padding` on `.b-grid-base`. Set those on the widget
   itself with higher specificity: `.my-wrapper :is(.b-panel, .b-panel-header):not(.b-nothing) { … }`.
 - A brand color with real meaning (the customer's primary color) may stay as a hex value, set once as a variable.
-- `eventColor` with a custom hex doesn't derive a readable text color: light colors need `color` in `renderData.style` (or a
-  palette name). Settings panels that rewrote Ext rules with `Ext.util.CSS.updateRule`: Gantt bar, progress and dependency
+- `eventColor` with a custom hex doesn't derive a readable text color (`api-mapping.md` §3). Settings panels that rewrote Ext rules with `Ext.util.CSS.updateRule`: Gantt bar, progress and dependency
   colors are in `products/gantt.md`; variables set on the widget root don't recolor bars.
 
 ## Sizes from Ext

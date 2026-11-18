@@ -18,7 +18,7 @@ different, commercial package). None of the `Cal.*` strings match it: use "Sourc
 | `Cal.panel.Calendar` | `new Calendar({ appendTo, ... })` | UNV |
 | `date`, `mode` (`day`/`week`/`month`/`year`/`agenda`), `readOnly`, `weekStartDay`, `hideNonWorkingDays`, `nonWorkingDays`, `showWeekNumber` | same names | SRC (`weekStartDay`, `hideNonWorkingDays`) |
 | `eventStore`, `resourceStore`, CrudManager | `project : { eventStore, resourceStore, loadUrl, syncUrl, autoLoad }` (8.0: the project is the CrudManager) | SRC |
-| `eventEditor : {...}` | `features : { eventEdit : {...} }` (vanilla; React/Vue/Angular write `eventEditFeature`, `SKILL.md`: in React a `features` prop is silently ignored) | SRC, TEST |
+| `eventEditor : {...}` | `features : { eventEdit : {...} }` (vanilla; wrappers use `eventEditFeature`, see `SKILL.md`, Converting) | SRC, TEST |
 | `eventMenu`, `dayMenu` | `features : { eventMenu, scheduleMenu }`, both on by default. `scheduleMenu` is the day-cell menu (right-click an empty cell; one built-in item `addEvent`). There is no `dayMenu` feature: `features : { dayMenu }` throws `Invalid type name`. Customize with `features : { scheduleMenu : { items : { addEvent : false, myItem : { text, onItem } } } }` (`false` removes a default item) and the Calendar listeners `scheduleMenuBeforeShow` (return `false` to suppress the menu), `scheduleMenuShow`, `scheduleMenuItem({ item, date })` (`item.ref` is the item key). Same in week and month view | TEST |
 | `recurringEvents : true` | drop the config: it isn't a Calendar config (stored as an inert property). Recurrence is built in: an event with `recurrenceRule : 'FREQ=DAILY;COUNT=3'` renders 3 occurrences with no config (Core tier and up) | TEST |
 | `navigationToolbar`, `resourceFilter` | `tbar`, or the built-in `sidebar : { items : { resourceFilter : {...} } }` | SRC |
@@ -86,8 +86,7 @@ repeat legend can read "Monthly on 27" for `FREQ=MONTHLY;BYDAY=-1FR` while the s
 series at 99 instances.
 
 Backend: Ext reject-on-failure is a reload in Bryntum (`syncFail({ source }) { setTimeout(() => source.load(), 0); }`):
-`revertChanges()` doesn't undo a recurring "this and following" edit, and `eventStore.revertChanges()` throws
-`view.getTime is not a function` on 8.0.1 (a Bryntum bug). `syncFail` fired three times for one edit.
+see `data-migration.md` (Ext reject-on-failure) for the `revertChanges()` limits.
 
 Running the original: `Extensible-config.js` points to a dead CDN, `extensible-all-debug.js` and `extensible-all.css` are
 build outputs missing from the clone, and the PHP demo needs MySQL. What worked: Ext 4.2.1 from another checkout, a Node

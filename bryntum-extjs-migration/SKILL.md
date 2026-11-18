@@ -50,7 +50,7 @@ Read only the references the app needs. If this skill isn't installed locally, f
 | `references/data-migration.md` | Models, stores, field mapping vs data conversion, CrudManager, Gantt data changes |
 | `references/patterns.md` | Idiom rewrites: app shell, classes, toolbars, dialogs, editors, renderers, locales, undo/redo, framework targets |
 | `references/styling.md` | Theme choice, dropping Ext chrome, selector renames, color tokens |
-| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `schedulerpro` (Scheduler at the Enterprise tier on 8.0), `gantt`, `calendar`, `taskboard` |
+| `references/products/<product>.md` | Product-specific gotchas and support level: `grid`, `scheduler`, `scheduler-enterprise` (Scheduler at the Enterprise tier on 8.0), `gantt`, `calendar`, `taskboard` |
 | `references/templates.md` | Inventory checklist, `MIGRATION_PLAN.md` / `MIGRATION_REPORT.md` formats, verification checklist |
 | `references/v7.md` | Only for 7.x targets: package names, trial/licensed install, imports, CSS, Scheduler Pro, known 7.3.7 bugs |
 
@@ -83,16 +83,15 @@ Ask the user about anything they haven't already told you, and record the answer
   fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md` §0): a feature above the
   tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
-  Tier needs in practice (details in `references/api-mapping.md` §0). The Enterprise tier is the engine Scheduler:
-for an Ext Scheduler that used no engine feature (dependencies that move events, constraints, effort, calendars) and no
-Enterprise-only feature (§0) **use the Core tier and say why**: two such ports behaved identically at both tiers (drag, resize,
-drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`), and the Core tier drops the `taskEdit`
-editor that `eventEdit : false` doesn't remove, and about 25% of the bundle. The tier the user names or holds a license for
-still wins. an Ext Gantt needs the Core tier at least
+  Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs the Core tier at least
   (constraints, calendars, dependencies and `taskEdit` are Core tier; the Community tier has a lighter engine) and the Enterprise tier
   for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
+  A Scheduler with no engine feature and no Enterprise-only feature ran identically at the Core tier in two test ports (drag,
+  resize, drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`) and the Core bundle is about 25%
+  smaller. That is an observation, not the default: the default stays the Enterprise tier, and the tier choice is the user's
+  (name Core as an option in the plan).
 - **Install.** Follow the base skill's "Installing packages": public npm, no login, no `-trial` package,
   `npm install --save-exact @bryntum/<product>-<tier>@8.x.y` (or the framework wrapper, e.g.
   `@bryntum/gantt-react-enterprise`; wrapper names are `-react-`, `-vue-`, `-angular-`, there is no `-vue-3-`). Add the
@@ -154,19 +153,20 @@ Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
 - Convert plugins to `features` only when the mapping is confirmed.
 - Some Bryntum features are on by default that the Ext app may not have had: `cellEdit`, `cellMenu`, `headerMenu`,
   `columnReorder`, `group`, `rowCopyPaste` (Grid, Scheduler); `eventEdit`, `eventMenu`, `scheduleMenu`,
-  `eventTooltip`, `eventCopyPaste`, `enableDeleteKey` (Scheduler); `taskCopyPaste`, `projectLines` (an orange "Project
+  `eventTooltip`, `eventCopyPaste`, `enableDeleteKey`, `stickyEvents`, `eventFilter`, `nonWorkingTime`,
+  `timeAxisHeaderMenu` (Scheduler); `taskCopyPaste`, `projectLines` (an orange "Project
   start" line), `percentBar` (its drag handle swallows task drags on short bars), `taskEdit`, `taskMenu`, `dependencies`
   (terminals on every bar) (Gantt); `taskEdit`, `taskMenu`, `columnHeaderMenu`, `columnToolbars` (a "+" under each column)
   (TaskBoard). **At the Enterprise tier a Scheduler also has** `taskEdit` (the default editor: `eventEdit : false` alone
-  still opens it on double-click and on drag-create), `dependencies`, `dependencyMenu`, `eventSegments`,
-  `eventSegmentDrag`, `eventSegmentResize`, `stickyEvents`, `eventFilter`, `nonWorkingTime`, `timeAxisHeaderMenu`. List
-  what is on in the running app with
+  still opens it on double-click and on drag-create, so set `taskEdit : false` too), `dependencies`, `dependencyMenu`,
+  `eventSegments`, `eventSegmentDrag`, `eventSegmentResize`. List what is on in the running app with
   `Object.keys(widget.features).filter(k => !widget.features[k].disabled)`. Turn off each one the source lacked, or keep
   it and list it as a behavior change.
 - **Wrappers take features as props, not as a `features` object.** The `features : { x : cfg }` blocks in this skill are
   vanilla. In React, Vue and Angular write one prop per feature: `eventEditFeature={...}` (React, Vue),
   `[eventEditFeature]="..."` (Angular); `false` disables it. A `features` prop is a TypeScript error in Vue and Angular
-  and **silently ignored in React** (it compiles, there is no warning, and the feature keeps its default). `cellEdit` takes over the row double-click that Ext
+  and **silently ignored in React** (it compiles, there is no warning, and the feature keeps its default).
+- `cellEdit` takes over the row double-click that Ext
   apps often used to open an edit window. `cellMenu`'s "Remove row" and the Delete key both skip any app-level
   delete confirmation. Two defaults that change Ext behavior without a feature flag: multi-row selection
   (`selectionMode.multiSelect`) and Ctrl-click multi-column sort (`sort : { multiSort }`); Ext grids select one row
@@ -213,8 +213,6 @@ features the Ext app didn't have.
   feature enabled and return `false` from the hook (`bryntum-editor`).
 - 8.0.0, until bryntum/bryntum#14230 is fixed: a function `field` in `groupers`, `addGrouper()` or `group({ field : fn })`
   throws `field.indexOf is not a function`, and `store.group(fn)` silently groups nothing. Group on a calculated field.
-- A hand-written `features : {}` in a React wrapper prop does nothing and doesn't warn: use `<name>Feature` props
-  (Converting section).
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use

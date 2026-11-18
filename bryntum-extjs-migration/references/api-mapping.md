@@ -34,20 +34,21 @@ the installed packages.
 
 A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`, `rowResize`, `resourceEdit` are listed there, not under Gantt).
 `ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
-`ResourceHistogram` and `ResourceUtilization` ship in `scheduler-<tier>` and are exported by the Gantt package; the source
-marks `ResourceHistogram` `@tier enterprise` and `@tier-for-gantt core` (package contents only: not run at the Core tier).
+`ResourceHistogram` and `ResourceUtilization` ship in `scheduler-<tier>` and are exported by the Gantt package: they need the
+Enterprise tier for a Scheduler and the Core tier for a Gantt.
 Run at the Core tier on a Scheduler (tested): `filterBar`, `filter`, `timeRanges`, `resourceTimeRanges`, `workingTime`,
 the built-in presets, `zoomIn`, `dependencies` (`dependencyEdit` errors without it), `labels`, `percentBar`, `headerZoom`,
 `pan`, `scrollButtons`, `scheduleContext`, `timeSelection`, `simpleEventEdit`, `eventDragSelect`. Confirmed Enterprise-only by the
 "Features unavailable on this tier" dialog: `rowReorder`, `print`, `pdfExport`, `summary`, `excelExporter`, `eventBuffer`,
 `eventClustering`, `eventSegments`, `nestedEvents`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `resourceEdit`,
-`calendarHighlight`, `timeSpanHighlight`. `tree` and `tickCells` fail with a factory error (no dialog) at Core. Two import
+`calendarHighlight`, `timeSpanHighlight`. `tickCells` fails with a factory error (no dialog) at Core. Three import
 traps at Core: `type : 'action'` columns throw `Invalid type name "action"` because the Scheduler entry doesn't register
-`ActionColumn` (`import '@bryntum/grid-core/lib/Grid/column/ActionColumn.js'`, or import Grid's package), and a wrapper prop for
+`ActionColumn` (`import '@bryntum/grid-core/lib/Grid/column/ActionColumn.js'`, or import Grid's package); `features : { tree }`
+(a `Sch.panel.SchedulerTree`) throws `Invalid type name "tree" passed to SchedulerFeature factory` until
+`import '@bryntum/grid-core/lib/Grid/feature/Tree.js'` is in the app (tested at Core 8.0.1 with a tree `resourceStore`: it then
+works; `Tree.js` is `@tier community`, so this is not a tier limit); and a wrapper prop for
 a feature the tier lacks (`taskEditFeature`) is a `tsc` error while the vanilla `features : { taskEdit : false }` is silently
 ignored.
-`RowReorder.js` in the Grid package says `static tier = 'core'` while the table lists `rowReorder` as Enterprise for Grid:
-check on the installed tier before promising it.
 
 In Gantt, `rowExpander` and `rowReorder` are Core tier on purpose (the Enterprise label on them applies to Grid and Scheduler only),
 and `rowReorder` is on by default, so don't report an Ext `gridviewdragdrop` or `rowexpander` on a Core tier Gantt as a gap or turn it off.
@@ -201,7 +202,7 @@ project on load at the Core tier. Convert to `Date`/ISO before loading (a loader
 | `treeviewdragdrop` (re-parent, or between two trees with a shared `ddGroup`) | `rowReorder : { dropOnLeaf : true, allowCrossGridDrag : { transferData({ records, insertBefore, parent, sourceGrid, targetGrid }) {} } }`: a drop onto a leaf makes it a parent. Without `transferData` the node is moved (copied with Ctrl). Tested between two TreeGrids with a real mouse | TEST |
 | drag onto a timeline (from a list or a Grid) | `DragHelper`: see the `bryntum-drag-and-drop` skill. Its demo takes the start date from the proxy's left edge, Ext used the pointer date (`getDateFromDomEvent(e, 'round')`). A chained store (`eventStore.chain(fn)`) re-evaluates only on fields passed as the 2nd argument: `chain(fn, ['startDate'])`, or the dragged row stays in the list | TEST |
 | context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default. Scheduler `eventMenu` item keys at the Enterprise tier: `editEvent`, `showDetails`, `copyEvent`, `cutEvent`, `splitEvent`, `eventColor`, `unassignEvent`, `deleteEvent` (the table is at the top of `EventMenu.js`); `editEvent : false` does not remove "Show details". `deleteEvent : { text }` renders; `deleteEvent : true` doesn't (SKILL.md trap) | G-G, SRC, TEST |
-| `scheduler_pan` | `pan`. In a **Gantt** it throws `Invalid type name "pan" passed to GanttFeature factory` until `import '@bryntum/scheduler-<tier>'` is in the app (declare the dependency) | G-G, SRC, TEST |
+| `scheduler_pan` | `pan`. In a **Gantt** it throws `Invalid type name "pan" passed to GanttFeature factory` until `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'` is in the app (declare the dependency) | G-G, SRC, TEST |
 | Scheduler event editor plugin | `eventEdit`, customize with keyed `items` + `weight` | SRC |
 | `gantt_taskeditor` (`taskFormClass`) | `taskEdit`, customize `items : { generalTab : { items : {...} } }` | G-G |
 | `gantt_projecteditor` | `projectEdit` (Enterprise tier; the guide says obsolete) | SRC |

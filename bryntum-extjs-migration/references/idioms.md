@@ -94,7 +94,7 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 | `store.query('name', /bob/)` | `store.query(fn)` | |
 | `store.filter('city', 'Paris')` | `store.filter({ property : 'city', value : 'Paris', operator : '=' })` | Also a predicate, an array, or `{ filters, replace }`. One filter off: `removeFilter(idOrInstance)` |
 | `store.group('city')` | same | Also `addGrouper`, `removeGrouper`, `clearGroupers` |
-| `store.sync()` | `store.commit()` (AjaxStore) | `acceptChanges()` marks clean without a request; `revertChanges()` rolls back |
+| `store.sync()` | `store.commit()` (AjaxStore) | `revertChanges()` rolls back. To mark a record clean without a request use `record.clearChanges()` |
 | `taskStore.filterTreeBy(fn)` / `clearTreeFilter()` | `taskStore.filter({ id : 'find', filterBy : t => ... })` / `clearFilters()` | Keeps the ancestors of a match. A visible Ext root row is not in the Bryntum tree, so counts differ by one |
 | a second store filtered from the first (`Ext.data.ChainedStore`) | `store.chain(fn, ['startDate'])` | The chained store re-evaluates only when a field in the 2nd argument changes. Without it a row that no longer matches stays, silently |
 | `store.getModifiedRecords()` | `store.changes` (`{ added, modified, removed }`) / `store.hasChanges` | |
@@ -105,7 +105,7 @@ Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a func
 
 | Ext JS | Bryntum | Note |
 |---|---|---|
-| `record.get('name')` / `set(…)` | same, or `record.name` / `record.name = v`; `getValue(f)` / `setValue(f, v)` | Declared fields only. In TypeScript `getValue`, `setValue`, `acceptChanges` and `Store#commit` exist at runtime but are missing from the 8.0.1 `.d.ts` (TS2339, or TS4113 on an `override`): use `get`/`set` or cast to `any` |
+| `record.get('name')` / `set(…)` | same, or `record.name` / `record.name = v` | Declared fields only. Don't use `getValue()`, `setValue()` or `store.acceptChanges()`: they exist at runtime but are not public API (not in the `.d.ts`), so they can change without notice |
 | `record.dirty` | `record.isModified` | Per field: `isFieldModified(name)` |
 | `record.getChanges()` | `record.modifications` | |
 | `record.reject()` / `commit()` | `record.revertChanges()` / `clearChanges()` | |

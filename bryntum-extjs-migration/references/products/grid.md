@@ -30,7 +30,7 @@ new Grid({
 ```
 
 That is the vanilla form. In React, Vue and Angular each feature is its own prop or input (`cellEditFeature`, `filterFeature`,
-`groupFeature`; `SKILL.md`), and a `features` object is a type error (silently ignored in React).
+`groupFeature`; see `SKILL.md`, Converting).
 
 Rules:
 
@@ -43,8 +43,8 @@ Rules:
   `store.changes`): `../idioms.md`.
 - Ext validation (`regex`, `maskRe`, `vtype`), form load/reset/dirty and `grid.setDisabled`: `../api-mapping.md` §2 and §7,
   `../patterns.md` §6.
-- Toolbar widths: five text+icon buttons that fit a 350 px Ext tree toolbar overflowed into the menu icon in Stockholm; even
-  the compact recipe (`styling.md`) needed about 520 px. Budget about 100 px per button.
+- Toolbar widths: five text+icon buttons that fit a 350 px Ext tree toolbar overflowed into the menu icon with the Stockholm theme; even
+  the compact recipe (`styling.md`) needed about 520 px. Budget about 100 px per button (measured with the Stockholm theme; font and padding differ per theme).
 - Locked columns: `locked : true` on the column (Ext `lockable`/`locked` → same idea; the Grid creates the locked
   region).
 - Grouped headers: parent column with `children : [...]`; collapsible groups use `collapsible`, `collapseMode :
