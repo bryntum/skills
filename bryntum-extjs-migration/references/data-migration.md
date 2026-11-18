@@ -25,13 +25,17 @@ both counts in the report.
 | field `type : 'int'` / `'float'` / `'number'` | `type : 'int'` / `'number'` | DOC |
 | field `type : 'bool'` / `'boolean'` | `type : 'boolean'` | DOC |
 | field `defaultValue` | `defaultValue` | SRC |
-| field `calculate` / `convert` | `calculate : r => ...` for derived fields (SRC); `convert` — verify (UNV) | SRC / UNV |
+| field `calculate` / `convert` | `calculate : r => ...` for derived fields (SRC); `convert` — verify (UNV). Not on `startDate`/`endDate` (epoch ms: `api-mapping.md` §3) | SRC / UNV |
+| TypeScript: `useDefineForClassFields : false` (older Vite templates) | leave it at the ES2022 default (`true`): `static fields` / `static configurable` throw "has only a getter" otherwise | TEST |
 | `idProperty : 'Id'` | `static idField = 'Id'` on the model subclass, or `{ name : 'id', dataSource : 'Id' }`. `idField` is **not** a Store config (silently ignored there; the official Scheduler guide is wrong) | SRC |
 | `hasMany` / `belongsTo` associations | no direct equivalent — flatten, or use Bryntum's built-in relations (assignments, dependencies, tree children) | UNV |
 | Sch/Gnt model subclasses (`Sch.model.Event`, `Gnt.model.Task`) | `EventModel`, `ResourceModel`, `TaskModel`, `DependencyModel`, `AssignmentModel`, `CalendarModel` | G-S, G-G |
 
 Leave the `id` field untyped, even when Ext declared `{ name : 'Id', type : 'int' }`; JSON numeric ids stay numbers
 anyway (8.0.0, until bryntum/bryntum#14232 is fixed: a typed `id` makes a grouped store return wrong record counts).
+
+After a `dataSource` mapping the record has only the Bryntum field: `fwa.get('scheduledCrewId')` is `undefined`, read
+`resourceId` (a ported "crew mismatch" check silently never fired). The source key is not a property of the record.
 
 Extra fields that keep their name can be declared as strings: `fields : ['location', { name : 'eventType', defaultValue : 'appointment' }]`
 (SRC). Declare only fields the app actually uses.
@@ -45,10 +49,15 @@ Extra fields that keep their name can be declared as strings: `fields : ['locati
 | `proxy : { type : 'rest', url }` | AjaxStore with per-operation URLs + `httpMethods` — verify request shape against the server | DOC |
 | `reader : { rootProperty : 'data' }` | AjaxStore `responseDataProperty` | DOC |
 | `remoteSort` / `remoteFilter` / paging (`pageSize`) | AjaxStore `remoteSort` / `remoteFilter` / `remotePaging` + `pageSize` | DOC |
-| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (a function `field` in `groupers` throws on 8.0.0, until bryntum/bryntum#14230 is fixed) | SRC |
+| `sorters`, `groupers`, `filters` | same names on the store. For computed groups use a calculated field (a function `field` in `groupers` throws on 8.0.0, until bryntum/bryntum#14230 is fixed). Ext **re-sorts on add**, Bryntum appends: set `reapplySortersOnAdd : true` on the store. Ext `remoteSort : true` against a server that ignores `sort`/`dir` left the list unsorted; Bryntum sorts locally (a behavior fix to report) | SRC, TEST |
 | `store.sync()` | AjaxStore `commit()`; CrudManager `sync()` | DOC |
 | Sch/Gnt `CrudManager` (`transport`, `load`, `sync`) | Bryntum `project` (every product and tier in 8.0: the project has the CrudManager built in; the standalone `CrudManager` class and the `crudManager` config are deprecated and go in 9.0) with `loadUrl`/`syncUrl` or `transport` | G-S, G-G |
-| separate event/resource stores loaded by separate proxies (Scheduler) | either keep separate stores with `readUrl`, or one `project` load for both | SRC |
+| separate event/resource stores loaded by separate proxies (Scheduler) | one `project` load for both (`loadUrl` with `{ resources : { rows }, events : { rows } }`), or call `await project.resourceStore.load()` yourself. **Scheduler stores don't load by themselves** from a `readUrl` (the config is accepted, nothing loads), and a plain `resourceStore : { sorters }` object on a React project component crashes: sort in code (`store.sort('name')`) | TEST |
+| a backend with its own envelope (several collections, nested objects such as `state : { id, name }`) | keep `loadUrl` and reshape in `project.listeners.beforeLoadApply({ response })`: mutate `response` in place (`response.tasks = { rows }`, `response.resources = { rows }`, `response.assignments = { rows }`). A TaskBoard column id and the task's `status` must be the same type (stringify both) | TEST |
+| writes to the app's own PHP/Java endpoints (flat bodies `{ customer_name : 'x' }`, a `contatos` form field) | `AjaxStore` writes `{ data : [...] }` (delete: `{ ids }`) and expects `{ data : [...] }` back. A backend that must stay unchanged can't use `createUrl`/`updateUrl`/`deleteUrl`: send the flat body yourself (`AjaxHelper.post(url, body, { parseJson : true })`), `store.add(serverRecord)` and `store.acceptChanges()`. For a custom wire protocol subclass `AjaxStore` and override `commit()` (map `store.changes` to the calls, write server ids back). Otherwise change the server and say so in the plan | TEST |
+| failed write (`Ext.Ajax` `failure`, proxy `exception`) | `AjaxHelper` with `parseJson` **rejects with the `Response` itself** for a non-JSON error body (`e.statusText`), but **resolves with `ok === false`** for a JSON error body: `if (!res.ok) throw res;` after every call | TEST |
+| Ext reject-on-failure (`store.rejectChanges`) | reload (`project.load()`); `revertChanges()` doesn't undo a recurring "this and following" edit and `eventStore.revertChanges()` throws `view.getTime is not a function` on 8.0.1. Bryntum already shows a "Data synchronization failed" dialog on `syncFail` | TEST |
+| data file that is a JS object literal (comments, unquoted keys), not JSON | a checked-in `scripts/convert-data.mjs` that `vm.runInNewContext`s it and writes JSON (`fetch().json()` and `loadUrl` fail on it) | TEST |
 | `Ext.data.proxy.LocalStorage`, `direct`, `jsonp` | unmapped — flag for a human (`api-mapping.md` §8) | — |
 
 The Ext Scheduler/Gantt CrudManager request/response envelope is close to Bryntum's but **not guaranteed identical**.
@@ -122,8 +131,22 @@ exceptions:
 
 ### Structural changes (the data itself must change)
 
-- **`TaskType`**: remove. The project is no longer a task node.
-- **`leaf`**: remove. A node is a parent only if it has `children`.
+- **`StartDate` semantics.** Ext kept `StartDate` as authored (only pushed by dependencies, and only when something
+  was edited). Bryntum schedules ASAP from `project.startDate`, so a plain rename piles every task without a constraint
+  at the project start (9 of 27 matched without it, 19 with it). Set `project : { autoSetConstraints : true }` (every
+  `startDate` becomes a `startnoearlierthan` constraint, which is the Ext behavior), or write `constraintType` /
+  `constraintDate` into the data. Side effect: dragging a task then writes a constraint.
+- **Dependency-violating source data changes on load.** Ext trusts stored dates, the Bryntum engine always recalculates
+  (13 of 26 tasks moved in one app: chained finish-to-start tasks that were all the same day in the data). Dump
+  start/end from the original and from `project.taskStore`, diff them, and list the tasks that moved as a behavior
+  difference. Tasks without dependencies should match exactly: that is the proof the calendar conversion is right.
+- **`TaskType`**: remove only the `Project` value (the project is no longer a task node). An app-defined `TaskType` such as
+  `"Important"` / `"LowPrio"` is data: keep it as a custom field (`TaskModel` subclass, `static fields = ['taskType']`,
+  `project.taskModelClass`).
+- **Visible root row** (`rootVisible : true`): a Bryntum root is not a task. Drop it (the project name goes into
+  `project.name`) and report the row-count difference (Ext 27 rows incl. root, Bryntum 26), or make it a real parent task.
+- **`leaf`**: remove for Gantt. A node is a parent only if it has `children`. A TreeGrid loaded `leaf : true, children :
+  null` rows fine (`children : null` is a leaf): the rule is Gantt-specific.
 - **Project metadata**: new top-level `"project"` section, e.g.
   `{ "calendar" : "general", "startDate" : "2017-01-16", "hoursPerDay" : 24, "daysPerWeek" : 5, "daysPerMonth" : 20 }`.
 - **Calendars**: only `id`, `name`, `intervals`. `Days` + `DefaultAvailability` → `intervals`:
@@ -134,12 +157,27 @@ exceptions:
   ] }
   ```
   `hoursPerDay`/`daysPerWeek`/`daysPerMonth` move from the calendar to the project (per-calendar escape hatch in
-  `products/gantt.md`).
+  `products/gantt.md`). Ext `BusinessTime` (Mon–Fri 08:00–12:00 and 13:00–17:00, 8 h/day, 5 d/week, 20 d/month) became
+  `project : { calendar : 'general', hoursPerDay : 8, daysPerWeek : 5, daysPerMonth : 20 }` plus non-working recurring gaps
+  (checked: durations and end dates identical to Ext for all tasks without dependencies):
+  ```json
+  { "recurrentStartDate" : "on Sat at 0:00",            "recurrentEndDate" : "on Mon at 0:00",           "isWorking" : false },
+  { "recurrentStartDate" : "every weekday at 12:00",    "recurrentEndDate" : "every weekday at 13:00",   "isWorking" : false },
+  { "recurrentStartDate" : "every weekday at 17:00",    "recurrentEndDate" : "every weekday at 08:00",   "isWorking" : false },
+  { "name" : "Holiday", "startDate" : "2010-01-12", "endDate" : "2010-01-13", "isWorking" : false, "cls" : "holiday" }
+  ```
+  i.e. `DefaultAvailability` windows become the non-working gaps between them, and a single-date holiday `Date` gets the
+  next day as `endDate`. The recurrence syntax has no `24:00` (`22:00–24:00` becomes `22:00–23:59`) and rejects
+  `23:59:59`.
 - **Baselines**: `BaselineStartDate` / `BaselineEndDate` → `"baselines" : [ { "startDate" : ..., "endDate" : ... } ]`.
+  Columns, "set baseline" and sizing: `products/gantt.md`, "Baselines".
 
 With a live backend, these structural changes mean either a server-side change or a load/sync adapter (a
-server-side mapping layer, or client-side request/response hooks on the project (CrudManager API) — verify the hook names in the
-docs for the installed version). Record which one in the plan; don't hide it.
+server-side mapping layer, or client-side request/response hooks on the project: `beforeLoadApply({ response })` is
+confirmed, see the stores table above; verify other hook names in the docs for the installed version). Record which one in
+the plan; don't hide it. A demo backend that only echoes the posted body can't answer `project.sync()` (it needs
+`{ requestId, success, tasks : { rows : [{ $PhantomId, id }] } }`): replace it with a CrudManager-protocol server and
+say so (tested: phantom ids were replaced after Save).
 
 ### Scheduling modes (G-G)
 

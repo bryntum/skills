@@ -95,6 +95,8 @@ Prefer `ref` over `id`: `id` must be unique across the document, `ref` need not 
 | `store.filter('city', 'Paris')` | `store.filter({ property : 'city', value : 'Paris', operator : '=' })` | Also a predicate, an array, or `{ filters, replace }`. One filter off: `removeFilter(idOrInstance)` |
 | `store.group('city')` | same | Also `addGrouper`, `removeGrouper`, `clearGroupers` |
 | `store.sync()` | `store.commit()` (AjaxStore) | `acceptChanges()` marks clean without a request; `revertChanges()` rolls back |
+| `taskStore.filterTreeBy(fn)` / `clearTreeFilter()` | `taskStore.filter({ id : 'find', filterBy : t => ... })` / `clearFilters()` | Keeps the ancestors of a match. A visible Ext root row is not in the Bryntum tree, so counts differ by one |
+| a second store filtered from the first (`Ext.data.ChainedStore`) | `store.chain(fn, ['startDate'])` | The chained store re-evaluates only when a field in the 2nd argument changes. Without it a row that no longer matches stays, silently |
 | `store.getModifiedRecords()` | `store.changes` (`{ added, modified, removed }`) / `store.hasChanges` | |
 
 Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a function (`Widget.query`, `queryAll`).
@@ -103,7 +105,7 @@ Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a func
 
 | Ext JS | Bryntum | Note |
 |---|---|---|
-| `record.get('name')` / `set(…)` | same, or `record.name` / `record.name = v`; `getValue(f)` / `setValue(f, v)` | Declared fields only |
+| `record.get('name')` / `set(…)` | same, or `record.name` / `record.name = v`; `getValue(f)` / `setValue(f, v)` | Declared fields only. In TypeScript `getValue`, `setValue`, `acceptChanges` and `Store#commit` exist at runtime but are missing from the 8.0.1 `.d.ts` (TS2339, or TS4113 on an `override`): use `get`/`set` or cast to `any` |
 | `record.dirty` | `record.isModified` | Per field: `isFieldModified(name)` |
 | `record.getChanges()` | `record.modifications` | |
 | `record.reject()` / `commit()` | `record.revertChanges()` / `clearChanges()` | |
@@ -115,6 +117,8 @@ Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a func
 | `node.getDepth()` | `node.childLevel` | |
 | `node.cascadeBy(fn)` | `node.traverse(fn, skipSelf)` | |
 | `node.expand()` | `await grid.features.tree.expand(record)` | Also `collapse`, `toggleCollapse`, `expandTo`, `expandToLevel` |
+| tree `itemdblclick` toggles a parent | `listeners : { cellDblClick : ({ record }) => grid.toggleCollapse(record) }` | Bryntum toggles only from the expander (or one click with `tree : { expandOnCellClick : true }`). With the default `cellEdit` a double-click opens the name editor instead: turn `cellEdit` off |
+| tree order changes | persist from the store `change` event (`action : 'update'`, `changes.parentIndex`) | A same-parent reorder (`insertChild`, a sibling drag) is **not** in `store.changes` or `hasChanges`, so it is never committed. A re-parent shows `modifications = { parentId }`. `autoCommit` also didn't run for a phantom inserted into a second tree store: commit explicitly after `add`/`remove` |
 | grouping `expand(name)` / `collapseAll()` | `await grid.features.group.toggleCollapse(record, false)` / `grid.collapseAll()` | Any record in the group, or its header |
 
 ## Dialogs, helpers, masking
@@ -127,7 +131,7 @@ Static selectors accept `'grid'`, `'#myScheduler'`, `'[ref=timeline]'` or a func
 | `Ext.util.Format.htmlEncode` | `StringHelper.encodeHtml` | Also `stripHtmlTags`, the `xss` tagged template |
 | `Ext.Array` / `Ext.Object` | `ArrayHelper` / `ObjectHelper` | |
 | `cmp.mask('Loading')` | `widget.masked = 'Loading'` | Or `Mask.mask(text, element)` |
-| `Ext.form.Panel` values | `container.values` | Validity via `isValid` |
+| `Ext.form.Panel` values | `container.values` | Validity via `isValid`; load/reset/dirty: `patterns.md` §6 |
 
 ## Refresh and selection
 

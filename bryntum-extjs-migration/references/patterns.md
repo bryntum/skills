@@ -10,7 +10,13 @@ Idiom-level rewrites. Tags as in `api-mapping.md`. Examples use vanilla JS; §10
   Sencha Cmd output, theme packages. (G-S)
 - Ext layouts (`border`, `vbox`, `hbox`, `fit`) → a Bryntum `Container` with `layout : 'hbox'`/`'vbox'` and `flex`
   on children (for pure layout wrappers), or `Panel` if the layout container has panel features (header, tools). In a framework app, use CSS flexbox instead. `split : true` → `{ type : 'splitter' }` between items. (G-G, SRC)
-- Multiple views sharing data → share one store or `project` instance. (G-G)
+- Multiple views sharing data → share one store or `project` instance. (G-G) In React, passing a `ProjectModel` instance as
+  `project={instance}` makes the wrapper log "Using the "project" prop with inner store configurations is not
+  recommended" (a false positive that recommends what you did). Render `<BryntumSchedulerProjectModel ref={projectRef}
+  ... />`, pass `project={projectRef}` to each widget, and render the second consumer (a Grid with
+  `store={project.resourceStore}`) only after a `useEffect` has put `projectRef.current.instance` in state: a Grid created
+  with `store={undefined}` keeps its own empty store and shows "No records to display". Vue and Angular take the same
+  `[project]` / `:project` binding with a component ref.
 - Controller logic listening to global events → methods on a custom widget (e.g. a `Toolbar` subclass), plain
   functions, or framework services/hooks.
 
@@ -102,7 +108,13 @@ listeners : {
 
 Gantt: `taskEdit : { items : { generalTab : { items : { customField : { type : 'textfield', name : 'customField', label : 'Custom', weight : 150 } } } } }` (G-G).
 
-Show/hide fields per value: tag fields with `dataset`, toggle `widget.hidden` in a `change` listener. (G-S)
+Show/hide fields per value: tag fields with `dataset`, toggle `widget.hidden` in a `change` listener. (G-S) Simpler, and
+it also covers the first show: key the fields (`imageField`, `locationField`) and toggle them through `editor.widgetMap`
+in `beforeEventEditShow` (TEST). An image in the editor is a `type : 'widget', html` item.
+
+Calendar's editor is flat (no tabs): its keys and weights are in `products/calendar.md`. Custom items need a `weight` above
+the built-ins (they use 100–800), or they land between "End date" and "End time". `eventEdit : { triggerEvent :
+'eventclick' }` reproduces an Ext single-click edit window (default: double-click).
 
 Only build a custom dialog when the user explicitly asks — then keep the feature enabled and return `false` from
 `beforeEventEdit`/`beforeTaskEdit` (see `bryntum-editor`).
@@ -157,6 +169,17 @@ RangeEditor.initClass();
 ```
 
 Checked on 8.0.0 (browser): Cancel closes the dialog, and Enter saves only when the fields are valid.
+
+Ext form idioms inside a `Popup`/`Container` (TEST on 8.0.1):
+
+| Ext | Bryntum |
+|---|---|
+| `form.loadRecord(r)` + `trackResetOnLoad` | `container.setValues(obj)` loads **and** sets the clean state |
+| `form.reset()` | `container.resetValues()` (no argument). `resetValues(values)` throws `Cannot set properties of undefined (setting 'optionsProp')` if `setValues()` was never called |
+| `isDirty()`, `dirtychange` | `container.hasChanges`, event `dirtyStateChange({ dirty })`. **Programmatic** `setValues()`/`resetValues()` don't fire it: re-read `hasChanges` after a save or cancel, or a "lock the list while dirty" screen stays locked |
+| `dirtyCls` (changed field turns yellow) | none: toggle a class from a field `change` listener |
+| `form.getValues()` | `container.values` includes every child with a `name`, key or `ref`, labels too (a `label` keyed `title` appears as `values.title`): post explicit fields. A keyed item gets no input `name` attribute: set `name` yourself |
+| `grid.setDisabled(true)` while a form is dirty | `grid.disabled = 'inert'`; a tab's panel `disabled = true` greys the tab and blocks switching, as in Ext |
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (base skill, widget-first rule).
 
@@ -206,13 +229,29 @@ the wrapper.
 
 | Concern | Vanilla | React | Angular | Vue 3 |
 |---|---|---|---|---|
-| Instance access | variable / `window.gantt` | `ref.current.instance` | `@ViewChild(...).instance` | template ref `.instance` |
+| Features | `features : { x : cfg }` | `xFeature={cfg}` (a `features` prop is **silently ignored**) | `[xFeature]="cfg"` (a `features` key is a type error) | `xFeature : cfg` prop (a `features` key is a type error) |
+| Instance access | variable / `window.gantt` | `ref.current.instance` | `@ViewChild(...).instance` | `ref.value.instance.value` |
 | Custom Bryntum classes (`Toolbar`/`Popup` subclasses) | `lib/*.js` | same classes, imported and referenced by `type` | same | same |
 | ViewModel binds | handlers | React state → props | component state/inputs → bindings | refs/reactive → props |
 | App dialogs outside Bryntum | `Popup` | app's component system if any, else `Popup` | same | same |
 
 Keep Bryntum configuration inside Bryntum configs even in a framework app: toolbars, editors, menus and renderers stay
 Bryntum widgets, not framework components.
+
+Wrapper details that cost time:
+
+- **Angular strict templates** reject bare attributes for typed inputs: `[toggleable]="true"`, `[icon]="'fa-plus'"`,
+  `[viewPreset]="'weekAndDay'"`. A config typed `BryntumGanttProps` breaks `[columns]="props.columns"` (`undefined` isn't
+  assignable): declare it `export const ganttProps = { ... } satisfies BryntumGanttProps`. `[partner]` takes the Bryntum
+  instance (`ganttCmp.instance`), not the Angular component. `[hidden]` and a `hidden` class on the host don't hide the
+  widget: set `grid.instance.hidden = true`. `ng build` fails the default 1 MB initial bundle budget (Bryntum is about
+  2–5 MB): raise `budgets` in `angular.json`.
+- **Vue**: the wrapper is `@bryntum/<product>-vue-<tier>` (no `-3`). Controller lookups (`Ext.first('scheduler-crew')`,
+  `reference`) become a template `ref` whose instance is emitted to the parent (`@ready`). ViewModel *methods* used by
+  renderers become plain module functions.
+- **React**: `BryntumGrid` isn't exported by the Scheduler wrapper: add `@bryntum/grid-react-<tier>` (and its package) at the
+  same exact version.
+- A feature's class comes from the package that owns it: `pan` in a Gantt needs `import '@bryntum/scheduler-<tier>'`.
 
 ## 11. Incremental path: Bryntum inside the Ext shell
 
