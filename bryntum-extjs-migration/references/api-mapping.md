@@ -121,7 +121,7 @@ Engine and data layer:
 | `allowBlank : false` | `required : true` | SRC |
 | `regex` / `regexText`, `vtype`, custom `validator` | none direct. A `checkValidity` config on the field works: `checkValidity(field) { re.test(field.value) ? field.clearError(MSG, true) : field.setError(MSG, true); }`. **The second argument `true` (silent) is required**: without it `clearError` re-enters `checkValidity` and overflows the stack. `maskRe` (blocks keystrokes) has no equivalent | TEST |
 | `maxLength`, `emptyText` | `maxLength`, `placeholder` | SRC |
-| `timeConfig : { minValue : '08:00', maxValue : '18:00' }` | **not** `timefield : { min : '08:00' }`: the string is parsed as 2020-01-01 and compared with the event's full Date, so every value is invalid and Save silently does nothing. Set Date `min`/`max` on the event's own day in `beforeEventEditShow` (`DateHelper.add(DateHelper.clearTime(eventRecord.startDate), 8, 'hour')`). The 12h display default also differs: `format : 'HH:mm'` | TEST |
+| `timeConfig : { minValue : '08:00', maxValue : '18:00' }` | **not** `timefield : { min : '08:00' }`: the string is parsed as 2020-01-01 08:00 and is not enforced in the event editor (07:00 stayed valid). Set Date `min`/`max` on the event's own day in `beforeEventEditShow` (`DateHelper.add(DateHelper.clearTime(eventRecord.startDate), 8, 'hour')`): with Dates 07:00 became invalid and 09:00 stayed valid (tested at Core 8.0.1). The 12h display default also differs: `format : 'HH:mm'` | TEST |
 | `iconCls : 'x-fa fa-sync'` (button, tool, column) | `icon : 'fa fa-sync'` (widgets), `renderData.iconCls : 'fa fa-sync'` (events). The `b-fa b-fa-*` classes log "Found legacy .b-fa CSS class" on 8.0: use unscoped `fa` | TEST |
 | `form.loadRecord`, `trackResetOnLoad`, `dirtychange`, `isDirty`, `reset`, `getValues` | `patterns.md` §6 | TEST |
 
@@ -263,7 +263,7 @@ Scheduler resource column with avatar: `type : 'resourceInfo'` (SRC).
 | `Ext.Date.format(d, 'Y-m-d H:i')` | `DateHelper.format(d, 'YYYY-MM-DD HH:mm')` — **tokens differ** (PHP-style → moment-style: `Y`→`YYYY`, `m`→`MM`, `d`→`DD`, `H`→`HH`, `i`→`mm`, `s`→`ss`, `g:i A`→`h:mm A`, `D`→`ddd`, `l`→`dddd`, `M`→`MMM`, `F`→`MMMM`, `j`→`D`, `n`→`M`) | SRC |
 | `Ext.Date.add(d, Ext.Date.DAY, 1)` | `DateHelper.add(d, 1, 'day')` | SRC |
 | `Ext.Date.clearTime(d)` | `DateHelper.clearTime(d)` | SRC |
-| `grid.setDisabled(true)` | `grid.disabled = 'inert'`. `true` greys nothing and a mouse click still selects a row | TEST |
+| `grid.setDisabled(true)` | `grid.disabled = 'inert'`. 8.0.1, until bryntum/bryntum#TBD is fixed: `true` only adds a `b-disabled` class (no greying) and a mouse click still selects a row | TEST |
 | `suspendLayouts` / `resumeLayouts` | `suspendRefresh()` / `resumeRefresh()` | UNV |
 | `expandAll`, `collapseAll`, `zoomIn`, `zoomOut`, `zoomToFit`, `shiftPrevious`, `shiftNext` | same names. Wrap them in a handler rather than using `'up.shiftNext'` (the event object would become `amount`) | G-G, SRC |
 
@@ -337,6 +337,6 @@ Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read old
 - Guides that name Scheduler Pro (`Sch.panel.SchedulerPro`, `@bryntum/schedulerpro`) → Scheduler at the Enterprise tier.
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
 - Set an editor title in `beforeEventEditShow` (works on 8.0.0; earlier hooks overwrite it on 7.3.7).
-- `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources`.
+- `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources` (the old names log a deprecation warning in 8.0.1).
 - `idField : 'Id'` as a store config (Scheduler guide) → silently ignored. Use `static idField = 'Id'` on the model,
   or a `{ name : 'id', dataSource : 'Id' }` field.

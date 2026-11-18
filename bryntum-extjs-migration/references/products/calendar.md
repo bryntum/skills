@@ -86,7 +86,7 @@ repeat legend can read "Monthly on 27" for `FREQ=MONTHLY;BYDAY=-1FR` while the s
 series at 99 instances.
 
 Backend: Ext reject-on-failure is a reload in Bryntum (`syncFail({ source }) { setTimeout(() => source.load(), 0); }`):
-see `data-migration.md` (Ext reject-on-failure) for the `revertChanges()` limits.
+see `data-migration.md` (Ext reject-on-failure) for the `revertChanges()` limits and the 8.0.1 throw.
 
 Running the original: `Extensible-config.js` points to a dead CDN, `extensible-all-debug.js` and `extensible-all.css` are
 build outputs missing from the clone, and the PHP demo needs MySQL. What worked: Ext 4.2.1 from another checkout, a Node

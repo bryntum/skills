@@ -36,7 +36,7 @@ PDF export or print (`../api-mapping.md` §0).
 `ResourceHistogram` and a resource `Scheduler` share the Gantt's `project` and `partner : gantt` (`api-mapping.md` §1; set
 `weekStartDay` on each: Sunday by default). `Scheduler` needs `columns` or no resource names show. In Angular `[partner]`
 takes `ganttCmp.instance`. The Ext scale configs of a histogram have no equivalent. (A Resource Histogram drew no bars in
-one early test with 8.0.1 and `getRecordHistogramData` returning data: unresolved, don't promise it.)
+one early test with 8.0.1 and `getRecordHistogramData` returning data; not reproduced in a minimal case and unfiled: unverified, don't promise it.)
 
 ### Color settings from `Ext.util.CSS.updateRule`
 

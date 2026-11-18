@@ -12,7 +12,7 @@ Idiom-level rewrites. Tags as in `api-mapping.md`. Examples use vanilla JS; §10
   on children (for pure layout wrappers), or `Panel` if the layout container has panel features (header, tools). In a framework app, use CSS flexbox instead. `split : true` → `{ type : 'splitter' }` between items. (G-G, SRC)
 - Multiple views sharing data → share one store or `project` instance. (G-G) In React, passing a `ProjectModel` instance as
   `project={instance}` makes the wrapper log "Using the "project" prop with inner store configurations is not
-  recommended" (a false positive that recommends what you did). Render `<BryntumSchedulerProjectModel ref={projectRef}
+  recommended" (8.0.1, until bryntum/bryntum#TBD is fixed: a false positive that recommends what you did). Render `<BryntumSchedulerProjectModel ref={projectRef}
   ... />`, pass `project={projectRef}` to each widget, and render the second consumer (a Grid with
   `store={project.resourceStore}`) only after a `useEffect` has put `projectRef.current.instance` in state: a Grid created
   with `store={undefined}` keeps its own empty store and shows "No records to display". Vue and Angular take the same
@@ -173,7 +173,7 @@ Ext form idioms inside a `Popup`/`Container` (TEST on 8.0.1):
 | Ext | Bryntum |
 |---|---|
 | `form.loadRecord(r)` + `trackResetOnLoad` | `container.setValues(obj)` loads **and** sets the clean state |
-| `form.reset()` | `container.resetValues()` (no argument). `resetValues(values)` throws `Cannot set properties of undefined (setting 'optionsProp')` if `setValues()` was never called |
+| `form.reset()` | `container.resetValues()` (no argument). 8.0.1, until bryntum/bryntum#TBD is fixed: `resetValues()` and `resetValues(values)` both throw `Cannot set properties of undefined (setting 'optionsProp')` if `setValues()` or `values =` was never called, so set the values once first |
 | `isDirty()`, `dirtychange` | `container.hasChanges`, event `dirtyStateChange({ dirty })`. **Programmatic** `setValues()`/`resetValues()` don't fire it: re-read `hasChanges` after a save or cancel, or a "lock the list while dirty" screen stays locked |
 | `dirtyCls` (changed field turns yellow) | none: toggle a class from a field `change` listener |
 | `form.getValues()` | `container.values` includes every child with a `name`, key or `ref`, labels too (a `label` keyed `title` appears as `values.title`): post explicit fields. A keyed item gets no input `name` attribute: set `name` yourself |
