@@ -18,7 +18,7 @@ renderers.
   "New event" as its placeholder, and Cancel removes the record. If the Ext app created events silently, either keep
   the editor (a visible behavior change for the report) or turn it off. Without an event editor, drag-create adds the
   record directly, still named "New event" (or the model's `name` default). `eventEdit : false` also removes
-  double-click editing. `beforeEventAdd` returning `false` vetoes the add. (SRC) **At the Enterprise tier this holds only with
+  double-click editing. `beforeEventAdd` returning `false` vetoes the add. (SRC) **At the Core tier `eventEdit : false` removes the editor. At the Enterprise tier it holds only with
   `taskEdit : false` as well:** the Enterprise default editor is `taskEdit`, and with `eventEdit : false` alone it still
   opens on double-click and on drag-create (and intercepts pointer events). A custom editor on that tier configures
   `eventEdit` **and** sets `taskEdit : false` (tested, both vanilla and React).

@@ -84,9 +84,11 @@ Ask the user about anything they haven't already told you, and record the answer
   tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
   Tier needs in practice (details in `references/api-mapping.md` §0). The Enterprise tier is the engine Scheduler:
-for an Ext Scheduler that used no engine feature and no Enterprise-only feature (§0) it adds behavior the source never had
-(the `taskEdit` editor, generated ids, dirty-flag classes on load, engine date handling). Tell the user that, and
-that the Core tier may fit better (not tested on a full port); don't switch silently. an Ext Gantt needs the Core tier at least
+for an Ext Scheduler that used no engine feature (dependencies that move events, constraints, effort, calendars) and no
+Enterprise-only feature (§0) **use the Core tier and say why**: two such ports behaved identically at both tiers (drag, resize,
+drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`), and the Core tier drops the `taskEdit`
+editor that `eventEdit : false` doesn't remove, and about 25% of the bundle. The tier the user names or holds a license for
+still wins. an Ext Gantt needs the Core tier at least
   (constraints, calendars, dependencies and `taskEdit` are Core tier; the Community tier has a lighter engine) and the Enterprise tier
   for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the

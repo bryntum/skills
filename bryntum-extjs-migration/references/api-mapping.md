@@ -36,7 +36,16 @@ A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`
 `ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
 `ResourceHistogram` and `ResourceUtilization` ship in `scheduler-<tier>` and are exported by the Gantt package; the source
 marks `ResourceHistogram` `@tier enterprise` and `@tier-for-gantt core` (package contents only: not run at the Core tier).
-`filterBar`, `workingTime`, `presets` and `timeRanges` are not in the table above: they ran at the Enterprise tier only.
+Run at the Core tier on a Scheduler (tested): `filterBar`, `filter`, `timeRanges`, `resourceTimeRanges`, `workingTime`,
+the built-in presets, `zoomIn`, `dependencies` (`dependencyEdit` errors without it), `labels`, `percentBar`, `headerZoom`,
+`pan`, `scrollButtons`, `scheduleContext`, `timeSelection`, `simpleEventEdit`, `eventDragSelect`. Confirmed Enterprise-only by the
+"Features unavailable on this tier" dialog: `rowReorder`, `print`, `pdfExport`, `summary`, `excelExporter`, `eventBuffer`,
+`eventClustering`, `eventSegments`, `nestedEvents`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `resourceEdit`,
+`calendarHighlight`, `timeSpanHighlight`. `tree` and `tickCells` fail with a factory error (no dialog) at Core. Two import
+traps at Core: `type : 'action'` columns throw `Invalid type name "action"` because the Scheduler entry doesn't register
+`ActionColumn` (`import '@bryntum/grid-core/lib/Grid/column/ActionColumn.js'`, or import Grid's package), and a wrapper prop for
+a feature the tier lacks (`taskEditFeature`) is a `tsc` error while the vanilla `features : { taskEdit : false }` is silently
+ignored.
 `RowReorder.js` in the Grid package says `static tier = 'core'` while the table lists `rowReorder` as Enterprise for Grid:
 check on the installed tier before promising it.
 
@@ -52,7 +61,7 @@ Engine and data layer:
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
-  A Scheduler that used neither the engine nor an Enterprise-only feature gains engine behavior it never had: `SKILL.md`,
+  A Scheduler that used neither the engine nor an Enterprise-only feature should be ported at the Core tier: `SKILL.md`,
   "Before starting".
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
   Enterprise package at a lower tier set `tier : 'core'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
@@ -149,7 +158,8 @@ Engine and data layer:
 | `multiSelect` (events) | `multiEventSelect` | UNV |
 | `resourceImagePath` | `resourceImagePath` or `resourceImages : { path, extension }` | SRC |
 | event colors (renderer-injected) | `eventColor` field/config + `eventStyle` (`'tonal'`, `'filled'`, `'bordered'`, `'traced'`, `'outlined'`, `'indented'`, `'line'`, `'dashed'`, `'minimal'`, `'rounded'`). `eventColor` takes any CSS color but does not derive the text color: for light custom colors set `color` in `renderData.style` or use a palette name | SRC, TEST |
-| `StartDate` as epoch milliseconds (`dateFormat : 'time'`) | a `date` field does **not** parse numbers (silently `null`, nothing renders), and a `convert` on `startDate`/`endDate` breaks drag-create at the Enterprise tier (`getTime is not a function`). Convert to `Date`/ISO before loading (a loader or script) | TEST |
+| `StartDate` as epoch milliseconds (`dateFormat : 'time'`) | a `date` field does **not** parse numbers (silently `null`, nothing renders), and a `convert` on `startDate`/`endDate` breaks drag-create at the Enterprise tier (`getTime is not a function`) and crashes the
+project on load at the Core tier. Convert to `Date`/ISO before loading (a loader or script) | TEST |
 
 ## 4. Gantt-specific configs
 
