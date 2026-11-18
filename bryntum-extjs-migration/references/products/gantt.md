@@ -13,6 +13,39 @@ PDF export or print (`../api-mapping.md` §0).
 
 ## Rules
 
+### Baselines
+
+`BaselineStartDate`/`BaselineEndDate` → `baselines : [{ startDate, endDate, cls }]` (Enterprise tier). On 8.0.1:
+
+- columns: `{ type : 'baselinestartdate' }`, `{ type : 'baselineenddate' }` (field `baselines[0].startDate`), and for a second
+  baseline `{ type : 'baselinestartdate', text : 'Secondary Start Date', field : 'baselines[1].startDate' }`
+- an extra `cls` in the data (`cls : 'secondary-baseline'`) lands on `.b-task-baseline`: show/hide toggles are plain CSS on the
+  Gantt (`.b-gantt .b-task-baseline { display : none }`), like Ext's `sch-ganttpanel-showbaseline`
+- "set new baseline" (Ext: `node.set('BaselineStartDate', node.getStartDate())` per node) → `task.setBaseline(1)` (1-based:
+  copies start/end into version 1). **Don't** assign `task.baselines = [{...}, ...old.data]`: records without an id are
+  appended and the list reorders
+- baselines shrink the bar: the bar is `rowHeight − 2 × barMargin` and baselines take 0.6 of it. `rowHeight : 30` with
+  `barMargin : 6` gave 7 px bars, and the percent-bar handle then swallowed every drag (`percentBar : { allowResize : false }`,
+  `barMargin : 2` gave 10 px)
+- differences to report: the `baselineenddate` column shows the stored **exclusive** end (Feb 1) where Ext showed the
+  inclusive day (Jan 31); Ext snapped baseline starts on non-working days to the previous working day; a secondary baseline
+  stacks one lane lower instead of overlaying
+
+### Resource views on the same project
+
+`ResourceHistogram` and a resource `Scheduler` share the Gantt's `project` and `partner : gantt` (`api-mapping.md` §1; set
+`weekStartDay` on each: Sunday by default). `Scheduler` needs `columns` or no resource names show. In Angular `[partner]`
+takes `ganttCmp.instance`. The Ext scale configs of a histogram have no equivalent. (A Resource Histogram drew no bars in
+one early test with 8.0.1 and `getRecordHistogramData` returning data: unresolved, don't promise it.)
+
+### Color settings from `Ext.util.CSS.updateRule`
+
+On 8.0.1: `gantt.eventColor = x` colors all bars (the percent bar derives from it). Variables set on `.b-gantt` do **not**
+recolor bars: `--b-gantt-task-primary` and `--b-primary` are redefined on the task wrappers, and `--b-percent-bar-background`
+needs a rule on the bar (`.b-gantt .b-task-percent-bar { background : var(--app-progress-color) }`). `--b-dependency-color` on `.b-gantt`
+works. A `ColorField` returns palette names (`b-red`): pass them through `DomHelper.createColorStyle()` before using them
+in CSS. For hex values give the field a `colors` palette and compare uppercase.
+
 ### Timeline companion
 
 An overview strip above/below the Gantt is a `Timeline` sharing the Gantt's `project` — not a second Gantt. On 8.0 `Timeline` is exported by `@bryntum/scheduler-<tier>` (declare it as a dependency), `ProjectModel` by the Gantt package:
@@ -62,6 +95,8 @@ me.widgetMap.localeCombo.value      = me.localeManager.locale.localeName;
 ## Both types supported
 
 - **Type A** (`Gnt.*`, PascalCase data, `TaskType`, old calendars): the full mapping in `../api-mapping.md` and the
-  structural data changes in `../data-migration.md`.
+  structural data changes in `../data-migration.md`. Check Gantt toolbar items too: a `'->'` spacer is
+  `{ type : 'widget', flex : 1 }` (a string item in keyed `items` is a type error), `fullscreenbutton` isn't a registered type
+  (use a button calling `element.requestFullscreen()`), and `onToggle` on a `toggleable` button gives `{ pressed }`.
 - **Type B** (Bryntum Gantt in an Ext wrapper): remove the Ext shell (an Ext hbox + resizable panel becomes a
   `Container` + `splitter`), move the wrapper's defaults onto the Gantt, and re-check the config against 8.0 defaults.

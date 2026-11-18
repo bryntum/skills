@@ -29,11 +29,22 @@ new Grid({
 });
 ```
 
+That is the vanilla form. In React, Vue and Angular each feature is its own prop or input (`cellEditFeature`, `filterFeature`,
+`groupFeature`; `SKILL.md`), and a `features` object is a type error (silently ignored in React).
+
 Rules:
 
 - Render the Grid directly unless the old screen had sibling panels; then use a `Container` (`layout : 'hbox'`) with a
   `splitter`.
 - `Ext.tree.Panel` → `TreeGrid` (or a Grid with a tree store) and a `type : 'tree'` column; data as nested `children`.
+  Ext toggles a parent on double-click; Bryntum only from the expander, so port it as `cellDblClick` + `toggleCollapse`
+  and turn `cellEdit` off (`../idioms.md`). Tree drag and drop (re-parent, between two trees): `rowReorder` with `dropOnLeaf`
+  and `allowCrossGridDrag` (`../api-mapping.md` §5). Tree persistence caveats (a same-parent reorder is not in
+  `store.changes`): `../idioms.md`.
+- Ext validation (`regex`, `maskRe`, `vtype`), form load/reset/dirty and `grid.setDisabled`: `../api-mapping.md` §2 and §7,
+  `../patterns.md` §6.
+- Toolbar widths: five text+icon buttons that fit a 350 px Ext tree toolbar overflowed into the menu icon in Stockholm; even
+  the compact recipe (`styling.md`) needed about 520 px. Budget about 100 px per button.
 - Locked columns: `locked : true` on the column (Ext `lockable`/`locked` → same idea; the Grid creates the locked
   region).
 - Grouped headers: parent column with `children : [...]`; collapsible groups use `collapsible`, `collapseMode :
@@ -65,3 +76,10 @@ becomes an import from the package that owns `X`: `DataGenerator`, `Store`, `Dat
 
 No official Ext → Bryntum Grid migration guide exists. Complete what the references support, and list the remaining
 gaps in the report.
+
+## Server contracts for plain grids
+
+Tested with two Ext 4 CRUD apps (PHP, Ext Direct): reads keep the server's JSON (`readUrl` + `responseDataProperty`), but writes
+don't (`../data-migration.md`: flat bodies, `{ data : [...] }`, `commit()` override, `AjaxHelper` failure semantics). Ext's
+selection behavior matched with `selectionMode : { multiSelect : false }`: arrows move and select, Ctrl+click replaces the
+selection, Ctrl+A and Shift+click don't multi-select, Delete does nothing.
