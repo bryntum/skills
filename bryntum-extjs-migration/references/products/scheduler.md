@@ -11,7 +11,7 @@ renderers.
 
 - Set `barMargin`, `rowHeight`, `viewPreset`, `startDate`/`endDate` explicitly — defaults differ from Ext Scheduler.
 - Resource column with name + avatar: `type : 'resourceInfo'` with `resourceImages` or `resourceImagePath`.
-- Multi-resource events: `assignments` store instead of `resourceId` on events.
+- Multi-resource events: `assignments` store instead of `resourceId` on events (a data store at every tier; no engine needed).
 - Date + time field pairs in forms: `datefield` with `partner : '<timeFieldRef>'` plus a `timefield`, laid out
   with `layout : { type : 'box', horizontal : true, wrap : true, align : 'end' }` and `flex : '1 0 45%'` on each.
 - Drag-create opens `eventEdit` for the new record. The name field is empty, with the model's `name` default or

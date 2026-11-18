@@ -74,7 +74,7 @@ Engine and data layer:
 
 | Ext JS | Bryntum 8 | Notes | Tag |
 |---|---|---|---|
-| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })`. With dependencies, assignments or calendars: Enterprise tier (7.x: `SchedulerPro`, see `v7.md`) | G-S |
+| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })`. Dependency lines and assignments are plain data at every tier (the Core project has their stores); dependencies that must move events, lag, calendars, constraints or effort need the Enterprise tier (7.x: `SchedulerPro`, see `v7.md`) | G-S |
 | `Gnt.panel.Gantt` | `Gantt` | | G-G |
 | `Ext.grid.Panel` / `Ext.grid.Grid` (Modern) | `Grid` | | DOC |
 | `Ext.tree.Panel` | `TreeGrid` (or `Grid` with a tree store + `type : 'tree'` column) | | DOC |
