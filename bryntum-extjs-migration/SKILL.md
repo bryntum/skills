@@ -3,7 +3,8 @@ name: bryntum-extjs-migration
 description: >
   Migrate an Ext JS application to Bryntum 8 (or 7.x) — legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`),
   Bryntum components wrapped in an Ext JS shell, or plain Ext grids and tree grids
-  (`Ext.grid.Panel`, `Ext.tree.Panel`) — targeting vanilla JS, React, Angular, or Vue. Use alongside
+  (`Ext.grid.Panel`, `Ext.tree.Panel`), Ext calendars (`Extensible.calendar.*`) and hand-built Ext boards
+  (kanban) — targeting vanilla JS, React, Angular, or Vue. Use alongside
   the `bryntum` skill. Trigger on phrases like "migrate from Ext JS", "port our Ext app", "replace
   Sencha", "Ext JS end of life", "Sch.panel", "Gnt.panel", "Ext.grid.Panel to Bryntum", or any
   Ext JS codebase being moved to Bryntum. Also use it whenever Ext JS habits appear in Bryntum code
@@ -11,7 +12,7 @@ description: >
   `dataIndex`, `renderTo`, `Ext.Msg`, `Ext.Ajax`, `Ext.define`, `grid.getStore()`, `getSelectionModel()`, `store.sync()`) or the
   user mentions an Ext JS / Sencha background.
 metadata:
-  tags: bryntum, extjs, sencha, migration, scheduler, gantt, grid, schedulerpro
+  tags: bryntum, extjs, sencha, migration, scheduler, gantt, grid, schedulerpro, calendar, taskboard
 ---
 
 # Ext JS → Bryntum migration
