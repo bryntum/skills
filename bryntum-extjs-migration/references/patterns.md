@@ -178,6 +178,7 @@ Ext form idioms inside a `Popup`/`Container` (TEST on 8.0.1):
 | `dirtyCls` (changed field turns yellow) | none: toggle a class from a field `change` listener |
 | `form.getValues()` | `container.values` includes every child with a `name`, key or `ref`, labels too (a `label` keyed `title` appears as `values.title`): post explicit fields. A keyed item gets no input `name` attribute: set `name` yourself |
 | `grid.setDisabled(true)` while a form is dirty | `grid.disabled = 'inert'`; a tab's panel `disabled = true` greys the tab and blocks switching, as in Ext |
+
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (base skill, widget-first rule).
 

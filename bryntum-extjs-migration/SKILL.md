@@ -186,7 +186,7 @@ Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
 
 ## Verifying
 
-Use the checklist in `references/templates.md`. Three lessons from past migrations:
+Use the checklist in `references/templates.md`. Lessons from past migrations:
 
 - Run the dev server as well as `npm run build`. Vite's dev server enforces file-serving rules that the build doesn't,
   so icons and fonts can 404 only in dev.
@@ -200,8 +200,8 @@ Use the checklist in `references/templates.md`. Three lessons from past migratio
 - Check every claim before writing it. "Fits", "no longer clipped" or "matches Ext" needs a screenshot or the same
   input sequence run on the original. Proving that a feature works doesn't prove it behaves like Ext.
 
-Then write `MIGRATION_REPORT.md` (`references/templates.md`). Follow the base skill's hand-off, and suggest Bryntum
-features the Ext app didn't have.
+Then write `MIGRATION_REPORT.md` (`references/templates.md`). Then suggest Bryntum features the Ext app
+didn't have.
 
 ## Traps
 
@@ -209,8 +209,9 @@ features the Ext app didn't have.
   corrections.
 - 8.0.0, until bryntum/bryntum#14231 is fixed: `items : { deleteEvent : true }` on a menu renders the Delete item with
   empty text. Leave kept built-ins out of `items`, or override only the properties you change.
-- Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog, keep the
-  feature enabled and return `false` from the hook (`bryntum-editor`).
+- Setting `eventEdit`/`taskEdit` to `false` also removes the `beforeEventEdit` hook. For a custom dialog of your own,
+  keep the feature enabled and return `false` from the hook (`bryntum-editor`). To only customize the built-in editor, configure
+  `eventEdit`, and at the Enterprise tier also set `taskEdit : false` (`references/products/scheduler.md`).
 - 8.0.0, until bryntum/bryntum#14230 is fixed: a function `field` in `groupers`, `addGrouper()` or `group({ field : fn })`
   throws `field.indexOf is not a function`, and `store.group(fn)` silently groups nothing. Group on a calculated field.
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
