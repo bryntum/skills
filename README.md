@@ -58,6 +58,10 @@ Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-
 
 Upgrading an existing Bryntum app to a newer version: detects installed and target versions, gathers the ordered upgrade guides / what's-new / changelogs across the product and the products it inherits from, cross-references them with your code, writes a migration plan you approve, then applies it (including the v6 → v7 CSS codemod and the 7.x → 8.0 tier package rename) and verifies the build.
 
+### `bryntum-report-issue`
+
+Preparing a bug report, regression, feature request or support question for Bryntum: routes it to the right channel for the tier and support plan (GitHub for Community, the forum for Core and Enterprise, Customer Zone for SLA customers, security@bryntum.com for vulnerabilities), checks the changelog and existing issues first, writes a runnable test case, follows Bryntum's issue templates, and scrubs secrets and private data. The user reviews and submits the report; the skill never posts anything itself.
+
 ---
 
 ## Installation
@@ -96,6 +100,7 @@ npx degit bryntum/skills/bryntum-editor .claude/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .claude/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .claude/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .claude/skills/bryntum-migrate
+npx degit bryntum/skills/bryntum-report-issue .claude/skills/bryntum-report-issue
 ```
 
 **Install individually** (e.g. React only):
@@ -125,6 +130,7 @@ npx degit bryntum/skills/bryntum-editor .agents/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .agents/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .agents/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .agents/skills/bryntum-migrate
+npx degit bryntum/skills/bryntum-report-issue .agents/skills/bryntum-report-issue
 ```
 
 **Install individually** (e.g. React only):
