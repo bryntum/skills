@@ -177,6 +177,8 @@ Ext form idioms inside a `Popup`/`Container` (TEST on 8.0.1):
 | `isDirty()`, `dirtychange` | `container.hasChanges`, event `dirtyStateChange({ dirty })`. **Programmatic** `setValues()`/`resetValues()` don't fire it: re-read `hasChanges` after a save or cancel, or a "lock the list while dirty" screen stays locked |
 | `dirtyCls` (changed field turns yellow) | none: toggle a class from a field `change` listener |
 | `form.getValues()` | `container.values` includes every child with a `name`, key or `ref`, labels too (a `label` keyed `title` appears as `values.title`): post explicit fields. A keyed item gets no input `name` attribute: set `name` yourself |
+| validation marks after `form.reset()` | `resetValues()` / `setValues()` re-validate: a reset form can show red "required" marks where Ext showed none. Set the values with `skipValidation` or call `clearError()` on each field (seen in two Angular ports; not re-run) |
+| `allowBlank : false` | `required : true` marks the field but a Save you wire yourself still posts empty values. Decide whether Save is blocked (the Ext app often saved anyway); say which in the report and test one empty-field save |
 | `grid.setDisabled(true)` while a form is dirty | `grid.disabled = 'inert'`; a tab's panel `disabled = true` greys the tab and blocks switching, as in Ext |
 
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
@@ -250,6 +252,8 @@ Wrapper details that cost time:
   renderers become plain module functions.
 - **React**: `BryntumGrid` isn't exported by the Scheduler wrapper: add `@bryntum/grid-react-<tier>` (and its package) at the
   same exact version.
+- **Angular + core widgets**: a `Grid` created from a nested config (`type : 'grid'`) needs a value import
+  (`import '@bryntum/grid-<tier>'` or `Grid.initClass()`); a type-only import throws `Invalid type name "grid"` (seen once).
 - A feature's class comes from the package that owns it: `pan` in a Gantt needs `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'`.
 
 ## 11. Incremental path: Bryntum inside the Ext shell

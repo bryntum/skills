@@ -11,6 +11,8 @@ several products on one page use the `*.thin.css` sheets (`core.thin.css`, `grid
 `gantt.thin.css`, `taskboard.thin.css`, ...), then one theme from any of those packages (TaskBoard and Grid are siblings). Ext Sass variables and theme packages don't carry over.
 The suffix-less family sheets (`svalbard.css`) use `light-dark()`: set `color-scheme` (`:root { color-scheme : light dark }`)
 or import a fixed `-light`/`-dark` sheet, and set `build.cssTarget` in Vite or the production build loses its colors.
+Images referenced from CSS or HTML (logos, header icons) go in `src/assets` and are referenced relatively, or set
+`base : './'` in `vite.config`. An absolute `/images/...` breaks when the app is served from a subfolder.
 
 ## Choosing a theme
 

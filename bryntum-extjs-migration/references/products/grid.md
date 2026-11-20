@@ -81,5 +81,6 @@ gaps in the report.
 
 Tested with two Ext 4 CRUD apps (PHP, Ext Direct): reads keep the server's JSON (`readUrl` + `responseDataProperty`), but writes
 don't (`../data-migration.md`: flat bodies, `{ data : [...] }`, `commit()` override, `AjaxHelper` failure semantics). Ext's
+paging (seen in a React port): `pageStartParamName` and `pageParamName` are mutually exclusive on the store (setting both throws at runtime); `loadPage()` takes two arguments in the typings (`loadPage(page, {})`); the paging summary text comes from the locale (`LocaleHelper.publishLocale`). Ext's
 selection behavior matched with `selectionMode : { multiSelect : false }`: arrows move and select, Ctrl+click replaces the
 selection, Ctrl+A and Shift+click don't multi-select, Delete does nothing.

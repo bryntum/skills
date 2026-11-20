@@ -112,6 +112,11 @@ Ask the user about anything they haven't already told you, and record the answer
 - **Backend**: keep the server's JSON shape and map the fields, or change the data to Bryntum's shape.
 - **Scope**: the whole app or named screens. For a large app, migrate one screen end to end as a pilot.
 
+Then read the references your app needs **before writing code**: agents in test rounds that skipped them hit errors the
+references already answer. Always read `references/api-mapping.md` (§0 tiers and the product's own table) and
+`references/products/<product>.md`; add `references/patterns.md` §6 for any app with forms or dialogs,
+`references/data-migration.md` for any backend, and `references/idioms.md` for ported handler code.
+
 ## Classify the source (per screen — apps are often mixed)
 
 | Type | How to tell | What changes |
@@ -162,6 +167,9 @@ Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
   `eventSegments`, `eventSegmentDrag`, `eventSegmentResize`. List what is on in the running app with
   `Object.keys(widget.features).filter(k => !widget.features[k].disabled)`. Turn off each one the source lacked, or keep
   it and list it as a behavior change.
+- **Features inside a raw widget config** (an entry in `items`, a nested `type : 'grid'`) use `features : { x : false }`. The
+  `xFeature` prop form exists only on the wrapper element; inside `items` it is silently ignored and the feature stays on
+  (seen in an Angular round: `cellEditFeature : false` in `items` left cell editing on).
 - **Wrappers take features as props, not as a `features` object.** The `features : { x : cfg }` blocks in this skill are
   vanilla. In React, Vue and Angular write one prop per feature: `eventEditFeature={...}` (React, Vue),
   `[eventEditFeature]="..."` (Angular); `false` disables it. A `features` prop is a TypeScript error in Vue and Angular
@@ -197,11 +205,16 @@ Use the checklist in `references/templates.md`. Lessons from past migrations:
   wrong screen in the original): port the intent and list it as a behavior change.
 - Assert after a real drop, not just that it renders. Silent failures found this way: a chained store that kept the dragged
   row, a `dataSource` mapping that hid the source key, a sorted store that swallowed a reorder.
+- Test the failure paths, not only the happy path. For every write (add, edit, delete, drag) make the server fail once and
+  confirm the screen does what the original did: error shown, edit reverted, row restored. Silent failures found this
+  way: a failed delete with no message, an edit that stayed on screen after the server rejected it.
 - Check every claim before writing it. "Fits", "no longer clipped" or "matches Ext" needs a screenshot or the same
   input sequence run on the original. Proving that a feature works doesn't prove it behaves like Ext.
 
-Then write `MIGRATION_REPORT.md` (`references/templates.md`). Then suggest Bryntum features the Ext app
-didn't have.
+Finish in this order: (1) clean the folder: no build artefacts (`tsconfig.tsbuildinfo`, `dist/`), no scripts that read
+files outside the project, no leftover Ext or IDE folders (`.idea`, `.vscode`) you can remove, pinned dependency versions;
+(2) write `MIGRATION_REPORT.md` (`references/templates.md`: never skip it, even when a README exists); (3) suggest Bryntum
+features the Ext app didn't have.
 
 ## Traps
 
@@ -214,6 +227,10 @@ didn't have.
   `eventEdit`, and at the Enterprise tier also set `taskEdit : false` (`references/products/scheduler.md`).
 - 8.0.0, until bryntum/bryntum#14230 is fixed: a function `field` in `groupers`, `addGrouper()` or `group({ field : fn })`
   throws `field.indexOf is not a function`, and `store.group(fn)` silently groups nothing. Group on a calculated field.
+- `grid.disabled = true` neither greys the grid nor stops a row click selecting (8.0.1, bryntum/bryntum#14249; `api-mapping.md` §7): use
+  `'inert'` to lock a list while a form is dirty.
+- A Scheduler-owned feature used in a Gantt (`pan`, `timeRanges` for `showTodayLine`) throws `Invalid type name` until the
+  Scheduler package is imported (`api-mapping.md`, Gantt table).
 - A mapping for one product doesn't carry over to another (Scheduler `eventRenderer` vs Gantt `taskRenderer`).
 - Ext-shaped calls that look right fail quietly in Bryntum: `store.first()` (a getter), `store.find('name', x)`
   (takes a predicate; use `findRecord`), `node.insertChild(index, child)` (reversed, takes a sibling), `down()` (use
