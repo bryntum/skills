@@ -24,6 +24,9 @@ PDF export or print (`../api-mapping.md` §0).
 - "set new baseline" (Ext: `node.set('BaselineStartDate', node.getStartDate())` per node) → `task.setBaseline(1)` (1-based:
   copies start/end into version 1). **Don't** assign `task.baselines = [{...}, ...old.data]`: records without an id are
   appended and the list reorders
+- `task.baselines.getAt(0)` is typed `Model`, so `.startDate` is a TypeScript error: read a version with `task.getBaseline(1)` (typed `Baseline`) or cast
+- baselines shrink the bar even when hidden with `display : none`: one port also set `--b-baseline-wrap-size : 0` on the
+  Gantt while baselines were hidden, and the bar returned to full height
 - baselines shrink the bar: the bar is `rowHeight − 2 × barMargin` and baselines take 0.6 of it. `rowHeight : 30` with
   `barMargin : 6` gave 7 px bars, and the percent-bar handle then swallowed every drag (`percentBar : { allowResize : false }`,
   `barMargin : 2` gave 10 px)

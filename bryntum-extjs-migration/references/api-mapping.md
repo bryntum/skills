@@ -165,7 +165,10 @@ Engine and data layer:
 
 | Ext Gantt | Bryntum Gantt | Tag |
 |---|---|---|
-| `showTodayLine` | `features.timeRanges.showCurrentTimeLine : true` | G-G |
+| `showTodayLine` | `features.timeRanges.showCurrentTimeLine : true`. In a **Gantt** `timeRanges` needs `import '@bryntum/scheduler-<tier>'` like `pan` (seen: `Invalid type name "timeRanges" passed to GanttFeature factory`, plus a follow-on "already in use" error) | G-G, TEST |
+| `highlightWeekends : false` | `features : { nonWorkingTime : false }` | G-G |
+| `enableBaseline`, `baselineVisible` | the `baselines` feature (Enterprise tier), shown or hidden by CSS: `products/gantt.md` | G-G |
+| `Gnt.view.Gantt` override of `baselineRenderer` drawing a second baseline | a second entry in `baselines` with its own `cls` (`products/gantt.md`); the `sch-gantt-*baseline*` / `sch-ganttpanel-show*` classes map to `.b-task-baseline` | SRC |
 | `loadMask` | `loadMask` | G-G |
 | `enableProgressBarResize : false` (the Ext default) | `percentBar : { allowResize : false }`. Bryntum's percent-bar drag is on by default and, on a short bar, takes the drag a task move needed (3 of 3 task drags failed). `true` → leave the default | G-G, TEST |
 | `enableDependencyDragDrop : false` | `features : { dependencies : { allowCreate : false } }` (no terminals appear on hover) | TEST |
@@ -201,7 +204,7 @@ Engine and data layer:
 | `treeviewdragdrop` (re-parent, or between two trees with a shared `ddGroup`) | `rowReorder : { dropOnLeaf : true, allowCrossGridDrag : { transferData({ records, insertBefore, parent, sourceGrid, targetGrid }) {} } }`: a drop onto a leaf makes it a parent. Without `transferData` the node is moved (copied with Ctrl). Tested between two TreeGrids with a real mouse | TEST |
 | drag onto a timeline (from a list or a Grid) | `DragHelper`: see the `bryntum-drag-and-drop` skill. Its demo takes the start date from the proxy's left edge, Ext used the pointer date (`getDateFromDomEvent(e, 'round')`). A chained store (`eventStore.chain(fn)`) re-evaluates only on fields passed as the 2nd argument: `chain(fn, ['startDate'])`, or the dragged row stays in the list | TEST |
 | context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default. Scheduler `eventMenu` item keys at the Enterprise tier: `editEvent`, `showDetails`, `copyEvent`, `cutEvent`, `splitEvent`, `eventColor`, `unassignEvent`, `deleteEvent` (the table is at the top of `EventMenu.js`); `editEvent : false` does not remove "Show details". `deleteEvent : { text }` renders; `deleteEvent : true` doesn't (SKILL.md trap) | G-G, SRC, TEST |
-| `scheduler_pan` | `pan`. In a **Gantt** it throws `Invalid type name "pan" passed to GanttFeature factory` until `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'` is in the app (declare the dependency) | G-G, SRC, TEST |
+| `scheduler_pan` | `pan`. In a **Gantt** it throws `Invalid type name "pan" passed to GanttFeature factory` until `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'` is in the app (declare the dependency). The same applies to every Scheduler-owned feature in a Gantt (`timeRanges`): importing the whole `@bryntum/scheduler-<tier>` package fixes all of them | G-G, SRC, TEST |
 | Scheduler event editor plugin | `eventEdit`, customize with keyed `items` + `weight` | SRC |
 | `gantt_taskeditor` (`taskFormClass`) | `taskEdit`, customize `items : { generalTab : { items : {...} } }` | G-G |
 | `gantt_projecteditor` | `projectEdit` (Enterprise tier; the guide says obsolete) | SRC |
@@ -298,8 +301,8 @@ Outside Bryntum's scope — flag for a human; may need the host framework, a thi
 - Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV). Bryntum Chart
   isn't in the product packages: it ships as the separate package `@bryntum/chart-enterprise` (Enterprise only; 7.x: `@bryntum/chart-thin`); 8.0's `Chart` widget uses AG Charts instead of Chart.js, so check
   its install docs before planning a chart replacement, and otherwise report the chart as unmapped
-- `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`) — Bryntum fields have `required`,
-  `validateOnInput`, etc., but the model differs (UNV)
+- `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`): see §2 (`checkValidity` + a silent `setError`) and
+  `patterns.md` §6 (load, reset, dirty). `vtype` and `formBind` have no equivalent: list them as unmapped
 - `Ext.util.History` / routing — use the target framework's router
 - `Ext.override` / `Ext.define({ override })` of Sch/Gnt internals, and private methods (leading `_` or undocumented)
 - Ext state providers (`stateful`, `stateId`) — Bryntum has a `state` mechanism but it isn't equivalent (UNV)
