@@ -118,7 +118,8 @@ Interaction:
   Cancel/close discards
 - [ ] drag/resize/create where the source allowed it; validators reject what the source rejected
 - [ ] backend: a create/update/delete round-trips (sync request shape accepted, phantom IDs replaced); for a failed write,
-  the original's error path (dialog, revert or reload) is reproduced
+  the original's error path (dialog, revert or reload) is reproduced. Force a failure **for each of add, edit and delete**
+  (delete is the one that fails silently) and look at the screen afterwards
 - [ ] after each real drop, assert the effect (the row left the source list, the order field changed, the server got the
   call): "it renders" missed three silent failures
 - [ ] test targets are on screen — clicks on off-screen elements silently do nothing
@@ -153,6 +154,11 @@ Look:
 
 Report:
 
+- [ ] every sentence under Behavior changes and Verification is backed by a line of code you read or a run you did: delete
+  any claim you did not check ("only one edit window", "no cell editing", "parent durations match", "server errors are
+  shown" were each false in a test run)
+- [ ] hygiene: no `tsconfig.tsbuildinfo`/`dist`, no scripts reading `../original`, dependency versions pinned, backup
+  folders you refer to are really delivered
 - [ ] each "fits"/"fixed"/"verified"/"matches Ext" claim names the check or screenshot behind it; a "matches Ext"
   claim ran the same input sequence on the original, not just proved the feature works
 

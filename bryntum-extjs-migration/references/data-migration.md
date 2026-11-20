@@ -133,10 +133,22 @@ exceptions:
 
 - **`StartDate` semantics.** Ext kept `StartDate` as authored (only pushed by dependencies, and only when something
   was edited). Bryntum schedules ASAP from `project.startDate`, so a plain rename piles every task without a constraint
-  at the project start. Set `project : { autoSetConstraints : true }` (every
-  `startDate` becomes a `startnoearlierthan` constraint: dates stay as authored and only dependencies push them, as in Ext; verified on a Gantt with
-  baselines, whose bars matched the Ext positions afterwards), or write `constraintType` /
-  `constraintDate` into the data. Side effect: dragging a task then writes a constraint.
+  at the project start. Two options; ask which the team wants and say so in the report:
+  - **Keep every stored date (preferred when the Ext app did not cascade along dependencies).** Write
+    `manuallyScheduled : true` on leaf tasks (parents still roll up from their children) and set
+    `project : { skipNonWorkingTimeInDurationWhenSchedulingManually : true }` so durations count working days as Ext did.
+    Two test ports kept all 26 start dates this way (a human reviewer compared each task). Trade-off: dependencies are drawn
+    but do not move the successor. Parent durations can still differ from the stored ones (one parent showed 27 days
+    against 25 stored): list those.
+  - **Let dependencies push.** `project : { autoSetConstraints : true }` (every `startDate` becomes a `startnoearlierthan`
+    constraint), or write `constraintType` / `constraintDate` into the data. In a test port this moved 13 of 26 tasks 1-8
+    days later (weekends and dependency chains) and the parent ended about a week later; reviewers rated it an issue.
+    Side effect: dragging a task then writes a constraint. Use it only when the team wants the engine to enforce
+    dependencies, and diff the dates as described next.
+- **A hand-posted write must handle failure.** When you write to a backend yourself (flat bodies, `AjaxHelper.post`): do
+  not `record.set()` before the `await` unless the `catch` calls `record.revertChanges()`; wrap every awaited create, update
+  and delete in try/catch, show the error the original showed, and reload or restore the row. A delete that fails silently
+  or an edit that stays on screen after a rejected save is a behavior change you must report.
 - **Dependency-violating source data changes on load.** Ext trusts stored dates, the Bryntum engine always recalculates
   (13 of 26 tasks moved in one app: chained finish-to-start tasks that were all the same day in the data). Dump
   start/end from the original and from `project.taskStore`, diff them, and list the tasks that moved as a behavior
