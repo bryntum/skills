@@ -2,7 +2,7 @@
 
 On 8.0 Scheduler Pro is no longer a product: it is `Scheduler` at the **Enterprise** tier (`@bryntum/scheduler-enterprise`,
 class `Scheduler`, wrapper `BryntumScheduler`). The instance `tier` config defaults to the package tier. On 7.x it is
-`SchedulerPro` from `@bryntum/schedulerpro` (see `../v7.md`). The file name is kept for existing links.
+`SchedulerPro` from `@bryntum/schedulerpro` (see `../v7.md`).
 
 Support level: **moderate** (no official Ext guide; follows the Scheduler shape plus a project-centric data layer).
 
@@ -22,6 +22,11 @@ Events have `startDate` + `duration`. `endDate` is derived, and dependencies cas
 - The editor feature is `taskEdit`, not `eventEdit` (Enterprise default; at the Community/Core tier it is `eventEdit`).
 - A Scheduler app at a lower tier has no engine: use the plain Scheduler mapping and report any dependency/calendar
   behavior the Ext app had as a gap.
+- A plain `Sch.*` Scheduler (no dependencies, no calendars) ran identically at the Core tier in two test ports; the tier is
+  still the user's choice (`SKILL.md`, "Before starting"). At the Enterprise tier it gets the engine Scheduler: the `taskEdit`
+  editor, dependency terminals, `eventSegments`, a 25% larger bundle (`SKILL.md`, default-on list). Generated ids (`_generatedBooking_<uuid>`) and the epoch-date trap
+  (`../api-mapping.md` §3) are the same at both tiers. The former-Scheduler-Pro guidance (use
+  `Scheduler` from the `-enterprise` package, no SchedulerPro class) held on 8.0.1.
 
 ## Limits
 

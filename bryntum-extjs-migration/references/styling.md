@@ -7,9 +7,12 @@ old app's domain meaning (status colors, holidays, custom renderer markup) — n
 
 Use plain CSS `@import`s as in the base `bryntum` skill ("CSS setup"). On 8.0: Font Awesome from
 `@bryntum/core-<tier>/fontawesome/css/`, the structural `<product>.css` and one theme from `@bryntum/<product>-<tier>/`;
-several products on one page use the `*.thin.css` sheets. Ext Sass variables and theme packages don't carry over.
+several products on one page use the `*.thin.css` sheets (`core.thin.css`, `grid.thin.css`, `scheduler.thin.css`,
+`gantt.thin.css`, `taskboard.thin.css`, ...), then one theme from any of those packages (TaskBoard and Grid are siblings). Ext Sass variables and theme packages don't carry over.
 The suffix-less family sheets (`svalbard.css`) use `light-dark()`: set `color-scheme` (`:root { color-scheme : light dark }`)
 or import a fixed `-light`/`-dark` sheet, and set `build.cssTarget` in Vite or the production build loses its colors.
+Images referenced from CSS or HTML (logos, header icons) go in `src/assets` and are referenced relatively, or set
+`base : './'` in `vite.config`. An absolute `/images/...` breaks when the app is served from a subfolder.
 
 ## Choosing a theme
 
@@ -75,6 +78,8 @@ data-driven.
   `.b-bryntum:not(.b-nothing)`, and core CSS sets `--b-panel-header-padding` on `.b-grid-base`. Set those on the widget
   itself with higher specificity: `.my-wrapper :is(.b-panel, .b-panel-header):not(.b-nothing) { … }`.
 - A brand color with real meaning (the customer's primary color) may stay as a hex value, set once as a variable.
+- `eventColor` with a custom hex doesn't derive a readable text color (`api-mapping.md` §3). Settings panels that rewrote Ext rules with `Ext.util.CSS.updateRule`: Gantt bar, progress and dependency
+  colors are in `products/gantt.md`; variables set on the widget root don't recolor bars.
 
 ## Sizes from Ext
 
@@ -92,6 +97,11 @@ Ext pixel widths fit Ext's padding and font, not Bryntum's (SRC):
 - Text columns: prefer `flex`, or `autoWidth : true` (`columnAutoWidth` is on by default), to a copied or scaled
   `width`.
 - Toolbars default to `overflow : 'menu'`: an Ext toolbar that just fitted may now hide buttons in a menu.
+
+A plain HTML/CSS port of an Ext page (no Bryntum widget) needs what Ext applied everywhere: `*, *::before, *::after {
+box-sizing : border-box }`, Neptune's 13px/17px helvetica body text, and a clearfix on containers (Ext containers contain
+floated children). Without them the port differs from the Ext screenshot (nav wraps, the hero sits higher). Ext's item
+collection is also keyed by `itemId`, so two items with the same `itemId` rendered only one box: decide which to port.
 
 Check at the original's window width: take a screenshot and look for header or cell text whose `scrollWidth`
 exceeds its `clientWidth` (`.b-grid-header-text-content`, `.b-grid-cell`). Report any clipping that remains.
