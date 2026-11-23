@@ -8,11 +8,11 @@ Read every file in scope and give each item its own row in the plan:
 - every `Ext.define`: views, models, stores, plugins, overrides
 - root widget configs, every `plugins` entry, every column (`xtype`, `dataIndex`, `filter`, editor)
 - renderers and templates: `eventRenderer`, `taskBodyTemplate`, `getRowClass`, `*Tpl`
-- what the source library's views draw by default, when the app is built on one (Extensible, Bryntum's old `Sch`/`Gnt`/`Cal`
+- what the source library's views draw by default, when the app is built on one (Extensible, Ext JS `Ext.calendar`, Bryntum's old `Sch`/`Gnt`/`Cal`
   bundles): the app's files don't mention it. Read the view classes the app uses (their `getTemplateEventData`,
   `*Tpl`/`*Markup`, `getEventBodyMarkup`) and give each visible detail a row: times before titles, icons, labels, which
-  events draw as bars. Then check the Bryntum view shows the same, or add a renderer (e.g. Extensible Month/MultiWeek's
-  start time, `products/calendar.md`)
+  events draw as bars, what a "+N more" popup lists. Then check the Bryntum view shows the same, or configure it (e.g. Month/2 Weeks
+  in `products/calendar.md`)
 - toolbars, buttons and their handlers; dialogs and forms
 - stores, models and proxies, plus the data they load; product structures (calendars, baselines, assignments,
   dependencies)

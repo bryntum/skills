@@ -1,4 +1,4 @@
-# Calendar (Ext `Cal.*` and Extensible)
+# Calendar (Ext `Cal.*`, Extensible and Ext JS `Ext.calendar`)
 
 Support level: **limited**. No official Ext → Bryntum Calendar guide exists. The rows below were name-checked against the 8.0.0 `@bryntum/calendar-enterprise` package; rows tagged TEST were also run in a browser on 8.0.0
 (real mouse input); "UNV" rows exist in Bryntum but the Ext equivalence is unverified. Report anything else as unmapped.
@@ -9,9 +9,12 @@ the Core tier.** The Enterprise tier adds the `dayagenda`, `monthagenda`, `resou
 
 Detect Bryntum's own Ext Calendar by `Cal.*` classes, `xtype : 'calendarpanel'` or `Cal.data.EventStore`. The **open-source Ext
 calendar is Extensible** (`Extensible.calendar.CalendarPanel`, `xtype : 'extensible.calendarpanel'`,
-`Extensible.calendar.data.EventMappings` / `CalendarMappings` / `MemoryEventStore`, Ext 3/4; Ext 6's `Ext.calendar.*` is a
-different, commercial package). None of the `Cal.*` strings match it: use "Source: Extensible" below, and ignore the
-`Cal.*` rows that don't apply (`eventRenderer(event, resource, metaData)`, `Cal.panel.Calendar`).
+`Extensible.calendar.data.EventMappings` / `CalendarMappings` / `MemoryEventStore`, Ext 3/4). **Ext JS's own calendar** is
+`Ext.calendar.*` (Ext JS 6.2+, Classic and Modern: e.g. `Ext.calendar.panel.Panel`, `Ext.calendar.store.Calendars`, xtypes
+like `calendar-month`). None of the `Cal.*` strings match either: use "Source: Extensible" or "Source: Ext JS
+`Ext.calendar`" below, and ignore the `Cal.*` rows that don't apply (`eventRenderer(event, resource, metaData)`,
+`Cal.panel.Calendar`). **Whatever the source, apply "Month and 2 Weeks: match the source" below**: the two calendars
+differ there, and Bryntum's defaults match neither on its own.
 
 | Ext (`Cal.*`) | Bryntum Calendar | Tag |
 |---|---|---|
@@ -45,16 +48,46 @@ Rules:
 - **Multi-week view.** `modes : { multiweek : { range : '2 w', title : '2 Weeks' } }` (Enterprise tier). `weekCount` is a
   getter: setting it throws `Cannot set property weekCount ... which has only a getter`. The default button text is
   "Multi week": `title` renames it.
-- **"+N more" overflow popup.** Check which events the source's popup lists. Bryntum's month view popup lists **all** the
-  day's events by default, like Extensible (`MonthDayDetail`): keep the default. Ext JS's own `Ext.calendar` (6.2+) lists
-  **only the hidden** ones ("+7 more" opens 7, not the events already in the cell): set `modes : { month : { overflowPopup
-  : { onlyShowOverflow : true } } }`. Tested on 8.0.2: "+4 more" opened 7 events by default and the 4 hidden ones with
-  `onlyShowOverflow`. `multiweek` takes the same `overflowPopup` config (untested).
 - **Sidebar.** Extensible's "Jump to" field and `CalendarListPanel` map to the built-in sidebar (a date picker and a resource
   filter list with colour check boxes, sorted by name, not by store order): no config needed.
 - A mode's events are `.b-cal-event-wrap`; occurrence ids look like `_generated:<masterId>:<yyyy-mm-dd>`. In a test scope
   month cells to `calendar.activeView.element` (the sidebar date picker uses the same `.b-calendar-cell` class).
   `window.bryntum.fromElement(el)` returns the widget.
+
+## Month and 2 Weeks: match the source
+
+These come from the source **library's** views, not the app's code, so the app's files never mention them: identify the
+source (above) and set the Bryntum app to match, in both `month` and `multiweek`.
+
+| Behaviour | Extensible | Ext JS `Ext.calendar` | Bryntum default | Set |
+|---|---|---|---|---|
+| Timed event (not all-day) text | **start time before the title**: `8:00am Haircut` (`'g:ia '`; `'G:i '` with `Extensible.Date.use24HourTime`), from `src/calendar/view/Month.js` `getTemplateEventData`; multi-day timed bars too | **start time before the title**: `07:00 Bike Ride` (seen as `H:i`; use the app's time format if it sets one) | title only (`showTime` and the event header are DayView/WeekView only) | the time renderer below, Bryntum format `'h:mma'` for Extensible, `'HH:mm'` for `H:i` |
+| "+N more" popup lists | **all** the day's events (`MonthDayDetail`) | **only the hidden** ones: "+7 more" opens 7, not the events already in the cell | all the day's events | Extensible: nothing. `Ext.calendar`: `overflowPopup : { onlyShowOverflow : true }` |
+
+```javascript
+import { DateHelper, StringHelper } from '@bryntum/core-<tier>';
+
+const TIME_FORMAT = 'h:mma';   // Extensible 'g:ia' → 8:00am; Ext.calendar 'H:i' → 'HH:mm'
+
+// Month and 2 Weeks only: Day/Week keep their built-in time header
+function timedRenderer({ eventRecord, renderData }) {
+    if (eventRecord.reminder) {           // the app's own extras (here Extensible's reminder bell) go here too:
+        renderData.iconCls = 'fa fa-bell'; // a mode's eventRenderer replaces the modeDefaults one
+    }
+    const name = StringHelper.encodeHtml(eventRecord.name);
+    return eventRecord.allDay ? name : DateHelper.format(eventRecord.startDate, TIME_FORMAT) + ' ' + name;
+}
+
+modes : {
+    month     : { eventRenderer : timedRenderer /* Ext.calendar: , overflowPopup : { onlyShowOverflow : true } */ },
+    multiweek : { eventRenderer : timedRenderer, range : '2 w', title : '2 Weeks' /* same overflowPopup */ }
+}
+```
+
+Tested on 8.0.2 (Extensible app): Month and 2 Weeks show `9:30am Team stand-up`, each recurring occurrence with its own start
+time, all-day bars and Week view unchanged, and the "+N more" popup uses the same renderer. "+4 more" opened 7 events by
+default and the 4 hidden ones with `onlyShowOverflow` (month; `multiweek` takes the same config, untested). `'HH:mm'` is
+untested. Compare each in the browser against the original (or a screenshot of it) before reporting it done.
 
 ## Source: Extensible
 
@@ -69,8 +102,8 @@ resize gave the same result as the original, and occurrences for the same month 
 | `CalendarModel` `CalendarId`, `Title`, `Description`, `ColorId`, `IsHidden` | `ResourceModel` `id`, `name`, custom field, `eventColor`; `IsHidden` has no field (an initial resource filter) |
 | colour id (`ColorId`, 1–32) | the hex in `resources/css/calendar-colors.css` (`.x-cal-<id>-x dl { background-color }`): `eventColor : '#cf2424'` |
 | custom `{ name, mapping, dateFormat }` mappings (the custom-mappings example) | a `dataSource` mapping, or convert in the loader |
-| Reminder | **no equivalent**: keep a `reminder` string field, a `combo` item with `ReminderCombo.getValueList()`, and a bell through `modeDefaults : { eventRenderer({ eventRecord, renderData }) { if (eventRecord.reminder) renderData.iconCls = 'fa fa-bell'; return eventRecord.name; } }`. That renderer drops the start time in Month and 2 Weeks: give those two modes the time renderer in the next row, with the same bell |
-| Month and MultiWeek event text: a timed event (not `IsAllDay`) shows its **start time before the title**, `8:00am Daily standup` (`'g:ia '`, `'G:i '` with `Extensible.Date.use24HourTime`). It comes from the library, `src/calendar/view/Month.js` `getTemplateEventData`, not the app's code, so it's easy to miss. Multi-day timed bars get it too | Bryntum's `month` and `multiweek` show **no time** in events (`showTime` and the event header are DayView/WeekView only). Add it in those two modes only, so Day/Week keep their built-in time header: `const timedRenderer = ({ eventRecord }) => { const name = StringHelper.encodeHtml(eventRecord.name); return eventRecord.allDay ? name : DateHelper.format(eventRecord.startDate, 'h:mma') + ' ' + name; }` and `modes : { month : { eventRenderer : timedRenderer }, multiweek : { eventRenderer : timedRenderer, range : '2 w', title : '2 Weeks' } }`. `'h:mma'` gives `8:00am`; 24-hour is `'H:mm'`. `DateHelper` and `StringHelper` come from `@bryntum/core-<tier>`. A mode's `eventRenderer` replaces the `modeDefaults` one, so add the bell there too. Tested on 8.0.2: occurrences show their own start time |
+| Reminder | **no equivalent**: keep a `reminder` string field, a `combo` item with `ReminderCombo.getValueList()`, and a bell through `modeDefaults : { eventRenderer({ eventRecord, renderData }) { if (eventRecord.reminder) renderData.iconCls = 'fa fa-bell'; return eventRecord.name; } }`. That renderer drops the start time in Month and 2 Weeks: give those two modes the time renderer in "Month and 2 Weeks: match the source", with the same bell |
+| Month and MultiWeek: start time before timed events' titles; "+N more" lists all the day's events | see "Month and 2 Weeks: match the source" |
 | `Extensible.calendar.view.MultiWeek` | `multiweek` mode (above) |
 | locales `extensible-lang-*.js` | already shipped: `import '@bryntum/calendar-<tier>/locales/calendar.locale.De.js'; LocaleManager.applyLocale('De')`. Names: `ca`→`Ca`, `zh_CN`→`ZhCn`, `zh_TW`→`ZhTw`, `hr`→`Hr`, `cs`→`Cs`, `da`→`Da`, `nl`→`Nl`, `en_GB`→`EnGb`, `fr`→`FrFr`, `de`→`De`, `it`→`It`, `pl`→`Pl`, `pt_BR`→`PtBr`, `pt_PT`→`Pt`, `ro`→`Ro`, `es`→`Es`, `sv_SE`→`SvSE`. `LocaleManager` comes from `@bryntum/core-<tier>` |
 
@@ -99,3 +132,11 @@ build outputs missing from the clone, and the PHP demo needs MySQL. What worked:
 static server that prepends `window.ExtensibleDefaults = { extJsRoot : '/ext/', mode : 'dynamic' }` to
 `Extensible-config.js` and serves `calendar-colors.css` + `calendar.css` + `recurrence.css` as `extensible-all.css`, and a Node
 reimplementation of the PHP API.
+
+## Source: Ext JS `Ext.calendar`
+
+Not yet tested against an `Ext.calendar` app: only its Month view behaviour was checked (against a screenshot). Apply "Month
+and 2 Weeks: match the source" above (start time before titles, `onlyShowOverflow : true`). The Bryntum side of the `Cal.*`
+rows (modes, `eventEdit`, `drag`, menus, `eventRenderer` placement) and the Rules apply. Data (`Ext.calendar.store.Calendars`,
+each calendar with its own events store, and the event model's fields) has no verified mapping: map it field by field as
+in `../data-migration.md`, mark those rows UNV in the plan, and compare the views in a browser with the original.
