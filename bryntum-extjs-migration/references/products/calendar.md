@@ -45,6 +45,11 @@ Rules:
 - **Multi-week view.** `modes : { multiweek : { range : '2 w', title : '2 Weeks' } }` (Enterprise tier). `weekCount` is a
   getter: setting it throws `Cannot set property weekCount ... which has only a getter`. The default button text is
   "Multi week": `title` renames it.
+- **"+N more" overflow popup.** Check which events the source's popup lists. Bryntum's month view popup lists **all** the
+  day's events by default, like Extensible (`MonthDayDetail`): keep the default. Ext JS's own `Ext.calendar` (6.2+) lists
+  **only the hidden** ones ("+7 more" opens 7, not the events already in the cell): set `modes : { month : { overflowPopup
+  : { onlyShowOverflow : true } } }`. Tested on 8.0.2: "+4 more" opened 7 events by default and the 4 hidden ones with
+  `onlyShowOverflow`. `multiweek` takes the same `overflowPopup` config (untested).
 - **Sidebar.** Extensible's "Jump to" field and `CalendarListPanel` map to the built-in sidebar (a date picker and a resource
   filter list with colour check boxes, sorted by name, not by store order): no config needed.
 - A mode's events are `.b-cal-event-wrap`; occurrence ids look like `_generated:<masterId>:<yyyy-mm-dd>`. In a test scope
