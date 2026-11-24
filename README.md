@@ -60,7 +60,7 @@ Upgrading an existing Bryntum app to a newer version: detects installed and targ
 
 ### `bryntum-report-issue`
 
-Preparing a bug report, regression, feature request or support question for Bryntum: routes it to the right channel for the tier and support plan (GitHub for Community, the forum for Core and Enterprise, Customer Zone for SLA customers, security@bryntum.com for vulnerabilities), checks the changelog and existing issues first, writes a runnable test case, follows Bryntum's issue templates, and scrubs secrets and private data. The user reviews and submits the report; the skill never posts anything itself.
+Filing a Bryntum bug report, regression or feature request as a GitHub issue in `bryntum/bryntum`, for every tier: checks the docs, the changelog and existing issues first, writes a runnable test case with synthetic data, captures a screenshot or short video when it can drive a browser, follows Bryntum's issue templates, and scrubs secrets and private data. The user reviews the exact text; after their OK the agent files it with `gh`. Vulnerabilities go privately to security@bryntum.com instead.
 
 ---
 
