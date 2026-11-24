@@ -62,8 +62,8 @@ Engine and data layer:
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
-  A Scheduler that used neither the engine nor an Enterprise-only feature ran identically at the Core tier in tests; the tier
-  is still the user's choice (`SKILL.md`, "Before starting").
+  A Scheduler that used neither the engine nor an Enterprise-only feature runs identically at the Core tier, and that is its
+  default tier (`SKILL.md`, "Before starting"); the tier is still the user's choice.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
   Enterprise package at a lower tier set `tier : 'core'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
@@ -158,6 +158,7 @@ Engine and data layer:
 | `createValidatorFn` | `features.eventDragCreate.validatorFn` | UNV |
 | `multiSelect` (events) | `multiEventSelect` | UNV |
 | `resourceImagePath` | `resourceImagePath` or `resourceImages : { path, extension }` | SRC |
+| resource model field holding a picture (`ImgUrl`, `Image`, ...) | map it to Bryntum's `imageUrl` field (`{ name : 'imageUrl', dataSource : 'ImgUrl' }`) and set `resourceImagePath` to its folder. The vertical-mode resource headers and `resourceInfo` columns read `imageUrl` only: a custom field name (`imgUrl`) works in your own code, such as the editor, but the headers then show initials. Seen in 2 of 3 E7 runs | TEST |
 | event colors (renderer-injected) | `eventColor` field/config + `eventStyle` (`'tonal'`, `'filled'`, `'bordered'`, `'traced'`, `'outlined'`, `'indented'`, `'line'`, `'dashed'`, `'minimal'`, `'rounded'`). `eventColor` takes any CSS color but does not derive the text color: for light custom colors set `color` in `renderData.style` or use a palette name | SRC, TEST |
 | `StartDate` as epoch milliseconds (`dateFormat : 'time'`) | a `date` field does **not** parse numbers (silently `null`, nothing renders), and a `convert` on `startDate`/`endDate` breaks drag-create at the Enterprise tier (`getTime is not a function`) and crashes the project on load at the Core tier. Convert to `Date`/ISO before loading (a loader or script) | TEST |
 

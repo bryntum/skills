@@ -78,9 +78,10 @@ Ask the user about anything they haven't already told you, and record the answer
   tier names (Community, Core, Enterprise; install `@bryntum/<product>-core`, never the deprecated `-business`), the
   `@bryntum/core-core` package name, the exact-version rule, the trial and the `.npmrc` registry trap. A `-business` app is
   pinned to 8.0.0 and renames through `bryntum-migrate`. Use the tier the user names or holds a license for ("free" /
-  "open source" means the Community tier). Otherwise use the **Enterprise** tier, say you picked it, and say it runs as a
-  14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the lowest tier by feature
-  fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md` §0): a feature above the
+  "open source" means the Community tier). Otherwise use the **Enterprise** tier, except for a plain Ext Scheduler (below),
+  which uses the **Core** tier (a v7 Scheduler, as opposed to Scheduler Pro, moves to Core on 8.0.1). Say which you picked, and say
+  it runs as a 14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the lowest tier by
+  feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md` §0): a feature above the
   tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
   Never invent a key: ask once, or leave a `// TODO: bryntum.licenseKey = '...'` placeholder.
   Tier needs in practice (details in `references/api-mapping.md` §0): an Ext Gantt needs the Core tier at least
@@ -88,10 +89,10 @@ Ask the user about anything they haven't already told you, and record the answer
   for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
-  A Scheduler with no engine feature and no Enterprise-only feature ran identically at the Core tier in two test ports (drag,
-  resize, drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`) and the Core bundle is about 25%
-  smaller. That is an observation, not the default: the default stays the Enterprise tier, and the tier choice is the user's
-  (name Core as an option in the plan).
+  A **plain Ext Scheduler** (no engine feature and no Enterprise-only feature) uses the **Core** tier by default: it ran identically
+  there in test ports (drag, resize, drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`) and the Core
+  bundle is about 25% smaller. Use Enterprise only when it needs the engine or an Enterprise-only feature. An E7 round (Scheduler,
+  Vue) that defaulted to Enterprise failed 3 of 3 on the tier. Name the other tier as an option in the plan. At Core, `type : 'action'` columns and `tree` need an import first (`references/api-mapping.md` §0, "import traps").
 - **Install.** Follow the base skill's "Installing packages": public npm, no login, no `-trial` package,
   `npm install --save-exact @bryntum/<product>-<tier>@8.x.y` (or the framework wrapper, e.g.
   `@bryntum/gantt-react-enterprise`; wrapper names are `-react-`, `-vue-`, `-angular-`, there is no `-vue-3-`). Add the
