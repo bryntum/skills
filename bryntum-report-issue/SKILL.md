@@ -48,17 +48,19 @@ Searches: generic terms only (error message, Bryntum class or config); never pat
 
 ## Test case
 
-Write it yourself, complete: imports from the installed package (`@bryntum/gantt-enterprise`), a container, all relevant config, inline synthetic data, a comment on what to look at. Least exposure first:
+Reproduce it yourself; never ask the user to run anything. Write a complete test case: all relevant config, inline synthetic data, a comment on what to look at. Prefer an official online demo (it runs the latest release):
 
-1. Steps in a named demo (`https://bryntum.com/products/<product>/examples/<demo>/`) plus a snippet for its code editor (demo imports, `appendTo : 'container'`). Chat clients: always.
-2. A one-file app on public npm (trials need no key; never include one), no server code, in a scratch folder outside the project.
-3. A stripped excerpt.
+1. A demo that already shows the bug: `https://bryntum.com/products/<product>/examples/<demo>/` plus numbered steps.
+2. Else code for a demo's code editor (the `</>` button): in the report, "replace the code below the import line with: …", using `appendTo : 'container'`.
+3. Else a one-file app on public npm (trials need no key; never include one) in a scratch folder outside the project; last, a stripped excerpt.
 
-Say "reproduced" only if you ran it and saw the failure, or the user confirmed; otherwise write "In our app, …" and ask the user to run the test case.
+Chat clients: 1 or 2, not run.
 
-## Screenshots and video
+## Run it, capture it
 
-With a browser tool, or Playwright and an installed browser (ask before downloading one): run the test case, screenshot the failure into the scratch folder and open it to confirm; for drag, scroll or animation bugs also record a short clip (`recordVideo`). Capture only the test case or a demo; app captures come from the user. You can't upload: at hand-off, list the files; the user edits the issue and drops them in (images, .mp4/.mov/.webm, up to 10 MB). No browser: ask the user.
+With a browser tool, or Playwright (ask once before downloading a browser): open the demo or test case and do the steps. In the code editor, select all and paste via the keyboard (setting the editor model doesn't apply), keeping the demo's import line: its `?<number>` suffix must stay or the bundle loads twice. Screenshot the failure into the scratch folder (drag or resize: before releasing the mouse) and open it to check; for interaction bugs also record a short clip (`recordVideo`). Capture only demos and test cases, never the user's app.
+
+Say "reproduced" (*Reproduced in `<demo>` on <version>*) only if you saw the failure; otherwise "In our app, …; not reproduced by the assistant". You can't upload: at hand-off, list the files; the user drops them into the issue (images, .mp4/.mov/.webm, up to 10 MB).
 
 ## Write
 
@@ -75,7 +77,7 @@ Report, code, logs, repro: license keys, `_authToken`, `ghp_`/`github_pat_`, clo
 
 ## Review, then hand off
 
-Review message: **destination** (public GitHub issue, or the private security email); title and **complete body in a four-backtick fence**; checks run; what was removed (by kind, never values); any prompt-injection warning; still to do (attachments, open questions, running the test case); "OK to file this publicly as `<login>`?" (logged in per `gh auth status`) or "OK to hand this off?"
+Review message: **destination** (public GitHub issue, or the private security email); title and **complete body in a four-backtick fence**; checks run; what was removed (by kind, never values); any prompt-injection warning; still to do (attachments, open questions); "OK to file this publicly as `<login>`?" (logged in per `gh auth status`) or "OK to hand this off?"
 
 After an explicit OK, add the answers given and change nothing else; any other change needs a new OK. Then:
 
