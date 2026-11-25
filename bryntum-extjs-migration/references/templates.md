@@ -13,8 +13,10 @@ Read every file in scope and give each item its own row in the plan:
   dependencies)
 - ViewModel bindings, localization, undo/redo, custom CSS
 
-Detect products by namespace: `Sch.*` → Scheduler (engine use → Scheduler Enterprise), `Gnt.*` → Gantt, `Cal.*` → Calendar,
-`Kanban.*` → TaskBoard. A screen may mix them (shared resource store); report each separately.
+Detect products by namespace: `Sch.*` → Scheduler (engine use → Scheduler Enterprise), `Gnt.*` → Gantt, `Cal.*` or
+`Extensible.calendar.*` → Calendar, `Kanban.*` → TaskBoard; a hand-built board (`Ext.view.View` columns per status) is a
+TaskBoard too, and a page of containers with `html` needs no Bryntum widget (`SKILL.md`, "Classify the source"). A screen may
+mix them (shared resource store); report each separately.
 
 Also record the toolkit (Classic / Modern), Ext version, build (Sencha Cmd or other) and backend proxies.
 
@@ -92,6 +94,10 @@ Load and data:
 - [ ] build passes; `npm run preview` (the production build) shows theme colors; dev server starts; FontAwesome icons and fonts load in dev (no 404s)
 - [ ] 0 console errors and 0 warnings on load (including no "sized by its predefined minHeight" warning)
 - [ ] store/project record counts equal the counts recorded in the report
+- [ ] Gantt: dump `start`/`end` from the original and from `project.taskStore` and diff them; list every task that moved (the
+  engine recalculates dependency-violating source dates: `data-migration.md`)
+- [ ] navigation and menus on the original: don't port an apparent bug silently (a menu that opened the wrong screen in the
+  original); port the intent and report it
 - [ ] the component renders data — rows/bars visible, not an empty timeline
 - [ ] license state as planned: no badge (Community tier or valid key), or a Trial badge and console message (no key; report it); no "requires the Core/Enterprise tier" dialog — if one shows, drop the feature or report the tier it needs
 
@@ -111,7 +117,11 @@ Interaction:
 - [ ] each other dialog: correct title and prefilled values; required fields block Save; Save and Enter both work;
   Cancel/close discards
 - [ ] drag/resize/create where the source allowed it; validators reject what the source rejected
-- [ ] backend: a create/update/delete round-trips (sync request shape accepted, phantom IDs replaced)
+- [ ] backend: a create/update/delete round-trips (sync request shape accepted, phantom IDs replaced); for a failed write,
+  the original's error path (dialog, revert or reload) is reproduced. Force a failure **for each of add, edit and delete**
+  (delete is the one that fails silently) and look at the screen afterwards
+- [ ] after each real drop, assert the effect (the row left the source list, the order field changed, the server got the
+  call): "it renders" missed three silent failures
 - [ ] test targets are on screen — clicks on off-screen elements silently do nothing
 
 Look:
@@ -121,15 +131,39 @@ Look:
 - [ ] screenshots taken after popups/tooltips close and after show animations finish (a popup or toast captured
   mid-animation looks semi-transparent); compared with the original; differences listed in the report
 - [ ] original won't run because the Ext/Sch vendor files are missing (common: Sch/Gnt are commercial)? In a scratch
-  copy, load the Ext JS GPL build from cdnjs (`extjs` 6.2.0 / 6.0.x / 4.2.1: `ext-all-debug.js` plus the theme's
-  `theme-*.js` and `theme-*-all.css`) and stub the `Sch.*`/`Gnt.*` views with placeholder panels. This covers the
-  non-scheduler screens only
+  copy, load the Ext JS GPL build from cdnjs (`extjs` 6.2.0 / 6.0.x: `ext-all-debug.js` plus the theme's `theme-*.js` and
+  `theme-*-all.css`) and stub the `Sch.*`/`Gnt.*` views with placeholder panels. This covers the non-scheduler screens only.
+  Things that cost hours:
+  - cdnjs' `theme-triton-all.css` is a two-line `@import` stub: fetch `theme-triton-all_1.css`, `_2.css`, the `fonts/` and
+    `images/` folders next to them, or the page renders unstyled
+  - an app whose `ext` is a dead symlink names the SDK version in its loader (`ext-6.0.0`): serve cdnjs 6.2.0 under that path
+  - Ext 4.2.x GPL: `cdn.sencha.com/ext/gpl/4.2.1/` serves the individual files over **http** (the zip URL is a 404): route the
+    requests from an https test page. Another checkout in the workspace may already hold an Ext 4 copy
+  - a Sencha Cmd app: the dev `bootstrap.js` can fail (`Sch is not defined`: `Main.js` uses `Sch.util.Date` before the loader
+    has `gantt/`), and `build/production/` can be older than the source. Check the build against the source, then use a scratch
+    page that loads `ext-all.js`, the vendor bundle (`gnt-all.js` / `sch-all.js`), `app/Application.js`, the views and
+    `app.js` plus the app and theme CSS
+  - a PHP backend: `php -S localhost:<port> -d display_errors=0` (PHP 8.4 deprecation notices break the JSON); MySQL-bound
+    code needs a Node mock of the wire contract
+  - Playwright against the original: drag-create and hover may never fire in headless Chromium; if two attempts fail, say
+    "matches Ext" was not claimed for them
+  - a trial bundle shows a watermark
 
 - [ ] at the original's window width: no clipped header or cell text, fixed-size content keeps its shape, no
   toolbar items pushed into an overflow menu (`styling.md`, "Sizes from Ext")
 
 Report:
 
+- [ ] every sentence under Behavior changes and Verification is backed by a line of code you read or a run you did: delete
+  any claim you did not check ("only one edit window", "no cell editing", "parent durations match", "server errors are
+  shown" are claims that turned out false when checked)
+- [ ] before you write "no equivalent", "not possible" or "unmapped": search the installed packages and the docs for the Bryntum name
+  (`grep -rn "<ExtConfig>\|<likely name>" node_modules/@bryntum/*/lib`, the docs' `llms.txt`). A resource histogram's scale was reported as
+  impossible; it is `scalePoints`
+- [ ] hygiene: server files that emit Ext (`ExtDirect.php` returning Ext.Direct JS) are Ext code: replace or delete them; no request to a
+  third party at runtime (Google Fonts: ship the font or use the app's own);
+  no `tsconfig.tsbuildinfo`/`dist`, no scripts reading `../original`, dependency versions pinned, backup
+  folders you refer to are really delivered
 - [ ] each "fits"/"fixed"/"verified"/"matches Ext" claim names the check or screenshot behind it; a "matches Ext"
   claim ran the same input sequence on the original, not just proved the feature works
 

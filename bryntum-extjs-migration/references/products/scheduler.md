@@ -11,21 +11,31 @@ renderers.
 
 - Set `barMargin`, `rowHeight`, `viewPreset`, `startDate`/`endDate` explicitly — defaults differ from Ext Scheduler.
 - Resource column with name + avatar: `type : 'resourceInfo'` with `resourceImages` or `resourceImagePath`.
-- Multi-resource events: `assignments` store instead of `resourceId` on events.
+- Resource pictures: name the resource field `imageUrl` (map the Ext `ImgUrl` with `dataSource`), or the vertical headers and `resourceInfo` show initials (`references/api-mapping.md` §3).
+- Multi-resource events: `assignments` store instead of `resourceId` on events (a data store at every tier; no engine needed).
 - Date + time field pairs in forms: `datefield` with `partner : '<timeFieldRef>'` plus a `timefield`, laid out
   with `layout : { type : 'box', horizontal : true, wrap : true, align : 'end' }` and `flex : '1 0 45%'` on each.
 - Drag-create opens `eventEdit` for the new record. The name field is empty, with the model's `name` default or
   "New event" as its placeholder, and Cancel removes the record. If the Ext app created events silently, either keep
   the editor (a visible behavior change for the report) or turn it off. Without an event editor, drag-create adds the
   record directly, still named "New event" (or the model's `name` default). `eventEdit : false` also removes
-  double-click editing. `beforeEventAdd` returning `false` vetoes the add. (SRC)
+  double-click editing. `beforeEventAdd` returning `false` vetoes the add. (SRC) **At the Core tier `eventEdit : false` removes the editor. At the Enterprise tier it holds only with
+  `taskEdit : false` as well:** the Enterprise default editor is `taskEdit`, and with `eventEdit : false` alone it still
+  opens on double-click and on drag-create (and intercepts pointer events). A custom editor on that tier configures
+  `eventEdit` **and** sets `taskEdit : false` (tested, both vanilla and React).
 - Open the editor for a new record from a button: `scheduler.editEvent(new eventStore.modelClass({...}))`.
 - Editor title: set it in `beforeEventEditShow` (checked on 8.0.0).
 - Ext validators (`dndValidatorFn`, `resizeValidatorFn`, `createValidatorFn`) → the `validatorFn` of `eventDrag`,
-  `eventResize`, `eventDragCreate` (UNV — verify the argument shape and test the rejection paths).
+  `eventResize`, `eventDragCreate`. The argument is one context object and the result `{ valid, message }`
+  (`api-mapping.md` §3; the resize shape is tested, the other two follow it: test the rejection paths).
 - An Ext `beforeeventdrop` veto → `beforeEventDropFinalize` with `context.valid = false`. There is no
   `beforeEventDrop` event (checked in 8.0.0).
 - Drag from an external list/grid onto the timeline: the `bryntum-drag-and-drop` skill.
+- Time lines, zones, a hidden-hours axis, `zoomLevels`, hour header formats: `../api-mapping.md` §3.
+- Two-line event bars (an Ext `eventBodyTemplate` with a header and a footer) need `stickyEvents : false` (otherwise the text
+  clips to about 70 px) **and** `.b-sch-event-content { display : block }` (the default is a flex row, so the two DomConfig
+  divs sit side by side).
+- Epoch-millisecond dates, stores that don't load from `readUrl`, and sorted stores: `../data-migration.md`.
 
 ## Both types supported
 

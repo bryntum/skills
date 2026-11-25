@@ -34,6 +34,21 @@ the installed packages.
 
 A Gantt port reads the Grid and Scheduler rows too (`fillHandle`, `groupSummary`, `rowResize`, `resourceEdit` are listed there, not under Gantt).
 `ResourceGrid` (the resource view with cost/rate columns, in `scheduler-<tier>`) is Enterprise only, so a Core-tier port loses it.
+`ResourceHistogram` and `ResourceUtilization` ship in `scheduler-<tier>` and are exported by the Gantt package: they need the
+Enterprise tier for a Scheduler and the Core tier for a Gantt.
+Run at the Core tier on a Scheduler (tested): `filterBar`, `filter`, `timeRanges`, `resourceTimeRanges`, `workingTime`,
+the built-in presets, `zoomIn`, `dependencies` (`dependencyEdit` errors without it), `labels`, `percentBar`, `headerZoom`,
+`pan`, `scrollButtons`, `scheduleContext`, `timeSelection`, `simpleEventEdit`, `eventDragSelect`. Confirmed Enterprise-only by the
+"Features unavailable on this tier" dialog: `rowReorder`, `print`, `pdfExport`, `summary`, `excelExporter`, `eventBuffer`,
+`eventClustering`, `eventSegments`, `nestedEvents`, `eventNonWorkingTime`, `resourceNonWorkingTime`, `resourceEdit`,
+`calendarHighlight`, `timeSpanHighlight`. `tickCells` fails with a factory error (no dialog) at Core. Three import
+traps at Core: `type : 'action'` columns throw `Invalid type name "action"` because the Scheduler entry doesn't register
+`ActionColumn` (`import '@bryntum/grid-<tier>/lib/Grid/column/ActionColumn.js'` (here `grid-core`), or import Grid's package); `features : { tree }`
+(a `Sch.panel.SchedulerTree`) throws `Invalid type name "tree" passed to SchedulerFeature factory` until
+`import '@bryntum/grid-<tier>/lib/Grid/feature/Tree.js'` is in the app (tested at Core 8.0.1 with a tree `resourceStore`: it then
+works; `Tree.js` is `@tier community`, so this is not a tier limit); and a wrapper prop for
+a feature the tier lacks (`taskEditFeature`) is a `tsc` error while the vanilla `features : { taskEdit : false }` is silently
+ignored.
 
 In Gantt, `rowExpander` and `rowReorder` are Core tier on purpose (the Enterprise label on them applies to Grid and Scheduler only),
 and `rowReorder` is on by default, so don't report an Ext `gridviewdragdrop` or `rowexpander` on a Core tier Gantt as a gap or turn it off.
@@ -47,8 +62,13 @@ Engine and data layer:
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
+  A Scheduler that used neither the engine nor an Enterprise-only feature runs identically at `tier : 'core'`, which is the
+  default for a plain Ext Scheduler: install the Enterprise package and set `tier : 'core'` (`SKILL.md`, "Before starting"), not the
+  `-core` package. The Enterprise-only features of the table above ship in that package and still work at `tier : 'core'`.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
-  Enterprise package at a lower tier set `tier : 'core'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
+  Enterprise package at a lower tier set `tier : 'core'` on the widget. **`tier` does not change a project, model or store you create
+  yourself**: pass `ProjectModelCore` / `EventModelCore` (the `Core`-suffixed classes of the Enterprise package) to extend or to build the
+  project. Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
 - Re-check a feature in the installed packages: it is there if `node_modules/@bryntum/*-<tier>/lib/*/feature/<Name>.js` exists in any package of the tier. A Gantt app's Grid and Scheduler features ship in `grid-<tier>` and `scheduler-<tier>`, and a Scheduler app's Grid features in `grid-<tier>`, not under the product's own `lib/`. Don't go by `static tier`.
@@ -57,10 +77,12 @@ Engine and data layer:
 
 | Ext JS | Bryntum 8 | Notes | Tag |
 |---|---|---|---|
-| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })`. With dependencies, assignments or calendars: Enterprise tier (7.x: `SchedulerPro`, see `v7.md`) | G-S |
+| `Sch.panel.SchedulerGrid` / `Sch.panel.SchedulerPanel` | `Scheduler` | `new Scheduler({ appendTo, ... })`. Dependency lines and assignments are plain data at every tier (the Core project has their stores); dependencies that must move events, lag, calendars, constraints or effort need the Enterprise tier (7.x: `SchedulerPro`, see `v7.md`) | G-S |
 | `Gnt.panel.Gantt` | `Gantt` | | G-G |
 | `Ext.grid.Panel` / `Ext.grid.Grid` (Modern) | `Grid` | | DOC |
 | `Ext.tree.Panel` | `TreeGrid` (or `Grid` with a tree store + `type : 'tree'` column) | | DOC |
+| `Gnt.panel.ResourceHistogram` (`scalecolumn`, `scaleStep`/`scaleMin`/`scaleMax`) | `ResourceHistogram` with `project` + `partner : gantt`, `columns : [{ field : 'name', flex : 1 }, { type : 'scale', width : 70 }]`, `rowHeight`, `hideHeaders`, `showBarTip`. The scale configs map to the scale column's `scalePoints` (`{ type : 'scale', scalePoints : [{ value : 0, unit : 'hour' }, { value : 8, unit : 'hour', text : '8' }] }`): without it the scale is 0–24 h (the time axis default), not Ext's 0–8 h. Do not report the scale as unmapped | SRC |
+| `Sch.panel.SchedulerGrid` showing the Gantt's tasks and resources (`eventStore : taskStore`, `partnerTimelinePanel`) | `Scheduler` with the Gantt's `project` + `partner : gantt` (Enterprise tier); give it `columns : [{ text : 'Name', field : 'name', flex : 1 }]`, or no resource names show | SRC |
 | `Gnt.model.Project` node (via `TaskType`) | `ProjectModel` | Not a task node: a wrapper holding all stores + CrudManager + scheduling engine | G-G |
 | Scheduling done by `Gnt.data.TaskStore` | `ProjectModel` | `await project.commitAsync()` after programmatic changes | G-G |
 | `Ext.application`, controllers, `Ext.Viewport` | none | Plain ES module (vanilla) or the framework's app shell. Widgets use `appendTo` | G-G |
@@ -100,7 +122,11 @@ Engine and data layer:
 | `displayfield` | `displayfield` | DOC |
 | `fieldcontainer` / `formpanel` | `Container` / `Popup` with `layout` | SRC |
 | `allowBlank : false` | `required : true` | SRC |
-| `vtype`, custom `validator` | none direct — see §8 | UNV |
+| `regex` / `regexText`, `vtype`, custom `validator` | none direct. A `checkValidity` config on the field works: `checkValidity(field) { re.test(field.value) ? field.clearError(MSG, true) : field.setError(MSG, true); }`. 8.0.1, until bryntum/bryntum#14274 is fixed: pass `true` (silent) as the second argument, because without it `clearError` re-enters `checkValidity` and overflows the stack (a Bryntum bug: the docs' own examples hit it). `maskRe` (blocks keystrokes) has no equivalent | TEST |
+| `maxLength`, `emptyText` | `maxLength`, `placeholder` | SRC |
+| `timeConfig : { minValue : '08:00', maxValue : '18:00' }` | **not** `timefield : { min : '08:00' }`: the string is parsed as 2020-01-01 08:00 and is not enforced in the event editor (07:00 stayed valid). Set Date `min`/`max` on the event's own day in `beforeEventEditShow` (`DateHelper.add(DateHelper.clearTime(eventRecord.startDate), 8, 'hour')`): with Dates 07:00 became invalid and 09:00 stayed valid (tested at Core 8.0.1). The 12h display default also differs: `format : 'HH:mm'` | TEST |
+| `iconCls : 'x-fa fa-sync'` (button, tool, column) | `icon : 'fa fa-sync'` (widgets), `renderData.iconCls : 'fa fa-sync'` (events). The `b-fa b-fa-*` classes log "Found legacy .b-fa CSS class" on 8.0: use unscoped `fa` | TEST |
+| `form.loadRecord`, `trackResetOnLoad`, `dirtychange`, `isDirty`, `reset`, `getValues` | `patterns.md` §6 | TEST |
 
 ## 3. Scheduler-specific configs
 
@@ -118,23 +144,38 @@ Engine and data layer:
 | `tooltipTpl` | `features : { eventTooltip : { template : ({ eventRecord }) => '...' } }` | G-S |
 | `setViewPreset(p)` / `switchViewPreset(p, start, end)` | `scheduler.viewPreset = p` + `setTimeSpan(start, end)`, or `scheduler.zoomTo({ preset, startDate, endDate })`. Either way the axis snaps to whole units of the preset: `weekAndDay` starts weeks on `weekStartDay` (Sunday by default), so a Mon–Mon span becomes two weeks. Align the start with `DateHelper.startOf(date, 'week')` or set `weekStartDay : 1` | G-S, SRC |
 | `setTimeSpan(s, e)` | `setTimeSpan(s, e)` | SRC |
+| `scheduler_zones` / `Sch.plugin.Zones` (store of `Sch.model.Range`) | project `timeRanges` with `startDate`, `endDate`, `name`, `cls` + `features : { timeRanges : { showHeaderElements : true } }`. DOM: `.b-sch-time-range.b-sch-range.<cls>`. Add at runtime with `scheduler.timeRangeStore.add({...})` | TEST |
+| `scheduler_lines` / `Sch.plugin.Lines` (`Date`, `Text`, `Cls`) | a `timeRanges` entry **without** `endDate` or duration is drawn as a line (`.b-sch-time-range.b-sch-line.<cls>`; `name` is its label) | TEST |
+| `scheduler_currenttimeline` (`updateInterval` ms) | `features : { timeRanges : { showCurrentTimeLine : { updateInterval : <seconds> } } }` | TEST |
+| `scheduler_printable` | `features : { print }` (Enterprise tier) | SRC |
+| custom `Sch.data.TimeAxis` hiding hours (`continuous : false`, `generateTicks`) | `workingTime : { fromDay, toDay, fromHour, toHour }`. A drop outside the hidden hours becomes impossible, so Ext "outside working hours" confirms can't fire | TEST |
+| `zoomLevels` | `presets : ['weekAndMonth', 'weekAndDay', 'hourAndDay', ...]` (string ids accepted; zoom is limited to them). Without it, a "min zoom" jumps to `manyYears` | TEST |
+| built-in preset date formats (`hourAndDay` shows `8:00` in Ext) | Bryntum's `hourAndDay` shows `8 AM`. Pass `viewPreset : { base : 'hourAndDay', headers : [{ unit : 'day', dateFormat : 'ddd DD/MM' }, { unit : 'hour', dateFormat : 'H:mm' }] }` | TEST |
+| `eventBarIconClsField` | `renderData.iconCls = eventRecord.<field>`: it renders `<i class="Meeting">` without `b-icon`, so an old `.Meeting { background : url() }` rule needs `.b-sch-event i.Meeting` plus a width and height | TEST |
 | `allowOverlap`, `eventBarTextField`, `readOnly`, `zoomOnMouseWheel` | same names | UNV |
 | `mode : 'vertical'` / `orientation` | `mode : 'vertical'` | UNV |
-| `dndValidatorFn` | `features.eventDrag.validatorFn` | UNV |
+| `dndValidatorFn` | `features.eventDrag.validatorFn` (one context object, same shape as below) | UNV |
+| `constrainDragToResource` | not a Scheduler config (TypeScript error): it is an `eventDrag` option, false by default | TEST |
 | `beforeeventdrop` listener returning `false` | `beforeEventDropFinalize` (there is no `beforeEventDrop`, checked in 8.0.0): set `context.valid = false`, or `context.async = true` + `context.finalize(bool)` | SRC |
-| `resizeValidatorFn` | `features.eventResize.validatorFn` | UNV |
+| `resizeValidatorFn(resource, event, start, end, e)` | `features.eventResize.validatorFn({ startDate, endDate, eventRecord, ... }, event)` returning `{ valid : false, message }`: the message shows in the resize tooltip and the resize reverts | TEST |
 | `createValidatorFn` | `features.eventDragCreate.validatorFn` | UNV |
 | `multiSelect` (events) | `multiEventSelect` | UNV |
 | `resourceImagePath` | `resourceImagePath` or `resourceImages : { path, extension }` | SRC |
-| event colors (renderer-injected) | `eventColor` field/config + `eventStyle` (`'tonal'`, `'filled'`, `'bordered'`, `'traced'`, `'outlined'`, `'indented'`, `'line'`, `'dashed'`, `'minimal'`, `'rounded'`) | SRC |
+| resource model field holding a picture (`ImgUrl`, `Image`, ...) | map it to Bryntum's `imageUrl` field (`{ name : 'imageUrl', dataSource : 'ImgUrl' }`) and set `resourceImagePath` to its folder. The vertical-mode resource headers and `resourceInfo` columns read `imageUrl` only: a custom field name (`imgUrl`) works in your own code, such as the editor, but the headers then show initials | TEST |
+| event colors (renderer-injected) | `eventColor` field/config + `eventStyle` (`'tonal'`, `'filled'`, `'bordered'`, `'traced'`, `'outlined'`, `'indented'`, `'line'`, `'dashed'`, `'minimal'`, `'rounded'`). `eventColor` takes any CSS color but does not derive the text color: for light custom colors set `color` in `renderData.style` or use a palette name | SRC, TEST |
+| `StartDate` as epoch milliseconds (`dateFormat : 'time'`) | a `date` field does **not** parse numbers (silently `null`, nothing renders), and a `convert` on `startDate`/`endDate` breaks drag-create at the Enterprise tier (`getTime is not a function`) and crashes the project on load at the Core tier. Convert to `Date`/ISO before loading (a loader or script) | TEST |
 
 ## 4. Gantt-specific configs
 
 | Ext Gantt | Bryntum Gantt | Tag |
 |---|---|---|
-| `showTodayLine` | `features.timeRanges.showCurrentTimeLine : true` | G-G |
+| `showTodayLine` | `features.timeRanges.showCurrentTimeLine : true`. In a **Gantt** `timeRanges` needs `import '@bryntum/scheduler-<tier>'` like `pan` (seen: `Invalid type name "timeRanges" passed to GanttFeature factory`, plus a follow-on "already in use" error) | G-G, TEST |
+| `highlightWeekends : false` | `features : { nonWorkingTime : false }` | G-G |
+| `enableBaseline`, `baselineVisible` | the `baselines` feature (Enterprise tier), shown or hidden by CSS: `products/gantt.md` | G-G |
+| `Gnt.view.Gantt` override of `baselineRenderer` drawing a second baseline | a second entry in `baselines` with its own `cls` (`products/gantt.md`); the `sch-gantt-*baseline*` / `sch-ganttpanel-show*` classes map to `.b-task-baseline` | SRC |
 | `loadMask` | `loadMask` | G-G |
-| `enableProgressBarResize` | `percentBar` feature | G-G, UNV for Gantt |
+| `enableProgressBarResize : false` (the Ext default) | `percentBar : { allowResize : false }`. Bryntum's percent-bar drag is on by default and, on a short bar, takes the drag a task move needed (3 of 3 task drags failed). `true` → leave the default | G-G, TEST |
+| `enableDependencyDragDrop : false` | `features : { dependencies : { allowCreate : false } }` (no terminals appear on hover) | TEST |
 | `showRollupTasks` | `features.rollups` | G-G, SRC |
 | `rowHeight`, `viewPreset` | keep | G-G |
 | — | `barMargin` (default differs a lot) | G-G |
@@ -147,12 +188,14 @@ Engine and data layer:
 | `eventRenderer(task, tplData)` | `taskRenderer({ taskRecord, renderData })` | G-G, SRC |
 | `leftLabelField : { dataIndex, editor }` | `features.labels.left : { field, editor : { type : 'textfield' } }` | G-G |
 | `startDate` (view) | Gantt `startDate` = time-axis start; `project.startDate` = project start | G-G |
+| `zoomIn()` / `zoomOut()`, `switchViewPreset('year', a, b)` | same names, but the neighbouring presets differ (`weekAndDayLetter` zooms in to `sixHoursAndDay`, Ext to `weekAndDay`) and the axis snaps to whole units (`zoomTo({ preset, startDate, endDate })`). Weeks start on Sunday: set `weekStartDay : 1` on the Gantt and on every Scheduler/histogram beside it | TEST |
+| baseline `BaselineStartDate`/`EndDate`, "set baseline" | `products/gantt.md`, "Baselines" | TEST |
 
 ## 5. Plugins / grid features → features
 
 | Ext | Bryntum feature | Tag |
 |---|---|---|
-| `cellediting` / `scheduler_treecellediting` (`clicksToEdit`) | `cellEdit` (default on in Grid-based widgets) | G-G, SRC |
+| `cellediting` / `scheduler_treecellediting` (`clicksToEdit`) | `cellEdit` (default on in Grid-based widgets). `clicksToEdit : 1` → `cellEdit : { triggerEvent : 'cellclick' }` (default is double-click). A grid **without** the `cellediting` plugin isn't editable in Ext even if its columns have `field`: set `cellEdit : false` | TEST |
 | `rowediting` | `rowEdit` (Enterprise tier; compare its UX with the Ext row editor) | DOC |
 | `gridfilters` | `filter` (header menu) or `filterBar` (filter row) | G-G, SRC |
 | `ftype : 'grouping'` | `group` feature (`features : { group : 'field' }`). `hideGroupedHeader` has no Group config: set `hidden : true` on the grouped column (`hideGroupedColumns` exists only on `treeGroup`) | SRC |
@@ -161,10 +204,11 @@ Engine and data layer:
 | `rowexpander` / `ftype : 'rowbody'` | `rowExpander` (Grid: Enterprise tier, §0) | DOC |
 | `bufferedrenderer` | remove — virtual rendering is built in | DOC |
 | `clipboard` / `gantt_clipboard` | `cellCopyPaste` (+ `taskCopyPaste : { useNativeClipboard : true }` in Gantt) | G-G, SRC |
-| `gridviewdragdrop` (reorder rows) | `rowReorder` (Enterprise tier in Grid and Scheduler; Core tier and on by default in Gantt) | G-G |
-| drag between grids / onto a timeline | `DragHelper` — see the `bryntum-drag-and-drop` skill | SRC |
-| context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default | G-G, SRC |
-| `scheduler_pan` | `pan` | G-G, SRC |
+| `gridviewdragdrop` (reorder rows) | `rowReorder` (Enterprise tier in Grid and Scheduler; Core tier and on by default in Gantt). **On a sorted store it clears the sorters and the drop is lost.** Keep the order in a field, sort the data on load, and renumber the field in `gridRowDrop` (`store.forEach((r, i) => r.order = i + 1)`) | G-G, TEST |
+| `treeviewdragdrop` (re-parent, or between two trees with a shared `ddGroup`) | `rowReorder : { dropOnLeaf : true, allowCrossGridDrag : { transferData({ records, insertBefore, parent, sourceGrid, targetGrid }) {} } }`: a drop onto a leaf makes it a parent. Without `transferData` the node is moved (copied with Ctrl). Tested between two TreeGrids with a real mouse | TEST |
+| drag onto a timeline (from a list or a Grid) | `DragHelper`: see the `bryntum-drag-and-drop` skill. Its demo takes the start date from the proxy's left edge, Ext used the pointer date (`getDateFromDomEvent(e, 'round')`). A chained store (`eventStore.chain(fn)`) re-evaluates only on fields passed as the 2nd argument: `chain(fn, ['startDate'])`, or the dragged row stays in the list | TEST |
+| context menus (`itemcontextmenu` listener, `advanced_taskcontextmenu`, `scheduler_eventcontextmenu`) | `cellMenu`, `headerMenu` (Grid); `eventMenu` (Scheduler); `taskMenu` (Gantt) — on by default. Scheduler `eventMenu` item keys at the Enterprise tier: `editEvent`, `showDetails`, `copyEvent`, `cutEvent`, `splitEvent`, `eventColor`, `unassignEvent`, `deleteEvent` (the table is at the top of `EventMenu.js`); `editEvent : false` does not remove "Show details". `deleteEvent : { text }` renders; `deleteEvent : true` doesn't (SKILL.md trap) | G-G, SRC, TEST |
+| `scheduler_pan` | `pan`. In a **Gantt** it throws `Invalid type name "pan" passed to GanttFeature factory` until `import '@bryntum/scheduler-<tier>/lib/Scheduler/feature/Pan.js'` is in the app (declare the dependency). The same applies to every Scheduler-owned feature in a Gantt (`timeRanges`): importing the whole `@bryntum/scheduler-<tier>` package fixes all of them | G-G, SRC, TEST |
 | Scheduler event editor plugin | `eventEdit`, customize with keyed `items` + `weight` | SRC |
 | `gantt_taskeditor` (`taskFormClass`) | `taskEdit`, customize `items : { generalTab : { items : {...} } }` | G-G |
 | `gantt_projecteditor` | `projectEdit` (Enterprise tier; the guide says obsolete) | SRC |
@@ -195,7 +239,7 @@ General (all Grid-based widgets):
 | `xtype : 'numbercolumn'` | `type : 'number'` | DOC |
 | `xtype : 'checkcolumn'` / `booleancolumn` | `type : 'check'` | DOC |
 | `xtype : 'templatecolumn'` (`tpl`) | `type : 'template'`, `template : ({ record }) => ...` | SRC |
-| `xtype : 'actioncolumn'` (`items`, `handler`) | `type : 'action'`, `actions : [{ cls, tooltip, onClick }]` | DOC |
+| `xtype : 'actioncolumn'` (`items`, `handler`) | `type : 'action'`, `actions : [{ cls, tooltip, onClick }]` (tested). A scheduler column `position : 'right'` (right of the timeline) has no equivalent: it stays in the locked grid | TEST |
 | `xtype : 'rownumberer'` | `type : 'rownumber'` | DOC |
 | `xtype : 'treecolumn'` | `type : 'tree'` | DOC |
 | `xtype : 'widgetcolumn'` | `type : 'widget'`, `widgets : [...]` | DOC |
@@ -225,6 +269,7 @@ Scheduler resource column with avatar: `type : 'resourceInfo'` (SRC).
 | `Ext.Date.format(d, 'Y-m-d H:i')` | `DateHelper.format(d, 'YYYY-MM-DD HH:mm')` — **tokens differ** (PHP-style → moment-style: `Y`→`YYYY`, `m`→`MM`, `d`→`DD`, `H`→`HH`, `i`→`mm`, `s`→`ss`, `g:i A`→`h:mm A`, `D`→`ddd`, `l`→`dddd`, `M`→`MMM`, `F`→`MMMM`, `j`→`D`, `n`→`M`) | SRC |
 | `Ext.Date.add(d, Ext.Date.DAY, 1)` | `DateHelper.add(d, 1, 'day')` | SRC |
 | `Ext.Date.clearTime(d)` | `DateHelper.clearTime(d)` | SRC |
+| `grid.setDisabled(true)` | `grid.disabled = 'inert'`. 8.0.1, until bryntum/bryntum#14249 is fixed: `true` only adds a `b-disabled` class (no greying) and a mouse click still selects a row | TEST |
 | `suspendLayouts` / `resumeLayouts` | `suspendRefresh()` / `resumeRefresh()` | UNV |
 | `expandAll`, `collapseAll`, `zoomIn`, `zoomOut`, `zoomToFit`, `shiftPrevious`, `shiftNext` | same names. Wrap them in a handler rather than using `'up.shiftNext'` (the event object would become `amount`) | G-G, SRC |
 
@@ -243,17 +288,25 @@ reason. If you use one of the listed alternatives, say so in the report.
 | `taskBodyTemplate`, `projectLinesConfig.linesFor`, `allowDeselect`, `TaskType` nodes | Removed | see §4 | G-G |
 | `DynamicAssignment` scheduling mode | Removed | `FixedDuration` + `effortDriven : true` | G-G |
 | Per-calendar `hoursPerDay`/`daysPerWeek`/`daysPerMonth` | Moved to project | `DurationConverterMixin` (see `products/gantt.md`) | G-G |
+| `Gnt.widget.calendar.CalendarWindow` / `CalendarPanel` ("Edit working time") | Not available (`CalendarPicker` only selects a calendar; `CalendarEditor` exists in the Scheduler package and ran in a test) | Drop the button and list it, or use `CalendarEditor` | TEST |
+| Reminders (Extensible `Reminder`) | Not available | Keep as a custom string field; show a bell with `renderData.iconCls` | TEST |
 | `Ext.app.Application`, controllers, Sencha Cmd, `Ext.Loader` | No concept | ES modules + Vite or the framework's build | G-G |
 
 Outside Bryntum's scope — flag for a human; may need the host framework, a third-party library or custom code:
 
-- Ext data proxies beyond plain AJAX/JSON/REST (`direct`, `jsonp`, custom writers, `LocalStorage` proxy)
+- Ext data proxies beyond plain AJAX/JSON/REST (`direct`, `jsonp`, custom writers, `LocalStorage` proxy). **Ext Direct**
+  (`directFn`, `paramOrder`, `Ext.direct.*`): keep the server contract. `CrudManager` and `AjaxStore` don't speak it, so
+  write a thin client (`fetch` a POST `{ action, method, data, type : 'rpc', tid }`, read `.result`) and load by assigning
+  `project` `resources`/`events` (or `store.data`). Persist from Bryntum handlers: `beforeEventDropFinalize` with
+  `context.async = true` + `context.finalize(ok)` for server-validated moves, or an `AjaxStore` subclass whose
+  `commit()` maps `store.changes` to the create/update/destroy calls and writes the server id back. Add the mock
+  router as a Vite plugin (`configurePreviewServer` too, for `vite preview`) when no backend exists (TEST)
 - `Ext.app.ViewModel` `bind : '{...}'` and `formulas` — rewrite as explicit handlers or framework state, item by item
 - Ext Charts (`Ext.chart.*`), Pivot grid, D3 adapters — Bryntum's `Chart`/`charts` are not drop-in (UNV). Bryntum Chart
   isn't in the product packages: it ships as the separate package `@bryntum/chart-enterprise` (Enterprise only; 7.x: `@bryntum/chart-thin`); 8.0's `Chart` widget uses AG Charts instead of Chart.js, so check
   its install docs before planning a chart replacement, and otherwise report the chart as unmapped
-- `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`) — Bryntum fields have `required`,
-  `validateOnInput`, etc., but the model differs (UNV)
+- `Ext.form.Panel` validation (`vtype`, custom validators, `formBind`): see §2 (`checkValidity` + a silent `setError`) and
+  `patterns.md` §6 (load, reset, dirty). `vtype` and `formBind` have no equivalent: list them as unmapped
 - `Ext.util.History` / routing — use the target framework's router
 - `Ext.override` / `Ext.define({ override })` of Sch/Gnt internals, and private methods (leading `_` or undocumented)
 - Ext state providers (`stateful`, `stateId`) — Bryntum has a `state` mechanism but it isn't equivalent (UNV)
@@ -290,6 +343,6 @@ Checked against the 7.3.7 and 8.0.0 sources. Correct these whenever you read old
 - Guides that name Scheduler Pro (`Sch.panel.SchedulerPro`, `@bryntum/schedulerpro`) → Scheduler at the Enterprise tier.
 - Button `cls : 'b-raised'` → `rendition : 'filled'`.
 - Set an editor title in `beforeEventEditShow` (works on 8.0.0; earlier hooks overwrite it on 7.3.7).
-- `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources`.
+- `tasksData`/`eventsData`/`resourcesData` → `tasks`/`events`/`resources` (the old names log a deprecation warning in 8.0.1).
 - `idField : 'Id'` as a store config (Scheduler guide) → silently ignored. Use `static idField = 'Id'` on the model,
   or a `{ name : 'id', dataSource : 'Id' }` field.
