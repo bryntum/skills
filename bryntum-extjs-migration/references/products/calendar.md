@@ -65,17 +65,16 @@ source (above) and set the Bryntum app to match, in both `month` and `multiweek`
 | "+N more" popup lists | **all** the day's events (`MonthDayDetail`) | **only the hidden** ones: "+7 more" opens 7, not the events already in the cell | all the day's events | Extensible: nothing. `Ext.calendar`: `overflowPopup : { onlyShowOverflow : true }` |
 
 ```javascript
-import { DateHelper, StringHelper } from '@bryntum/core-<tier>';
-
 const TIME_FORMAT = 'h:mma';   // Extensible 'g:ia' → 8:00am; Ext.calendar 'H:i' → 'HH:mm'
 
 // Month and 2 Weeks only: Day/Week keep their built-in time header
-function timedRenderer({ eventRecord, renderData }) {
+function timedRenderer({ view, eventRecord, renderData }) {
+    const name = StringHelper.encodeHtml(eventRecord.name);
+
     if (eventRecord.reminder) {           // the app's own extras (here Extensible's reminder bell) go here too:
         renderData.iconCls = 'fa fa-bell'; // a mode's eventRenderer replaces the modeDefaults one
     }
-    const name = StringHelper.encodeHtml(eventRecord.name);
-    return eventRecord.allDay ? name : DateHelper.format(eventRecord.startDate, TIME_FORMAT) + ' ' + name;
+    return eventRecord.allDay ? name : view.dateHelper.format(eventRecord.startDate, TIME_FORMAT) + ' ' + name;
 }
 
 modes : {
