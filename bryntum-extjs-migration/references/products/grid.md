@@ -42,11 +42,11 @@ Rules:
   and `allowCrossGridDrag` (`../api-mapping.md` §5). Tree persistence caveats (a same-parent reorder is not in
   `store.changes`): `../idioms.md`.
   - **Visible root** (`rootVisible : true`, a root row above the tree): Bryntum has no root row, so a port that just drops it loses
-    "add a sub node to the root" (1 of 3 E3 runs), and the 3 runs treated it 3 different ways. Decide once and say so in the report:
+    "add a sub node to the root", and every port handles it differently. Decide once and say so in the report:
     load the root as a real top-level record (`[{ id : 'root', name : 'Root', expanded : true, children : [...] }]`) and keep it, or drop it
     and add a top-level "Add" action.
   - **Drop onto a parent**: Bryntum's `rowReorder` inserts the node as the parent's **first** child (`RowReorder.js`:
-    `parent.insertChild(records, parent.children?.[0])`); Ext appended it **last** (1 of 3 E3 runs got the order wrong). To keep Ext's
+    `parent.insertChild(records, parent.children?.[0])`); Ext appended it **last**. To keep Ext's
     order, move the record in `gridRowDrop` (`parent.appendChild(record)`, UNV) and test a drop onto a parent with children.
   - **Order field**: don't name a field `index` (the Store writes `record.index`; the TreeNode mixin owns `parentIndex`/`orderedParentIndex`):
     call it `sortIndex`, or the model works in a test and breaks later.
@@ -90,6 +90,6 @@ gaps in the report.
 
 Tested with two Ext 4 CRUD apps (PHP, Ext Direct): reads keep the server's JSON (`readUrl` + `responseDataProperty`), but writes
 don't (`../data-migration.md`: flat bodies, `{ data : [...] }`, `commit()` override, `AjaxHelper` failure semantics). Ext's
-paging (seen in a React port): `pageStartParamName` and `pageParamName` are mutually exclusive on the store (setting both throws at runtime); `loadPage()` takes two arguments in the typings (`loadPage(page, {})`); the paging summary text comes from the locale (`LocaleHelper.publishLocale`). Ext's
+paging: `pageStartParamName` and `pageParamName` are mutually exclusive on the store (setting both throws at runtime); `loadPage()` takes two arguments in the typings (`loadPage(page, {})`); the paging summary text comes from the locale (`LocaleHelper.publishLocale`). Ext's
 selection behavior matched with `selectionMode : { multiSelect : false }`: arrows move and select, Ctrl+click replaces the
 selection, Ctrl+A and Shift+click don't multi-select, Delete does nothing.

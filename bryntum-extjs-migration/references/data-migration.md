@@ -137,12 +137,12 @@ exceptions:
   - **Keep every stored date (preferred when the Ext app did not cascade along dependencies).** Write
     `manuallyScheduled : true` on leaf tasks (parents still roll up from their children) and set
     `project : { skipNonWorkingTimeInDurationWhenSchedulingManually : true }` so durations count working days as Ext did.
-    Two test ports kept all 26 start dates this way (a human reviewer compared each task). Trade-off: dependencies are drawn
+    This kept all 26 start dates of a test port. Trade-off: dependencies are drawn
     but do not move the successor. Parent durations can still differ from the stored ones (one parent showed 27 days
     against 25 stored): list those.
   - **Let dependencies push.** `project : { autoSetConstraints : true }` (every `startDate` becomes a `startnoearlierthan`
     constraint), or write `constraintType` / `constraintDate` into the data. In a test port this moved 13 of 26 tasks 1-8
-    days later (weekends and dependency chains) and the parent ended about a week later; reviewers rated it an issue.
+    days later (weekends and dependency chains) and the parent ended about a week later.
     Side effect: dragging a task then writes a constraint. Use it only when the team wants the engine to enforce
     dependencies, and diff the dates as described next.
 - **A hand-posted write must handle failure.** When you write to a backend yourself (flat bodies, `AjaxHelper.post`): do

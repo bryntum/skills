@@ -147,7 +147,7 @@ Look:
     code needs a Node mock of the wire contract
   - Playwright against the original: drag-create and hover may never fire in headless Chromium; if two attempts fail, say
     "matches Ext" was not claimed for them
-  - a trial bundle shows a watermark but no 2026 expiry problem was seen
+  - a trial bundle shows a watermark
 
 - [ ] at the original's window width: no clipped header or cell text, fixed-size content keeps its shape, no
   toolbar items pushed into an overflow menu (`styling.md`, "Sizes from Ext")
@@ -156,12 +156,12 @@ Report:
 
 - [ ] every sentence under Behavior changes and Verification is backed by a line of code you read or a run you did: delete
   any claim you did not check ("only one edit window", "no cell editing", "parent durations match", "server errors are
-  shown" were each false in a test run)
+  shown" are claims that turned out false when checked)
 - [ ] before you write "no equivalent", "not possible" or "unmapped": search the installed packages and the docs for the Bryntum name
-  (`grep -rn "<ExtConfig>\|<likely name>" node_modules/@bryntum/*/lib`, the docs' `llms.txt`). All 3 E4 runs reported the histogram scale as
-  impossible; it is `scalePoints`, and the skill's own row said the same until it was fixed
-- [ ] hygiene: server files that emit Ext (`ExtDirect.php` returning Ext.Direct JS) are Ext code: replace or delete them (all 3 E3 runs
-  kept it); no request to a third party at runtime (Google Fonts: ship the font or use the app's own, 1 E5 run loaded it from outside);
+  (`grep -rn "<ExtConfig>\|<likely name>" node_modules/@bryntum/*/lib`, the docs' `llms.txt`). A resource histogram's scale was reported as
+  impossible; it is `scalePoints`
+- [ ] hygiene: server files that emit Ext (`ExtDirect.php` returning Ext.Direct JS) are Ext code: replace or delete them; no request to a
+  third party at runtime (Google Fonts: ship the font or use the app's own);
   no `tsconfig.tsbuildinfo`/`dist`, no scripts reading `../original`, dependency versions pinned, backup
   folders you refer to are really delivered
 - [ ] each "fits"/"fixed"/"verified"/"matches Ext" claim names the check or screenshot behind it; a "matches Ext"

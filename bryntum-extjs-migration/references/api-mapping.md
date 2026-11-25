@@ -62,10 +62,13 @@ Engine and data layer:
 - **Scheduler Core** adds recurring events and lazy loading to the plain data model. **Scheduler Enterprise** swaps in
   the scheduling engine (constraints, effort, `percentDone`, calculated dates) and the default editor becomes `taskEdit`
   (`taskEdit` ships only in the Enterprise package; the Community and Core tiers use `eventEdit`). It is the former Scheduler Pro.
-  A Scheduler that used neither the engine nor an Enterprise-only feature runs identically at the Core tier, and that is its
-  default tier (`SKILL.md`, "Before starting"); the tier is still the user's choice.
+  A Scheduler that used neither the engine nor an Enterprise-only feature runs identically at `tier : 'core'`, which is the
+  default for a plain Ext Scheduler: install the Enterprise package and set `tier : 'core'` (`SKILL.md`, "Before starting"), not the
+  `-core` package. The Enterprise-only features of the table above ship in that package and still work at `tier : 'core'`.
 - Models and stores resolve to the tier's class from the plain name (`TaskModel` → `TaskModelEnterprise`). To run the
-  Enterprise package at a lower tier set `tier : 'core'` on the widget. Don't `instanceof` across tiers: use the `is<Name>` flags.
+  Enterprise package at a lower tier set `tier : 'core'` on the widget. **`tier` does not change a project, model or store you create
+  yourself**: pass `ProjectModelCore` / `EventModelCore` (the `Core`-suffixed classes of the Enterprise package) to extend or to build the
+  project. Don't `instanceof` across tiers: use the `is<Name>` flags.
 - A field a lower tier doesn't have reads as `undefined`, silently. Re-check Ext data fields such as `Effort`,
   `ConstraintType` and `Baselines` against the tier.
 - Re-check a feature in the installed packages: it is there if `node_modules/@bryntum/*-<tier>/lib/*/feature/<Name>.js` exists in any package of the tier. A Gantt app's Grid and Scheduler features ship in `grid-<tier>` and `scheduler-<tier>`, and a Scheduler app's Grid features in `grid-<tier>`, not under the product's own `lib/`. Don't go by `static tier`.
@@ -119,7 +122,7 @@ Engine and data layer:
 | `displayfield` | `displayfield` | DOC |
 | `fieldcontainer` / `formpanel` | `Container` / `Popup` with `layout` | SRC |
 | `allowBlank : false` | `required : true` | SRC |
-| `regex` / `regexText`, `vtype`, custom `validator` | none direct. A `checkValidity` config on the field works: `checkValidity(field) { re.test(field.value) ? field.clearError(MSG, true) : field.setError(MSG, true); }`. **The second argument `true` (silent) is required**: without it `clearError` re-enters `checkValidity` and overflows the stack. `maskRe` (blocks keystrokes) has no equivalent | TEST |
+| `regex` / `regexText`, `vtype`, custom `validator` | none direct. A `checkValidity` config on the field works: `checkValidity(field) { re.test(field.value) ? field.clearError(MSG, true) : field.setError(MSG, true); }`. 8.0.1, until bryntum/bryntum#TBD is fixed: pass `true` (silent) as the second argument, because without it `clearError` re-enters `checkValidity` and overflows the stack (a Bryntum bug: the docs' own examples hit it). `maskRe` (blocks keystrokes) has no equivalent | TEST |
 | `maxLength`, `emptyText` | `maxLength`, `placeholder` | SRC |
 | `timeConfig : { minValue : '08:00', maxValue : '18:00' }` | **not** `timefield : { min : '08:00' }`: the string is parsed as 2020-01-01 08:00 and is not enforced in the event editor (07:00 stayed valid). Set Date `min`/`max` on the event's own day in `beforeEventEditShow` (`DateHelper.add(DateHelper.clearTime(eventRecord.startDate), 8, 'hour')`): with Dates 07:00 became invalid and 09:00 stayed valid (tested at Core 8.0.1). The 12h display default also differs: `format : 'HH:mm'` | TEST |
 | `iconCls : 'x-fa fa-sync'` (button, tool, column) | `icon : 'fa fa-sync'` (widgets), `renderData.iconCls : 'fa fa-sync'` (events). The `b-fa b-fa-*` classes log "Found legacy .b-fa CSS class" on 8.0: use unscoped `fa` | TEST |
@@ -158,7 +161,7 @@ Engine and data layer:
 | `createValidatorFn` | `features.eventDragCreate.validatorFn` | UNV |
 | `multiSelect` (events) | `multiEventSelect` | UNV |
 | `resourceImagePath` | `resourceImagePath` or `resourceImages : { path, extension }` | SRC |
-| resource model field holding a picture (`ImgUrl`, `Image`, ...) | map it to Bryntum's `imageUrl` field (`{ name : 'imageUrl', dataSource : 'ImgUrl' }`) and set `resourceImagePath` to its folder. The vertical-mode resource headers and `resourceInfo` columns read `imageUrl` only: a custom field name (`imgUrl`) works in your own code, such as the editor, but the headers then show initials. Seen in 2 of 3 E7 runs | TEST |
+| resource model field holding a picture (`ImgUrl`, `Image`, ...) | map it to Bryntum's `imageUrl` field (`{ name : 'imageUrl', dataSource : 'ImgUrl' }`) and set `resourceImagePath` to its folder. The vertical-mode resource headers and `resourceInfo` columns read `imageUrl` only: a custom field name (`imgUrl`) works in your own code, such as the editor, but the headers then show initials | TEST |
 | event colors (renderer-injected) | `eventColor` field/config + `eventStyle` (`'tonal'`, `'filled'`, `'bordered'`, `'traced'`, `'outlined'`, `'indented'`, `'line'`, `'dashed'`, `'minimal'`, `'rounded'`). `eventColor` takes any CSS color but does not derive the text color: for light custom colors set `color` in `renderData.style` or use a palette name | SRC, TEST |
 | `StartDate` as epoch milliseconds (`dateFormat : 'time'`) | a `date` field does **not** parse numbers (silently `null`, nothing renders), and a `convert` on `startDate`/`endDate` breaks drag-create at the Enterprise tier (`getTime is not a function`) and crashes the project on load at the Core tier. Convert to `Date`/ISO before loading (a loader or script) | TEST |
 

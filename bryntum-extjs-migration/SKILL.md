@@ -78,8 +78,8 @@ Ask the user about anything they haven't already told you, and record the answer
   tier names (Community, Core, Enterprise; install `@bryntum/<product>-core`, never the deprecated `-business`), the
   `@bryntum/core-core` package name, the exact-version rule, the trial and the `.npmrc` registry trap. A `-business` app is
   pinned to 8.0.0 and renames through `bryntum-migrate`. Use the tier the user names or holds a license for ("free" /
-  "open source" means the Community tier). Otherwise use the **Enterprise** tier, except for a plain Ext Scheduler (below),
-  which uses the **Core** tier (a v7 Scheduler, as opposed to Scheduler Pro, moves to Core on 8.0.1). Say which you picked, and say
+  "open source" means the Community tier). Otherwise use the **Enterprise** package: every v7 license moves to Enterprise, a Scheduler
+  without Pro included (a plain Ext Scheduler: see below for the `tier` it runs at). Say which you picked, and say
   it runs as a 14-day trial until `bryntum.licenseKey` is set (the Community tier has no key). Don't choose the lowest tier by
   feature fit, but check every Ext feature you port against the chosen tier (`references/api-mapping.md` §0): a feature above the
   tier is skipped and a dialog names the tier it needs, so leave it out and list it as a gap.
@@ -89,10 +89,14 @@ Ask the user about anything they haven't already told you, and record the answer
   for baselines, critical paths, `projectEdit`, Rollups, `summary`, `pdfExport`, MS Project export and print. An
   Ext Scheduler that relied on the scheduling engine (dependencies that move events, constraints, effort, calendars: the
   former Scheduler Pro) needs the Enterprise tier. Calendar and TaskBoard keep the Core tier data layer at the Enterprise tier.
-  A **plain Ext Scheduler** (no engine feature and no Enterprise-only feature) uses the **Core** tier by default: it ran identically
-  there in test ports (drag, resize, drag-create, editor, menus, `filterBar`, `workingTime`, `presets`, `timeRanges`) and the Core
-  bundle is about 25% smaller. Use Enterprise only when it needs the engine or an Enterprise-only feature. An E7 round (Scheduler,
-  Vue) that defaulted to Enterprise failed 3 of 3 on the tier. Name the other tier as an option in the plan. At Core, `type : 'action'` columns and `tree` need an import first (`references/api-mapping.md` §0, "import traps").
+  A **plain Ext Scheduler** (no engine feature: dependencies that move events, constraints, effort, calendars) installs the **Enterprise**
+  package and sets `tier : 'core'` on the Scheduler. That keeps the v7 behavior (`eventEdit`, no engine, dates stored as given, dependency
+  lines only drawn) and every Enterprise-only feature (`summary`, `rowReorder`, `print`, `pdfExport`) still works, so do not list them as
+  gaps. Do **not** install `@bryntum/scheduler-core` for this; install `-core` only when the user holds a Core license. `tier` does not
+  reach what you create yourself: an app-made project, model or store (and subclasses of `ProjectModel`/`EventModel`) must use the
+  `Core`-suffixed classes (`ProjectModelCore`, `EventModelCore`), or the engine is back. An Ext Scheduler that relied on the engine keeps the
+  default `tier : 'enterprise'`. Name the other `tier` as an option in the plan. With the `-core` package (a Core license),
+  `type : 'action'` columns and `tree` need an import first (`references/api-mapping.md` §0, "import traps").
 - **Install.** Follow the base skill's "Installing packages": public npm, no login, no `-trial` package,
   `npm install --save-exact @bryntum/<product>-<tier>@8.x.y` (or the framework wrapper, e.g.
   `@bryntum/gantt-react-enterprise`; wrapper names are `-react-`, `-vue-`, `-angular-`, there is no `-vue-3-`). Add the
@@ -170,7 +174,7 @@ Vite `optimizeDeps`), follow the base skill. Points specific to migrations:
   it and list it as a behavior change.
 - **Features inside a raw widget config** (an entry in `items`, a nested `type : 'grid'`) use `features : { x : false }`. The
   `xFeature` prop form exists only on the wrapper element; inside `items` it is silently ignored and the feature stays on
-  (seen in an Angular round: `cellEditFeature : false` in `items` left cell editing on).
+  (`cellEditFeature : false` in `items` left cell editing on).
 - **Wrappers take features as props, not as a `features` object.** The `features : { x : cfg }` blocks in this skill are
   vanilla. In React, Vue and Angular write one prop per feature: `eventEditFeature={...}` (React, Vue),
   `[eventEditFeature]="..."` (Angular); `false` disables it. A `features` prop is a TypeScript error in Vue and Angular

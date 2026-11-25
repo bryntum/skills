@@ -22,9 +22,9 @@ Events have `startDate` + `duration`. `endDate` is derived, and dependencies cas
 - The editor feature is `taskEdit`, not `eventEdit` (Enterprise default; at the Community/Core tier it is `eventEdit`).
 - A Scheduler app at a lower tier has no engine: use the plain Scheduler mapping and report any dependency/calendar
   behavior the Ext app had as a gap.
-- A plain `Sch.*` Scheduler (no dependencies, no calendars) ran identically at the Core tier in two test ports; the tier is
-  still the user's choice (`SKILL.md`, "Before starting"). At the Enterprise tier it gets the engine Scheduler: the `taskEdit`
-  editor, dependency terminals, `eventSegments`, a 25% larger bundle (`SKILL.md`, default-on list). Generated ids (`_generatedBooking_<uuid>`) and the epoch-date trap
+- A plain `Sch.*` Scheduler (no dependencies that move events, no calendars) runs identically at `tier : 'core'` on the Enterprise
+  package, its default (`SKILL.md`, "Before starting"). At `tier : 'enterprise'` it gets the engine Scheduler: the `taskEdit`
+  editor, dependency terminals, `eventSegments` (`SKILL.md`, default-on list). Generated ids (`_generatedBooking_<uuid>`) and the epoch-date trap
   (`../api-mapping.md` §3) are the same at both tiers. The former-Scheduler-Pro guidance (use
   `Scheduler` from the `-enterprise` package, no SchedulerPro class) held on 8.0.1.
 
