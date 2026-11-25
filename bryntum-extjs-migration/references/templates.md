@@ -157,7 +157,12 @@ Report:
 - [ ] every sentence under Behavior changes and Verification is backed by a line of code you read or a run you did: delete
   any claim you did not check ("only one edit window", "no cell editing", "parent durations match", "server errors are
   shown" were each false in a test run)
-- [ ] hygiene: no `tsconfig.tsbuildinfo`/`dist`, no scripts reading `../original`, dependency versions pinned, backup
+- [ ] before you write "no equivalent", "not possible" or "unmapped": search the installed packages and the docs for the Bryntum name
+  (`grep -rn "<ExtConfig>\|<likely name>" node_modules/@bryntum/*/lib`, the docs' `llms.txt`). All 3 E4 runs reported the histogram scale as
+  impossible; it is `scalePoints`, and the skill's own row said the same until it was fixed
+- [ ] hygiene: server files that emit Ext (`ExtDirect.php` returning Ext.Direct JS) are Ext code: replace or delete them (all 3 E3 runs
+  kept it); no request to a third party at runtime (Google Fonts: ship the font or use the app's own, 1 E5 run loaded it from outside);
+  no `tsconfig.tsbuildinfo`/`dist`, no scripts reading `../original`, dependency versions pinned, backup
   folders you refer to are really delivered
 - [ ] each "fits"/"fixed"/"verified"/"matches Ext" claim names the check or screenshot behind it; a "matches Ext"
   claim ran the same input sequence on the original, not just proved the feature works

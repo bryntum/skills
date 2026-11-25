@@ -78,7 +78,7 @@ Engine and data layer:
 | `Gnt.panel.Gantt` | `Gantt` | | G-G |
 | `Ext.grid.Panel` / `Ext.grid.Grid` (Modern) | `Grid` | | DOC |
 | `Ext.tree.Panel` | `TreeGrid` (or `Grid` with a tree store + `type : 'tree'` column) | | DOC |
-| `Gnt.panel.ResourceHistogram` (`scalecolumn`, `scaleStep`/`scaleMin`/`scaleMax`) | `ResourceHistogram` with `project` + `partner : gantt`, `columns : [{ field : 'name', flex : 1 }, { type : 'scale', width : 70 }]`, `rowHeight`, `hideHeaders`, `showBarTip`. The Ext scale configs have no equivalent (the scale max comes from the time axis): report as unmapped | SRC |
+| `Gnt.panel.ResourceHistogram` (`scalecolumn`, `scaleStep`/`scaleMin`/`scaleMax`) | `ResourceHistogram` with `project` + `partner : gantt`, `columns : [{ field : 'name', flex : 1 }, { type : 'scale', width : 70 }]`, `rowHeight`, `hideHeaders`, `showBarTip`. The scale configs map to the scale column's `scalePoints` (`{ type : 'scale', scalePoints : [{ value : 0, unit : 'hour' }, { value : 8, unit : 'hour', text : '8' }] }`): without it the scale is 0–24 h (the time axis default), not Ext's 0–8 h. Do not report the scale as unmapped | SRC |
 | `Sch.panel.SchedulerGrid` showing the Gantt's tasks and resources (`eventStore : taskStore`, `partnerTimelinePanel`) | `Scheduler` with the Gantt's `project` + `partner : gantt` (Enterprise tier); give it `columns : [{ text : 'Name', field : 'name', flex : 1 }]`, or no resource names show | SRC |
 | `Gnt.model.Project` node (via `TaskType`) | `ProjectModel` | Not a task node: a wrapper holding all stores + CrudManager + scheduling engine | G-G |
 | Scheduling done by `Gnt.data.TaskStore` | `ProjectModel` | `await project.commitAsync()` after programmatic changes | G-G |

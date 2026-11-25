@@ -41,6 +41,15 @@ Rules:
   and turn `cellEdit` off (`../idioms.md`). Tree drag and drop (re-parent, between two trees): `rowReorder` with `dropOnLeaf`
   and `allowCrossGridDrag` (`../api-mapping.md` §5). Tree persistence caveats (a same-parent reorder is not in
   `store.changes`): `../idioms.md`.
+  - **Visible root** (`rootVisible : true`, a root row above the tree): Bryntum has no root row, so a port that just drops it loses
+    "add a sub node to the root" (1 of 3 E3 runs), and the 3 runs treated it 3 different ways. Decide once and say so in the report:
+    load the root as a real top-level record (`[{ id : 'root', name : 'Root', expanded : true, children : [...] }]`) and keep it, or drop it
+    and add a top-level "Add" action.
+  - **Drop onto a parent**: Bryntum's `rowReorder` inserts the node as the parent's **first** child (`RowReorder.js`:
+    `parent.insertChild(records, parent.children?.[0])`); Ext appended it **last** (1 of 3 E3 runs got the order wrong). To keep Ext's
+    order, move the record in `gridRowDrop` (`parent.appendChild(record)`, UNV) and test a drop onto a parent with children.
+  - **Order field**: don't name a field `index` (the Store writes `record.index`; the TreeNode mixin owns `parentIndex`/`orderedParentIndex`):
+    call it `sortIndex`, or the model works in a test and breaks later.
 - Ext validation (`regex`, `maskRe`, `vtype`), form load/reset/dirty and `grid.setDisabled`: `../api-mapping.md` §2 and §7,
   `../patterns.md` §6.
 - Toolbar widths: five text+icon buttons that fit a 350 px Ext tree toolbar overflowed into the menu icon with the Stockholm theme; even

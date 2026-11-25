@@ -74,6 +74,14 @@ tbar : {
 - Access items by key: `this.widgetMap.addButton`. Ext `reference` / `itemId` → the key in `items`.
 - Ext `header : { items }` → Panel `tools` (Grid, Scheduler and Gantt are Panels).
 
+- **Toggle buttons that can be unpressed** (Ext `enableToggle` + `toggleGroup` + `allowDepress`, e.g. buttons that show and hide a panel):
+  Bryntum's `toggleGroup` keeps one button pressed, and pressing the pressed one does nothing. Set `supportsUnpressing : true`
+  (a `Button` config, `Button.js` in 8.0.x) to get Ext's behaviour. **The Vue wrapper's `BryntumButton` has no `supportsUnpressing` prop**
+  (checked in `core-vue-enterprise` 8.0.x): written as an attribute it is silently dropped, and the buttons turn into a radio group
+  (seen in 2 of 3 E4 runs, with a report that said the show/hide logic was unchanged). Set it on the instance after mount
+  (`button.instance.supportsUnpressing = true`, UNV), or build that toolbar with a `Toolbar` config instead of wrapper tags, and click the
+  pressed button in the browser to check.
+
 ## 4. ViewModel bindings → explicit state
 
 An Ext `bind : '{rowHeight}'` shared by two components becomes an explicit value on each, kept in sync by an
@@ -183,6 +191,9 @@ Ext form idioms inside a `Popup`/`Container` (TEST on 8.0.1):
 
 In a framework app that already has a component system (MUI, Angular Material, Vuetify, ...), use that system's dialog
 for app-level dialogs instead (base skill, widget-first rule).
+
+- **Create a dialog once.** `new Popup(...)` in a click handler builds a new widget on every click: create it once and `show()` it again,
+  or `destroy()` it in its close handler (1 E5 run built a `CalendarEditor` per "Edit working time" click and never destroyed it).
 
 ## 7. Rendering
 

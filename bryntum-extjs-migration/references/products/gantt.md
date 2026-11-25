@@ -38,7 +38,11 @@ PDF export or print (`../api-mapping.md` §0).
 
 `ResourceHistogram` and a resource `Scheduler` share the Gantt's `project` and `partner : gantt` (`api-mapping.md` §1; set
 `weekStartDay` on each: Sunday by default). `Scheduler` needs `columns` or no resource names show. In Angular `[partner]`
-takes `ganttCmp.instance`. The Ext scale configs of a histogram have no equivalent. (A Resource Histogram drew no bars in
+takes `ganttCmp.instance`. **The scale has an equivalent**: Ext `scaleMin`/`scaleMax`/`scaleStep` → the `scale` column's `scalePoints`
+(`columns : [{ type : 'scale', scalePoints : [{ value : 0, unit : 'hour' }, { value : 4, unit : 'hour', text : '4' }, { value : 8, unit : 'hour', text : '8' }] }]`;
+the views read the unit from the last point). The default is 8h/16h/24h, so a histogram you leave alone runs 0–24 h and a full 8-hour working day
+fills a third of the row (all 3 E4 runs; the Ext original was 0–8 h). Read from `ScaleColumn.js` in 8.0.x; check the bar heights against Ext
+in the browser. (A Resource Histogram drew no bars in
 one early test with 8.0.1 and `getRecordHistogramData` returning data; not reproduced in a minimal case and unfiled: unverified, don't promise it.)
 
 ### Color settings from `Ext.util.CSS.updateRule`
