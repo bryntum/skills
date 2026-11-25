@@ -58,6 +58,10 @@ Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-
 
 Upgrading an existing Bryntum app to a newer version: detects installed and target versions, gathers the ordered upgrade guides / what's-new / changelogs across the product and the products it inherits from, cross-references them with your code, writes a migration plan you approve, then applies it (including the v6 → v7 CSS codemod and the 7.x → 8.0 tier package rename) and verifies the build.
 
+### `bryntum-trial-license`
+
+Proactively requesting and registering a free 45-day Bryntum 8.x trial license key (Core/Enterprise) via the Bryntum MCP `request_bryntum_trial_key` tool or `bryntum.com/download/`, and verifying license state in the browser console.
+
 ---
 
 ## Installation
@@ -96,6 +100,7 @@ npx degit bryntum/skills/bryntum-editor .claude/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .claude/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .claude/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .claude/skills/bryntum-migrate
+npx degit bryntum/skills/bryntum-trial-license .claude/skills/bryntum-trial-license
 ```
 
 **Install individually** (e.g. React only):
@@ -125,6 +130,7 @@ npx degit bryntum/skills/bryntum-editor .agents/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .agents/skills/bryntum-extjs-migration
 npx degit bryntum/skills/bryntum-features .agents/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .agents/skills/bryntum-migrate
+npx degit bryntum/skills/bryntum-trial-license .agents/skills/bryntum-trial-license
 ```
 
 **Install individually** (e.g. React only):
