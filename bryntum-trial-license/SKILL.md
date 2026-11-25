@@ -28,10 +28,10 @@ Core and Enterprise packages run without a key as a **14-day keyless trial** per
 
 When setting up an 8.x Core or Enterprise app with no key yet, **proactively get a trial key**:
 
-1. Tell the user you're getting them a free 45-day Bryntum trial license key (emailed to their inbox, never returned by the tool) — or they can paste an existing key or skip to stay on the 14-day keyless trial.
+1. Tell the user you're getting them a free 45-day Bryntum trial license key (a copy is also emailed to their inbox) — or they can paste an existing key or skip to stay on the 14-day keyless trial.
 2. Ask for their **full name**, **company**, **work email**, and whether they want **product updates and marketing emails from Bryntum and AG Grid** (`marketingConsent: true` only on explicit opt-in; default `false`). **Never invent, guess, or reuse placeholder details.**
 3. Call `request_bryntum_trial_key` with those details and `products` limited to `scheduler`, `gantt`, `calendar`, `taskboard`, or `grid` (Scheduler Pro is `scheduler`; omit `products` to default to all five, e.g. for Chart or widgets-only Core-package apps — the key covers every product either way).
-4. Once sent, ask the user to paste the key from their email (check spam if delayed, or contact `https://bryntum.com/contact/` if it never arrives), then register it. Setup can continue on the 14-day keyless trial meanwhile.
+4. If the tool returns the key directly, register it right away and verify it in the browser. If the tool instead says the key was emailed, ask the user to paste it from their email (check spam if delayed, or contact `https://bryntum.com/contact/` if it never arrives), then register it — setup can continue on the 14-day keyless trial meanwhile.
 5. If the tool reports an error or refusal, follow its reply: on a rate limit, ask the user to check for an earlier Bryntum email (including spam) or try tomorrow; if rejected, verify their real details; after any network/timeout failure, have them check inbox/spam before retrying since the email may still have gone out — don't retry on your own.
 
 ### Without MCP (or if the user skips)
