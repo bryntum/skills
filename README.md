@@ -50,6 +50,10 @@ Customizing the built-in event/task editor — which editor each tier uses (`eve
 
 Migrating Ext JS apps to Bryntum 8 or 7.x (vanilla JS, React, Angular or Vue): legacy Ext Scheduler / Gantt (`Sch.*`, `Gnt.*`), Bryntum inside an Ext shell, and plain Ext grids and tree grids. Covers Ext → Bryntum API mappings, data migration and verification, plus the Ext idioms that fail silently in Bryntum code (`store.first()`, `down()`, `xtype`, `dataIndex`, `Ext.*`).
 
+### `bryntum-extjs-wrapper`
+
+Embedding a Bryntum widget inside an Ext JS app that stays on Ext JS (Modern or Classic toolkit): generates a self-contained `Ext.define` component that adopts the Ext element as the widget's element, discovers the Bryntum configs and properties at runtime (`$meta.configs` + prototype setters) instead of a hardcoded list, gives each a `getXxx()`/`setXxx()` for Ext configs and ViewModel `bind`, lets Ext win name clashes (Bryntum values go in `widgetConfig`), maps Ext JS names to Bryntum ones, relays Bryntum events as Ext events and handles sizing and destroy. To remove Ext JS altogether use `bryntum-extjs-migration`.
+
 ### `bryntum-features`
 
 Concept-to-feature lookup: what a user asks for in plain language ("shade 11:00-13:00 as lunch", "grey out weekends", "a totals row", "export to Excel", "swimlanes", "critical path") mapped to the built-in feature that does it and the tier it needs, plus the commonly invented APIs that don't exist.
@@ -98,6 +102,7 @@ npx degit bryntum/skills/bryntum-theming .claude/skills/bryntum-theming
 npx degit bryntum/skills/bryntum-styling .claude/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .claude/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .claude/skills/bryntum-extjs-migration
+npx degit bryntum/skills/bryntum-extjs-wrapper .claude/skills/bryntum-extjs-wrapper
 npx degit bryntum/skills/bryntum-features .claude/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .claude/skills/bryntum-migrate
 npx degit bryntum/skills/bryntum-report-issue .claude/skills/bryntum-report-issue
@@ -128,6 +133,7 @@ npx degit bryntum/skills/bryntum-theming .agents/skills/bryntum-theming
 npx degit bryntum/skills/bryntum-styling .agents/skills/bryntum-styling
 npx degit bryntum/skills/bryntum-editor .agents/skills/bryntum-editor
 npx degit bryntum/skills/bryntum-extjs-migration .agents/skills/bryntum-extjs-migration
+npx degit bryntum/skills/bryntum-extjs-wrapper .agents/skills/bryntum-extjs-wrapper
 npx degit bryntum/skills/bryntum-features .agents/skills/bryntum-features
 npx degit bryntum/skills/bryntum-migrate .agents/skills/bryntum-migrate
 npx degit bryntum/skills/bryntum-report-issue .agents/skills/bryntum-report-issue
