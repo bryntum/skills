@@ -1,0 +1,23 @@
+# Redeploy the Bryntum MCP server (bryntum/ai) when a skill changes on main.
+# The deploy workflows bundle the latest skills from this repo's main branch.
+name: Deploy MCP server
+
+on:
+  push:
+    branches: [main]
+    paths: ['*/SKILL.md']
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start the MCP deploys in bryntum/ai
+        env:
+          # Fine-grained token: bryntum/ai only, Actions read and write
+          GH_TOKEN: ${{ secrets.BRYTUM_AI_MCP_DEPLOY_PROD_TOKEN }}
+        run: |
+          gh workflow run deploy_mcp_staging.yml --repo bryntum/ai --ref main
+          gh workflow run deploy_mcp_prod.yml --repo bryntum/ai --ref main
